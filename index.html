@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Trading Bot & Signals</title>
+<style>
+  /* Base Styles */
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#0a0a0a; color:#fff; line-height:1.6; }
+  a { text-decoration:none; color:#00bfff; }
+  header { 
+    position:relative; 
+    background:#111 url('assets/hero-trading.jpg') no-repeat center/cover; 
+    height:450px; 
+    display:flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+  }
+  header img { width:120px; margin-bottom:15px; }
+  header h1 { color:#00bfff; font-size:2.5em; margin:0 10px; }
+  header p { color:#ccc; font-size:1.2em; max-width:600px; }
+  nav { text-align:center; margin-top:15px; }
+  nav a { margin:0 15px; font-weight:bold; }
+
+  /* Container */
+  .container { max-width:1000px; margin:auto; padding:40px 20px; }
+
+  /* Headings */
+  h2 { text-align:center; color:#00bfff; margin-bottom:20px; }
+
+  /* Features Section */
+  .features { display: flex; flex-wrap: wrap; justify-content: center; gap:20px; }
+  .feature { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:25px; flex:1 1 250px; text-align:center; }
+  .feature img { max-width:80px; display:block; margin:0 auto 15px auto; }
+  .feature h3 { color:#00bfff; margin-bottom:15px; }
+
+  /* Pricing Section */
+  .pricing { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
+  .plan { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:25px; flex:1 1 250px; text-align:center; }
+  .plan h3 { color:#00bfff; margin-bottom:15px; }
+  .plan button { background:#00bfff; color:#fff; border:none; padding:12px 25px; border-radius:5px; cursor:pointer; margin-top:15px; font-weight:bold; }
+
+  /* Contact Form */
+  .contact-form { max-width:600px; margin:30px auto; text-align:left; }
+  .contact-form label { display:block; margin-bottom:5px; color:#00bfff; }
+  .contact-form input, .contact-form textarea { width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #333; background:#1a1a1a; color:#fff; }
+  .contact-form button { background:#00bfff; color:#fff; border:none; padding:12px 25px; font-size:1em; border-radius:5px; cursor:pointer; font-weight:bold; }
+
+  /* Footer */
+  footer { background:#1a1a1a; text-align:center; padding:25px 20px; color:#777; }
+  .social a { color:#00bfff; margin:0 10px; font-size:1.2em; }
+
+  /* Floating Subscribe Button */
+  #floating-btn { position:fixed; bottom:30px; right:30px; background:#00bfff; color:#fff; padding:15px 25px; border-radius:50px; font-weight:bold; font-size:1em; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,0.3); z-index:1000; transition:transform 0.3s; }
+  #floating-btn:hover { transform:scale(1.1); }
+
+  /* Responsive */
+  @media(max-width:768px){ 
+    .features, .pricing { flex-direction: column; align-items: center; } 
+    header h1 { font-size:2em; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="assets/logo.png" alt="VIP Trading Bot Logo">
+  <h1>VIP Trading Bot & Signals</h1>
+  <p>Automated trading made easy. Get real-time signals and maximize profits with our smart trading bot.</p>
+  <nav>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- Features Section -->
+<div class="container" id="features">
+  <h2>Features</h2>
+  <div class="features">
+    <div class="feature">
+      <img src="assets/feature-bot.png" alt="Bot Icon">
+      <h3>Automated Trading</h3>
+      <p>Trade 24/7 with our intelligent trading bot optimized for maximum profit.</p>
+    </div>
+    <div class="feature">
+      <img src="assets/feature-signal.png" alt="Signal Icon">
+      <h3>Real-Time Signals</h3>
+      <p>Receive accurate trading signals instantly to make smarter trades.</p>
+    </div>
+    <div class="feature">
+      <img src="assets/feature-security.png" alt="Security Icon">
+      <h3>Secure & Reliable</h3>
+      <p>Your trades and data are fully protected on our platform.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing Section -->
+<div class="container" id="pricing">
+  <h2>Pricing / Subscription</h2>
+  <div class="pricing">
+    <div class="plan">
+      <h3>Basic Plan</h3>
+      <p>$29/month – Access to signals & bot alerts.</p>
+      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe</button>
+    </div>
+    <div class="plan">
+      <h3>Pro Plan</h3>
+      <p>$59/month – Signals, bot, & VIP support.</p>
+      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe</button>
+    </div>
+    <div class="plan">
+      <h3>Ultimate Plan</h3>
+      <p>$99/month – All features + priority trading alerts.</p>
+      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contact Section -->
+<div class="container" id="contact">
+  <h2>Contact Us</h2>
+  <form class="contact-form" action="https://formspree.io/f/mbdavrkj" method="POST">
+    <label for="name">Name</label>
+    <input type="text" name="name" id="name" placeholder="Your Name" required>
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" placeholder="Your Email" required>
+    <label for="message">Message</label>
+    <textarea name="message" id="message" rows="5" placeholder="Your Message" required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer>
+  &copy; 2026 VIP Trading Bot. All Rights Reserved.
+  <div class="social">
+    <a href="#">Facebook</a>
+    <a href="#">Instagram</a>
+    <a href="#">Telegram</a>
+  </div>
+</footer>
+
+<!-- Floating Subscribe Button -->
+<div id="floating-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe Now</div>
+
+</body>
+  </html>
