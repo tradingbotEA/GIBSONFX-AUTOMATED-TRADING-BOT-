@@ -5,136 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GIBSONFX Trading Platform - User Dashboard</title>
 <style>
-body{
-margin:0;
-font-family:Arial, Helvetica, sans-serif;
-background:#0b0f1a;
-color:white;
-}
-
-/* HEADER */
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px 40px;
-background:#050814;
-}
-
+body{margin:0;font-family:Arial, Helvetica, sans-serif;background:#0b0f1a;color:white;}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:#050814;}
 header img{height:45px;}
-nav a{
-margin-left:20px;
-text-decoration:none;
-color:white;
-font-weight:bold;
-}
-
-/* HERO */
-.hero{
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:80px;
-flex-wrap:wrap;
-}
+nav a{margin-left:20px;text-decoration:none;color:white;font-weight:bold;}
+.hero{display:flex;align-items:center;justify-content:space-between;padding:80px;flex-wrap:wrap;}
 .hero img{width:480px;border-radius:10px;}
 .hero h1{font-size:48px;color:#00eaff;}
 .btn{display:inline-block;background:#00eaff;padding:14px 30px;border-radius:6px;margin-top:20px;color:black;font-weight:bold;text-decoration:none;}
-
-/* FEATURES */
-.features{
-display:flex;
-justify-content:space-around;
-padding:70px;
-background:#101728;
-flex-wrap:wrap;
-gap:40px;
-}
-.card{
-width:300px;
-text-align:center;
-background:#121a2b;
-padding:20px;
-border-radius:10px;
-}
+.features{display:flex;justify-content:space-around;padding:70px;background:#101728;flex-wrap:wrap;gap:40px;}
+.card{width:300px;text-align:center;background:#121a2b;padding:20px;border-radius:10px;}
 .card img{width:100%;border-radius:10px;}
-
-/* DASHBOARD */
-.dashboard{
-padding:60px 40px;
-background:#101728;
-text-align:center;
-}
-.stats{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:30px;
-margin-top:40px;
-}
-.stat-card{
-width:220px;
-background:#151d33;
-padding:25px;
-border-radius:10px;
-text-align:center;
-}
+.dashboard{padding:60px 40px;background:#101728;text-align:center;}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:30px;margin-top:40px;}
+.stat-card{width:220px;background:#151d33;padding:25px;border-radius:10px;text-align:center;}
 .stat-card h2{color:#00eaff;}
-
-/* BOT CONTROL */
-.bot-panel{
-padding:60px 40px;
-text-align:center;
-}
-.bot-box{
-background:#121a2b;
-padding:30px;
-border-radius:10px;
-max-width:500px;
-margin:auto;
-}
-.bot-btn{
-background:#00eaff;
-border:none;
-padding:12px 25px;
-margin-top:20px;
-font-weight:bold;
-cursor:pointer;
-border-radius:6px;
-}
-
-/* LIVE CHART */
-.chart{
-padding:70px 40px;
-text-align:center;
-}
-
-/* LOGIN MODAL */
-.modal{
-display:none;
-position:fixed;
-z-index:1000;
-left:0;top:0;width:100%;height:100%;
-overflow:auto;background:rgba(0,0,0,0.8);
-}
-.modal-content{
-background:#121a2b;margin:15% auto;padding:30px;border-radius:10px;max-width:400px;color:white;
-}
-.close-btn{
-color:#00eaff;float:right;font-size:28px;font-weight:bold;cursor:pointer;
-}
-input[type=text], input[type=password]{
-width:100%;padding:10px;margin:10px 0;border-radius:5px;border:none;background:#151d33;color:white;
-}
-.login-btn{
-width:100%;padding:12px;background:#00eaff;color:black;border:none;font-weight:bold;border-radius:6px;cursor:pointer;
-}
-
-/* FOOTER */
+.bot-panel{padding:60px 40px;text-align:center;}
+.bot-box{background:#121a2b;padding:30px;border-radius:10px;max-width:500px;margin:auto;}
+.bot-btn{background:#00eaff;border:none;padding:12px 25px;margin-top:20px;font-weight:bold;cursor:pointer;border-radius:6px;}
+.chart{padding:70px 40px;text-align:center;}
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.8);}
+.modal-content{background:#121a2b;margin:15% auto;padding:30px;border-radius:10px;max-width:400px;color:white;}
+.close-btn{color:#00eaff;float:right;font-size:28px;font-weight:bold;cursor:pointer;}
+input[type=text], input[type=password]{width:100%;padding:10px;margin:10px 0;border-radius:5px;border:none;background:#151d33;color:white;}
+.login-btn{width:100%;padding:12px;background:#00eaff;color:black;border:none;font-weight:bold;border-radius:6px;cursor:pointer;}
 footer{text-align:center;padding:30px;background:#050814;}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -149,7 +46,6 @@ footer{text-align:center;padding:30px;background:#050814;}
 </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero">
 <div>
 <h1>GIBSONFX AI Trading Bot</h1>
@@ -159,28 +55,12 @@ footer{text-align:center;padding:30px;background:#050814;}
 <img src="./assets/hero.jpg" alt="hero">
 </section>
 
-<!-- FEATURES -->
 <section class="features">
-<div class="card">
-<img src="./assets/bot.jpg" alt="bot">
-<h3>AI Trading Engine</h3>
-<p>Automates buy and sell decisions using advanced algorithms.</p>
-</div>
-
-<div class="card">
-<img src="./assets/dashboard.jpg" alt="dashboard">
-<h3>Live Dashboard</h3>
-<p>Track trades, profits, signals and bot performance in real time.</p>
-</div>
-
-<div class="card">
-<img src="./assets/signals.jpg" alt="signals">
-<h3>VIP Signals</h3>
-<p>Receive accurate forex and crypto signals with high win rate.</p>
-</div>
+<div class="card"><img src="./assets/bot.jpg" alt="bot"><h3>AI Trading Engine</h3><p>Automates buy and sell decisions using advanced algorithms.</p></div>
+<div class="card"><img src="./assets/dashboard.jpg" alt="dashboard"><h3>Live Dashboard</h3><p>Track trades, profits, signals and bot performance in real time.</p></div>
+<div class="card"><img src="./assets/signals.jpg" alt="signals"><h3>VIP Signals</h3><p>Receive accurate forex and crypto signals with high win rate.</p></div>
 </section>
 
-<!-- DASHBOARD -->
 <section id="dashboard" class="dashboard">
 <h1>User Dashboard</h1>
 <div class="stats">
@@ -191,7 +71,6 @@ footer{text-align:center;padding:30px;background:#050814;}
 </div>
 </section>
 
-<!-- BOT CONTROL -->
 <section id="bot" class="bot-panel">
 <h1>Trading Bot Control</h1>
 <div class="bot-box">
@@ -201,39 +80,25 @@ footer{text-align:center;padding:30px;background:#050814;}
 </div>
 </section>
 
-<!-- LIVE CHART -->
 <section id="market" class="chart">
 <h1>Live Market Chart</h1>
 <iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD" width="100%" height="500" frameborder="0"></iframe>
 </section>
 
-<!-- CONTACT -->
 <section id="contact" class="dashboard">
 <h1>Contact</h1>
 <p>Email: support@gibsonfx.com</p>
 <p>Telegram: @gibsonfx</p>
 </section>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="modal">
-<div class="modal-content">
-<span class="close-btn" id="closeModal">&times;</span>
-<h2>User Login</h2>
-<input type="text" placeholder="Username">
-<input type="password" placeholder="Password">
-<button class="login-btn">Login</button>
-</div>
-</div>
+<div id="loginModal" class="modal"><div class="modal-content"><span class="close-btn" id="closeModal">&times;</span><h2>User Login</h2><input type="text" placeholder="Username"><input type="password" placeholder="Password"><button class="login-btn">Login</button></div></div>
 
-<footer>
-<p>© 2026 GIBSONFX Trading Platform</p>
-</footer>
+<footer><p>© 2026 GIBSONFX Trading Platform</p></footer>
 
 <script>
 const modal = document.getElementById('loginModal');
 const loginLink = document.getElementById('loginLink');
 const closeBtn = document.getElementById('closeModal');
-
 loginLink.onclick = function(){ modal.style.display = "block"; }
 closeBtn.onclick = function(){ modal.style.display = "none"; }
 window.onclick = function(event){ if(event.target == modal){ modal.style.display="none"; } }
