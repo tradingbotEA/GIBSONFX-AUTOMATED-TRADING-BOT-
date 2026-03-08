@@ -1,151 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIP Trading Bot & Signals</title>
+<title>GIBSONFX Trading Platform</title>
+
 <style>
-  /* Base Styles */
-  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#0a0a0a; color:#fff; line-height:1.6; }
-  a { text-decoration:none; color:#00bfff; }
-  header { 
-    position:relative; 
-    background:#111 url('assets/hero-trading.jpg') no-repeat center/cover; 
-    height:450px; 
-    display:flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    text-align: center; 
-  }
-  header img { width:120px; margin-bottom:15px; }
-  header h1 { color:#00bfff; font-size:2.5em; margin:0 10px; }
-  header p { color:#ccc; font-size:1.2em; max-width:600px; }
-  nav { text-align:center; margin-top:15px; }
-  nav a { margin:0 15px; font-weight:bold; }
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:#0b0f1a;
+color:white;
+}
 
-  /* Container */
-  .container { max-width:1000px; margin:auto; padding:40px 20px; }
+/* HEADER */
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 40px;
+background:#050814;
+}
 
-  /* Headings */
-  h2 { text-align:center; color:#00bfff; margin-bottom:20px; }
+header img{
+height:45px;
+}
 
-  /* Features Section */
-  .features { display: flex; flex-wrap: wrap; justify-content: center; gap:20px; }
-  .feature { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:25px; flex:1 1 250px; text-align:center; }
-  .feature img { max-width:80px; display:block; margin:0 auto 15px auto; }
-  .feature h3 { color:#00bfff; margin-bottom:15px; }
+nav a{
+margin-left:20px;
+text-decoration:none;
+color:white;
+font-weight:bold;
+}
 
-  /* Pricing Section */
-  .pricing { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
-  .plan { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:25px; flex:1 1 250px; text-align:center; }
-  .plan h3 { color:#00bfff; margin-bottom:15px; }
-  .plan button { background:#00bfff; color:#fff; border:none; padding:12px 25px; border-radius:5px; cursor:pointer; margin-top:15px; font-weight:bold; }
+/* HERO */
+.hero{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:80px;
+flex-wrap:wrap;
+}
 
-  /* Contact Form */
-  .contact-form { max-width:600px; margin:30px auto; text-align:left; }
-  .contact-form label { display:block; margin-bottom:5px; color:#00bfff; }
-  .contact-form input, .contact-form textarea { width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #333; background:#1a1a1a; color:#fff; }
-  .contact-form button { background:#00bfff; color:#fff; border:none; padding:12px 25px; font-size:1em; border-radius:5px; cursor:pointer; font-weight:bold; }
+.hero img{
+width:480px;
+border-radius:10px;
+}
 
-  /* Footer */
-  footer { background:#1a1a1a; text-align:center; padding:25px 20px; color:#777; }
-  .social a { color:#00bfff; margin:0 10px; font-size:1.2em; }
+.hero h1{
+font-size:48px;
+color:#00eaff;
+}
 
-  /* Floating Subscribe Button */
-  #floating-btn { position:fixed; bottom:30px; right:30px; background:#00bfff; color:#fff; padding:15px 25px; border-radius:50px; font-weight:bold; font-size:1em; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,0.3); z-index:1000; transition:transform 0.3s; }
-  #floating-btn:hover { transform:scale(1.1); }
+.btn{
+display:inline-block;
+background:#00eaff;
+padding:14px 30px;
+border-radius:6px;
+margin-top:20px;
+color:black;
+font-weight:bold;
+text-decoration:none;
+}
 
-  /* Responsive */
-  @media(max-width:768px){ 
-    .features, .pricing { flex-direction: column; align-items: center; } 
-    header h1 { font-size:2em; }
-  }
+/* FEATURES */
+.features{
+display:flex;
+justify-content:space-around;
+padding:70px;
+background:#101728;
+flex-wrap:wrap;
+gap:40px;
+}
+
+.card{
+width:300px;
+text-align:center;
+background:#121a2b;
+padding:20px;
+border-radius:10px;
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+}
+
+/* DASHBOARD */
+.dashboard{
+padding:60px 40px;
+background:#101728;
+text-align:center;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:30px;
+margin-top:40px;
+}
+
+.stat-card{
+width:220px;
+background:#151d33;
+padding:25px;
+border-radius:10px;
+text-align:center;
+}
+
+.stat-card h2{
+color:#00eaff;
+}
+
+/* BOT CONTROL */
+.bot-panel{
+padding:60px 40px;
+text-align:center;
+}
+
+.bot-box{
+background:#121a2b;
+padding:30px;
+border-radius:10px;
+max-width:500px;
+margin:auto;
+}
+
+.bot-btn{
+background:#00eaff;
+border:none;
+padding:12px 25px;
+margin-top:20px;
+font-weight:bold;
+cursor:pointer;
+border-radius:6px;
+}
+
+/* CHART */
+.chart{
+padding:70px 40px;
+text-align:center;
+}
+
+/* FOOTER */
+footer{
+text-align:center;
+padding:30px;
+background:#050814;
+}
 </style>
 </head>
+
 <body>
 
 <header>
-  <img src="assets/logo.png" alt="VIP Trading Bot Logo">
-  <h1>VIP Trading Bot & Signals</h1>
-  <p>Automated trading made easy. Get real-time signals and maximize profits with our smart trading bot.</p>
-  <nav>
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#contact">Contact</a>
-  </nav>
+<img src="./assets/logo.png" alt="logo">
+<nav>
+<a href="#">Home</a>
+<a href="#dashboard">Dashboard</a>
+<a href="#bot">Trading Bot</a>
+<a href="#market">Market</a>
+<a href="#contact">Contact</a>
+</nav>
 </header>
 
-<!-- Features Section -->
-<div class="container" id="features">
-  <h2>Features</h2>
-  <div class="features">
-    <div class="feature">
-      <img src="assets/feature-bot.png" alt="Bot Icon">
-      <h3>Automated Trading</h3>
-      <p>Trade 24/7 with our intelligent trading bot optimized for maximum profit.</p>
-    </div>
-    <div class="feature">
-      <img src="assets/feature-signal.png" alt="Signal Icon">
-      <h3>Real-Time Signals</h3>
-      <p>Receive accurate trading signals instantly to make smarter trades.</p>
-    </div>
-    <div class="feature">
-      <img src="assets/feature-security.png" alt="Security Icon">
-      <h3>Secure & Reliable</h3>
-      <p>Your trades and data are fully protected on our platform.</p>
-    </div>
-  </div>
+<!-- HERO -->
+<section class="hero">
+<div>
+<h1>GIBSONFX AI Trading Bot</h1>
+<p>Automated AI powered trading system designed to execute trades 24/7 with precision.</p>
+<a href="https://t.me/" class="btn">Join Telegram</a>
+</div>
+<img src="./assets/hero.jpg" alt="hero">
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+<div class="card">
+<img src="./assets/bot.jpg" alt="bot">
+<h3>AI Trading Engine</h3>
+<p>Automates buy and sell decisions using advanced algorithms.</p>
 </div>
 
-<!-- Pricing Section -->
-<div class="container" id="pricing">
-  <h2>Pricing / Subscription</h2>
-  <div class="pricing">
-    <div class="plan">
-      <h3>Basic Plan</h3>
-      <p>$29/month – Access to signals & bot alerts.</p>
-      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe</button>
-    </div>
-    <div class="plan">
-      <h3>Pro Plan</h3>
-      <p>$59/month – Signals, bot, & VIP support.</p>
-      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe</button>
-    </div>
-    <div class="plan">
-      <h3>Ultimate Plan</h3>
-      <p>$99/month – All features + priority trading alerts.</p>
-      <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe</button>
-    </div>
-  </div>
+<div class="card">
+<img src="./assets/dashboard.jpg" alt="dashboard">
+<h3>Live Dashboard</h3>
+<p>Track trades, profits, signals and bot performance in real time.</p>
 </div>
 
-<!-- Contact Section -->
-<div class="container" id="contact">
-  <h2>Contact Us</h2>
-  <form class="contact-form" action="https://formspree.io/f/mbdavrkj" method="POST">
-    <label for="name">Name</label>
-    <input type="text" name="name" id="name" placeholder="Your Name" required>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" placeholder="Your Email" required>
-    <label for="message">Message</label>
-    <textarea name="message" id="message" rows="5" placeholder="Your Message" required></textarea>
-    <button type="submit">Send Message</button>
-  </form>
+<div class="card">
+<img src="./assets/signals.jpg" alt="signals">
+<h3>VIP Signals</h3>
+<p>Receive accurate forex and crypto signals with high win rate.</p>
 </div>
+</section>
 
-<!-- Footer -->
+<!-- DASHBOARD -->
+<section id="dashboard" class="dashboard">
+<h1>Trading Dashboard</h1>
+<div class="stats">
+<div class="stat-card"><h3>Total Balance</h3><h2>$12,450</h2></div>
+<div class="stat-card"><h3>Today's Profit</h3><h2>$640</h2></div>
+<div class="stat-card"><h3>Active Trades</h3><h2>8</h2></div>
+<div class="stat-card"><h3>Bot Status</h3><h2>Active</h2></div>
+</div>
+</section>
+
+<!-- BOT CONTROL -->
+<section id="bot" class="bot-panel">
+<h1>Trading Bot Control</h1>
+<div class="bot-box">
+<p>Activate the GIBSONFX AI trading bot.</p>
+<button class="bot-btn">Start Bot</button><br><br>
+<button class="bot-btn">Stop Bot</button>
+</div>
+</section>
+
+<!-- LIVE CHART -->
+<section id="market" class="chart">
+<h1>Live Market Chart</h1>
+<iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD" width="100%" height="500" frameborder="0"></iframe>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="dashboard">
+<h1>Contact</h1>
+<p>Email: support@gibsonfx.com</p>
+<p>Telegram: @gibsonfx</p>
+</section>
+
 <footer>
-  &copy; 2026 VIP Trading Bot. All Rights Reserved.
-  <div class="social">
-    <a href="#">Facebook</a>
-    <a href="#">Instagram</a>
-    <a href="#">Telegram</a>
-  </div>
+<p>© 2026 GIBSONFX Trading Platform</p>
 </footer>
 
-<!-- Floating Subscribe Button -->
-<div id="floating-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScmJdibxxoQyHlmHkMWIPH_vcO0nSjVDeDhGsiUMaPY-PtaQg/viewform?usp=header','_blank')">Subscribe Now</div>
-
 </body>
-  </html>
+</html>
