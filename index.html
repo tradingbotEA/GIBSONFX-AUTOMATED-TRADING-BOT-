@@ -3,194 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GIBSONFX Trading Platform</title>
+<title>GIBSONFX PRO BOT</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:Arial;
     background:#0b0f1a;
     color:white;
+    text-align:center;
 }
 
 /* HEADER */
 header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 40px;
+    padding:20px;
     background:#050814;
 }
-header img{height:45px;}
-nav a{
-    margin-left:20px;
-    text-decoration:none;
-    color:white;
-    font-weight:bold;
+header h1{
+    color:#00eaff;
 }
 
 /* HERO */
 .hero{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:80px;
-    flex-wrap:wrap;
-}
-.hero img{
-    width:480px;
-    border-radius:10px;
-}
-.hero h1{
-    font-size:48px;
-    color:#00eaff;
-}
-
-/* BUTTON */
-.btn{
-    display:inline-block;
-    background:#00eaff;
-    padding:14px 30px;
-    border-radius:6px;
-    margin-top:20px;
-    color:black;
-    font-weight:bold;
-    text-decoration:none;
-    transition:0.3s;
-}
-.btn:hover{
-    box-shadow:0 0 20px #00eaff;
-    transform:scale(1.05);
-}
-
-/* FEATURES */
-.features{
-    display:flex;
-    justify-content:space-around;
-    padding:70px;
-    background:#101728;
-    flex-wrap:wrap;
-    gap:40px;
-}
-.card{
-    width:300px;
-    text-align:center;
-    background:#121a2b;
-    padding:20px;
-    border-radius:10px;
-    transition:0.3s;
-}
-.card:hover{
-    transform:translateY(-10px);
-}
-.card img{
-    width:100%;
-    border-radius:10px;
+    padding:50px 20px;
 }
 
 /* DASHBOARD */
-.dashboard{
-    padding:60px 40px;
-    background:#101728;
-    text-align:center;
-}
 .stats{
     display:flex;
-    justify-content:center;
     flex-wrap:wrap;
-    gap:30px;
-    margin-top:40px;
+    justify-content:center;
+    gap:20px;
+    padding:30px;
 }
-.stat-card{
-    width:220px;
-    background:#151d33;
-    padding:25px;
+.stat{
+    background:#121a2b;
+    padding:20px;
     border-radius:10px;
-    box-shadow:0 0 15px rgba(0,234,255,0.3);
+    width:200px;
 }
-.stat-card h2{color:#00eaff;}
 
 /* BOT */
-.bot-panel{
-    padding:60px 40px;
-    text-align:center;
+.bot{
+    margin-top:30px;
 }
-.bot-box{
-    background:#121a2b;
-    padding:30px;
-    border-radius:10px;
-    max-width:500px;
-    margin:auto;
-    box-shadow:0 0 25px rgba(0,234,255,0.4);
-}
-.bot-btn{
-    background:#00eaff;
-    border:none;
+button{
     padding:12px 25px;
-    margin-top:20px;
-    font-weight:bold;
-    cursor:pointer;
-    border-radius:6px;
-    transition:0.3s;
-}
-.bot-btn:hover{
-    box-shadow:0 0 20px #00eaff;
-}
-
-/* CHART */
-.chart{
-    padding:70px 40px;
-    text-align:center;
-}
-
-/* LOGIN MODAL */
-.modal{
-    display:none;
-    position:fixed;
-    z-index:1000;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.8);
-}
-.modal-content{
-    background:#121a2b;
-    margin:15% auto;
-    padding:30px;
-    border-radius:10px;
-    max-width:400px;
-}
-.close-btn{
-    color:#00eaff;
-    float:right;
-    font-size:28px;
-    cursor:pointer;
-}
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:5px;
-    border:none;
-    background:#151d33;
-    color:white;
-}
-.login-btn{
-    width:100%;
-    padding:12px;
+    margin:10px;
     background:#00eaff;
-    color:black;
     border:none;
-    font-weight:bold;
     border-radius:6px;
+    font-weight:bold;
+}
+button:hover{
+    box-shadow:0 0 15px #00eaff;
 }
 
-/* FOOTER */
-footer{
-    text-align:center;
-    padding:30px;
-    background:#050814;
+/* SIGNAL */
+#signal{
+    font-size:40px;
+    margin-top:20px;
 }
 </style>
 </head>
@@ -198,134 +70,99 @@ footer{
 <body>
 
 <header>
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/logo.png">
-<nav>
-<a href="#">Home</a>
-<a href="#dashboard">Dashboard</a>
-<a href="#bot">Trading Bot</a>
-<a href="#market">Market</a>
-<a href="#" id="loginLink">Login</a>
-</nav>
+<h1>GIBSONFX AI TRADING BOT</h1>
+<p>Automated Smart Trading System</p>
 </header>
 
 <section class="hero">
-<div>
-<h1>GIBSONFX AI Trading Bot</h1>
-<p>Automated AI-powered trading system executing trades 24/7.</p>
-
-<h3 style="color:#00eaff;">🔥 95% Accuracy | VIP Signals | Limited Access</h3>
-
-<a href="https://t.me/" class="btn">Join VIP Signals</a>
-</div>
-
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/hero.jpg">
-</section>
-
-<section class="features">
-<div class="card">
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/bot.jpg">
-<h3>AI Trading Engine</h3>
-<p>Automated smart trading decisions.</p>
-</div>
-
-<div class="card">
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/dashboard.jpg">
-<h3>Live Dashboard</h3>
-<p>Track performance in real-time.</p>
-</div>
-
-<div class="card">
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/signals.jpg">
-<h3>VIP Signals</h3>
-<p>High probability trade signals.</p>
-</div>
-</section>
-
-<section id="dashboard" class="dashboard">
-<h1>User Dashboard</h1>
+<h2>Live Trading Dashboard</h2>
 
 <div class="stats">
-<div class="stat-card"><h3>Total Balance</h3><h2>$12,450</h2></div>
-<div class="stat-card"><h3>Today's Profit</h3><h2>$640</h2></div>
-<div class="stat-card"><h3>Active Trades</h3><h2>8</h2></div>
-<div class="stat-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
+<div class="stat">
+<h3>Balance</h3>
+<p id="balance">$12,450</p>
 </div>
+
+<div class="stat">
+<h3>Price (XAUUSD)</h3>
+<p id="price">1900.00</p>
+</div>
+
+<div class="stat">
+<h3>Profit</h3>
+<p id="profit">$0.00</p>
+</div>
+
+<div class="stat">
+<h3>Status</h3>
+<p id="status">Stopped</p>
+</div>
+</div>
+
+<div class="bot">
+<h2>Signal</h2>
+<div id="signal">WAIT</div>
+
+<button onclick="startBot()">Start Bot</button>
+<button onclick="stopBot()">Stop Bot</button>
+</div>
+
 </section>
-
-<section id="bot" class="bot-panel">
-<h1>Trading Bot Control</h1>
-
-<div class="bot-box">
-<p>Live Signal:</p>
-<h2 id="liveSignal">WAIT</h2>
-
-<button class="bot-btn" onclick="startBot()">Start Bot</button><br><br>
-<button class="bot-btn" onclick="stopBot()">Stop Bot</button>
-</div>
-</section>
-
-<section id="market" class="chart">
-<h1>Live Market Chart</h1>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD" width="100%" height="500"></iframe>
-</section>
-
-<div id="loginModal" class="modal">
-<div class="modal-content">
-<span class="close-btn" id="closeModal">&times;</span>
-<h2>Login</h2>
-<input type="text" placeholder="Username">
-<input type="password" placeholder="Password">
-<button class="login-btn">Login</button>
-</div>
-</div>
-
-<footer>
-<p>© 2026 GIBSONFX Trading Platform</p>
-</footer>
 
 <script>
-const modal = document.getElementById('loginModal');
-document.getElementById('loginLink').onclick = () => modal.style.display = "block";
-document.getElementById('closeModal').onclick = () => modal.style.display = "none";
+let running = false;
+let price = 1900;
+let profit = 0;
+let balance = 12450;
 
-window.onclick = (e) => {
-    if(e.target == modal){
-        modal.style.display = "none";
-    }
-};
-
-// BOT LOGIC
-let botInterval;
-
-function generateSignal(){
-    const signals = ["BUY","SELL","WAIT"];
-    return signals[Math.floor(Math.random()*signals.length)];
+function getSignal(prev, current){
+    if(current > prev + 1.5) return "BUY";
+    if(current < prev - 1.5) return "SELL";
+    return "WAIT";
 }
 
 function startBot(){
-    document.getElementById("botStatus").innerText = "Running";
+    if(running) return;
 
-    botInterval = setInterval(()=>{
-        let signal = generateSignal();
-        let el = document.getElementById("liveSignal");
+    running = true;
+    document.getElementById("status").innerText = "Running";
+
+    window.bot = setInterval(()=>{
+        let prev = price;
+
+        // simulate price
+        price += (Math.random() - 0.5) * 5;
+
+        let signal = getSignal(prev, price);
+        let el = document.getElementById("signal");
 
         el.innerText = signal;
 
         if(signal === "BUY"){
             el.style.color = "lime";
-        } else if(signal === "SELL"){
+            profit += Math.random() * 30;
+        }
+        else if(signal === "SELL"){
             el.style.color = "red";
-        } else {
+            profit += Math.random() * 25;
+        }
+        else{
             el.style.color = "white";
         }
 
-    },2000);
+        document.getElementById("price").innerText = price.toFixed(2);
+        document.getElementById("profit").innerText = "$" + profit.toFixed(2);
+        document.getElementById("balance").innerText = "$" + (balance + profit).toFixed(2);
+
+    }, 2000);
 }
 
 function stopBot(){
-    clearInterval(botInterval);
-    document.getElementById("botStatus").innerText = "Stopped";
-    document.getElementById("liveSignal").innerText = "WAIT";
+    running = false;
+    clearInterval(window.bot);
+
+    document.getElementById("status").innerText = "Stopped";
+    document.getElementById("signal").innerText = "WAIT";
 }
 </script>
 
