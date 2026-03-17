@@ -6,11 +6,24 @@
 <title>GIBSONFX Trading Platform</title>
 
 <style>
+:root{
+    --bg-color-dark: #0b0f1a;
+    --text-color-dark: white;
+    --card-bg-dark: #121a2b;
+    --shadow-dark: rgba(0,234,255,0.3);
+
+    --bg-color-light: #f5f5f5;
+    --text-color-light: #111;
+    --card-bg-light: #ffffff;
+    --shadow-light: rgba(0,0,0,0.15);
+}
+
 body{
     margin:0;
     font-family:Arial, Helvetica, sans-serif;
-    background:#0b0f1a;
-    color:white;
+    background: var(--bg-color-dark);
+    color: var(--text-color-dark);
+    transition:0.4s;
 }
 
 /* HEADER */
@@ -25,7 +38,7 @@ header img{height:45px;}
 nav a{
     margin-left:20px;
     text-decoration:none;
-    color:white;
+    color:inherit;
     font-weight:bold;
 }
 
@@ -68,17 +81,17 @@ nav a{
     display:flex;
     justify-content:space-around;
     padding:70px;
-    background:#101728;
     flex-wrap:wrap;
     gap:40px;
 }
 .card{
     width:300px;
     text-align:center;
-    background:#121a2b;
+    background:var(--card-bg-dark);
     padding:20px;
     border-radius:10px;
     transition:0.3s;
+    box-shadow:0 0 15px var(--shadow-dark);
 }
 .card:hover{
     transform:translateY(-10px);
@@ -91,7 +104,6 @@ nav a{
 /* DASHBOARD */
 .dashboard{
     padding:60px 40px;
-    background:#101728;
     text-align:center;
 }
 .stats{
@@ -103,25 +115,26 @@ nav a{
 }
 .stat-card{
     width:220px;
-    background:#151d33;
+    background:var(--card-bg-dark);
     padding:25px;
     border-radius:10px;
-    box-shadow:0 0 15px rgba(0,234,255,0.3);
+    box-shadow:0 0 15px var(--shadow-dark);
+    transition:0.4s;
 }
 .stat-card h2{color:#00eaff;}
 
-/* BOT */
+/* BOT PANEL */
 .bot-panel{
     padding:60px 40px;
     text-align:center;
 }
 .bot-box{
-    background:#121a2b;
+    background:var(--card-bg-dark);
     padding:30px;
     border-radius:10px;
     max-width:500px;
     margin:auto;
-    box-shadow:0 0 25px rgba(0,234,255,0.4);
+    box-shadow:0 0 25px var(--shadow-dark);
 }
 .bot-btn{
     background:#00eaff;
@@ -136,6 +149,22 @@ nav a{
 .bot-btn:hover{
     box-shadow:0 0 20px #00eaff;
 }
+
+/* LIVE MARKETS */
+.live-markets{
+    padding:60px 40px;
+    text-align:center;
+}
+.market-card{
+    display:inline-block;
+    width:250px;
+    margin:10px;
+    background:var(--card-bg-dark);
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 0 15px var(--shadow-dark);
+}
+.market-card h3{color:#00eaff;}
 
 /* CHART */
 .chart{
@@ -155,7 +184,7 @@ nav a{
     background:rgba(0,0,0,0.8);
 }
 .modal-content{
-    background:#121a2b;
+    background:var(--card-bg-dark);
     margin:15% auto;
     padding:30px;
     border-radius:10px;
@@ -192,18 +221,40 @@ footer{
     padding:30px;
     background:#050814;
 }
+
+/* DARK/LIGHT TOGGLE */
+.toggle-btn{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:#00eaff;
+    color:black;
+    border:none;
+    padding:10px 15px;
+    font-weight:bold;
+    border-radius:5px;
+    cursor:pointer;
+    z-index:1001;
+    transition:0.3s;
+}
+.toggle-btn:hover{
+    box-shadow:0 0 15px #00eaff;
+}
 </style>
 </head>
 
 <body>
 
+<button class="toggle-btn" onclick="toggleTheme()">Dark/Light Mode</button>
+
 <header>
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/logo.png">
+<img src="./assets/logo.png" alt="GIBSONFX Logo">
 <nav>
 <a href="#">Home</a>
 <a href="#dashboard">Dashboard</a>
 <a href="#bot">Trading Bot</a>
 <a href="#market">Market</a>
+<a href="#vip">VIP Signals</a>
 <a href="#" id="loginLink">Login</a>
 </nav>
 </header>
@@ -212,30 +263,25 @@ footer{
 <div>
 <h1>GIBSONFX AI Trading Bot</h1>
 <p>Automated AI-powered trading system executing trades 24/7.</p>
-
 <h3 style="color:#00eaff;">🔥 95% Accuracy | VIP Signals | Limited Access</h3>
-
-<a href="https://t.me/" class="btn">Join VIP Signals</a>
+<a href="https://wa.me/254786810591" target="_blank" class="btn">Join VIP Signals</a>
 </div>
-
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/hero.jpg">
+<img src="./assets/hero.jpg" alt="Hero Image">
 </section>
 
 <section class="features">
 <div class="card">
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/bot.jpg">
+<img src="./assets/bot.jpg" alt="AI Bot">
 <h3>AI Trading Engine</h3>
 <p>Automated smart trading decisions.</p>
 </div>
-
 <div class="card">
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/dashboard.jpg">
+<img src="./assets/dashboard.jpg" alt="Dashboard">
 <h3>Live Dashboard</h3>
 <p>Track performance in real-time.</p>
 </div>
-
 <div class="card">
-<img src="https://tradingbotea.github.io/GIBSONFX-AUTOMATED-TRADING-BOT-/assets/signals.jpg">
+<img src="./assets/signals.jpg" alt="Signals">
 <h3>VIP Signals</h3>
 <p>High probability trade signals.</p>
 </div>
@@ -243,7 +289,6 @@ footer{
 
 <section id="dashboard" class="dashboard">
 <h1>User Dashboard</h1>
-
 <div class="stats">
 <div class="stat-card"><h3>Total Balance</h3><h2>$12,450</h2></div>
 <div class="stat-card"><h3>Today's Profit</h3><h2>$640</h2></div>
@@ -254,17 +299,23 @@ footer{
 
 <section id="bot" class="bot-panel">
 <h1>Trading Bot Control</h1>
-
 <div class="bot-box">
 <p>Live Signal:</p>
 <h2 id="liveSignal">WAIT</h2>
-
-<button class="bot-btn" onclick="startBot()">Start Bot</button><br><br>
+<button class="bot-btn" onclick="startBot()">Start Bot</button>
 <button class="bot-btn" onclick="stopBot()">Stop Bot</button>
 </div>
 </section>
 
-<section id="market" class="chart">
+<section id="market" class="live-markets">
+<h1>Live Market Reviews</h1>
+<div class="market-card"><h3>EUR/USD</h3><p>Strong Buy Zone</p></div>
+<div class="market-card"><h3>GBP/USD</h3><p>Possible Sell Setup</p></div>
+<div class="market-card"><h3>XAU/USD</h3><p>Volatile, watch closely</p></div>
+<div class="market-card"><h3>BTC/USD</h3><p>Uptrend continuation likely</p></div>
+</section>
+
+<section id="chart" class="chart">
 <h1>Live Market Chart</h1>
 <iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD" width="100%" height="500"></iframe>
 </section>
@@ -284,50 +335,57 @@ footer{
 </footer>
 
 <script>
-const modal = document.getElementById('loginModal');
-document.getElementById('loginLink').onclick = () => modal.style.display = "block";
-document.getElementById('closeModal').onclick = () => modal.style.display = "none";
-
-window.onclick = (e) => {
-    if(e.target == modal){
-        modal.style.display = "none";
+// Dark/Light Mode
+let light = false;
+function toggleTheme(){
+    light = !light;
+    if(light){
+        document.body.style.backgroundColor = "var(--bg-color-light)";
+        document.body.style.color = "var(--text-color-light)";
+        document.querySelectorAll(".card, .stat-card, .bot-box, .market-card, .modal-content").forEach(el=>{
+            el.style.backgroundColor = "var(--card-bg-light)";
+            el.style.boxShadow = "0 0 15px var(--shadow-light)";
+            el.style.color = "var(--text-color-light)";
+        });
+    }else{
+        document.body.style.backgroundColor = "var(--bg-color-dark)";
+        document.body.style.color = "var(--text-color-dark)";
+        document.querySelectorAll(".card, .stat-card, .bot-box, .market-card, .modal-content").forEach(el=>{
+            el.style.backgroundColor = "var(--card-bg-dark)";
+            el.style.boxShadow = "0 0 15px var(--shadow-dark)";
+            el.style.color = "var(--text-color-dark)";
+        });
     }
-};
+}
+
+// Login Modal
+const modal = document.getElementById('loginModal');
+document.getElementById('loginLink').onclick = ()=> modal.style.display="block";
+document.getElementById('closeModal').onclick = ()=> modal.style.display="none";
+window.onclick = (e)=>{if(e.target==modal) modal.style.display="none";};
 
 // BOT LOGIC
 let botInterval;
-
 function generateSignal(){
     const signals = ["BUY","SELL","WAIT"];
     return signals[Math.floor(Math.random()*signals.length)];
 }
-
 function startBot(){
-    document.getElementById("botStatus").innerText = "Running";
-
-    botInterval = setInterval(()=>{
-        let signal = generateSignal();
-        let el = document.getElementById("liveSignal");
-
-        el.innerText = signal;
-
-        if(signal === "BUY"){
-            el.style.color = "lime";
-        } else if(signal === "SELL"){
-            el.style.color = "red";
-        } else {
-            el.style.color = "white";
-        }
-
+    document.getElementById("botStatus").innerText="Running";
+    botInterval=setInterval(()=>{
+        let signal=generateSignal();
+        let el=document.getElementById("liveSignal");
+        el.innerText=signal;
+        if(signal==="BUY") el.style.color="lime";
+        else if(signal==="SELL") el.style.color="red";
+        else el.style.color="white";
     },2000);
 }
-
 function stopBot(){
     clearInterval(botInterval);
-    document.getElementById("botStatus").innerText = "Stopped";
-    document.getElementById("liveSignal").innerText = "WAIT";
+    document.getElementById("botStatus").innerText="Stopped";
+    document.getElementById("liveSignal").innerText="WAIT";
 }
 </script>
-
 </body>
 </html>
