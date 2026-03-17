@@ -99,7 +99,7 @@ nav a{
     text-align:center;
 }
 
-.bot-box, .market-card, .card, .modal-content{
+.bot-box, .market-card, .card, .modal-content, .gallery-card{
     background:var(--card-dark);
     box-shadow:0 0 15px var(--shadow-dark);
     border-radius:10px;
@@ -107,7 +107,7 @@ nav a{
     margin-bottom:20px;
 }
 
-.market-cards{
+.market-cards, .gallery-cards{
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
@@ -115,13 +115,15 @@ nav a{
 }
 
 iframe{width:100%; height:300px; border:none; margin-top:10px;}
+.gallery-cards img{width:100%; max-width:300px; border-radius:10px; cursor:pointer; transition:0.3s;}
+.gallery-cards img:hover{transform:scale(1.05); box-shadow:0 0 20px #00eaff;}
 
 @media screen and (max-width:768px){
     .hero{flex-direction:column; text-align:center;}
     .hero img{max-width:90%; margin-top:20px;}
     .stats{flex-direction:column; align-items:center;}
     .stat-card{width:90%; max-width:300px;}
-    .market-cards{flex-direction:column; align-items:center;}
+    .market-cards, .gallery-cards{flex-direction:column; align-items:center;}
     iframe{height:250px;}
 }
 
@@ -145,6 +147,7 @@ iframe{width:100%; height:300px; border:none; margin-top:10px;}
 <a onclick="showPage('dashboard')">Dashboard</a>
 <a onclick="showPage('bot')">Trading Bot</a>
 <a onclick="showPage('market')">Market</a>
+<a onclick="showPage('gallery')">Gallery</a>
 <a href="https://wa.me/254786810591" target="_blank">VIP Signals</a>
 <a id="loginLink">Login</a>
 </nav>
@@ -203,12 +206,24 @@ iframe{width:100%; height:300px; border:none; margin-top:10px;}
 </div>
 <div class="market-card">
 <h3>XAU/USD</h3>
-<iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:XAUUSD"></iframe>
+<iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA:XAUUSD"></iframe>
 </div>
 <div class="market-card">
 <h3>BTC/USD</h3>
 <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT"></iframe>
 </div>
+</div>
+</section>
+
+<!-- GALLERY PAGE -->
+<section id="gallery" class="page">
+<h1>Gallery & Screenshots</h1>
+<div class="gallery-cards">
+<img src="./assets/bot.jpg" alt="Bot Interface">
+<img src="./assets/signals.jpg" alt="VIP Signals">
+<img src="./assets/trades-example1.png" alt="Trade Example 1">
+<img src="./assets/trades-example2.png" alt="Trade Example 2">
+<img src="./assets/profit-summary.png" alt="Profit Summary">
 </div>
 </section>
 
@@ -245,7 +260,7 @@ function toggleTheme(){
     const shadow = light ? '--shadow-light' : '--shadow-dark';
     document.body.style.backgroundColor = `var(${bg})`;
     document.body.style.color = `var(${text})`;
-    document.querySelectorAll('.card, .stat-card, .bot-box, .market-card, .modal-content').forEach(el=>{
+    document.querySelectorAll('.card, .stat-card, .bot-box, .market-card, .gallery-card, .modal-content').forEach(el=>{
         el.style.backgroundColor = `var(${card})`;
         el.style.boxShadow = `0 0 15px var(${shadow})`;
         el.style.color = `var(${text})`;
@@ -262,7 +277,7 @@ window.onclick = (e)=>{if(e.target==modal) modal.style.display="none";};
 // Dummy login check
 function checkLogin(){
     const pass = document.getElementById('loginPassword').value;
-    const correctPass = "GIBSONFX2026"; // <-- Set your desired password here
+    const correctPass = "GIBSONFX2026"; 
     if(pass === correctPass){
         loggedIn = true;
         modal.style.display="none";
