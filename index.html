@@ -11,15 +11,16 @@
 }
 body{margin:0; font-family:Arial,sans-serif; background:var(--bg-dark); color:var(--text-dark); transition:0.4s;}
 body.light-mode{background:var(--bg-light); color:var(--text-light);}
-header{display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#050814; flex-wrap:wrap; transition:0.4s;}
+header{display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#050814; flex-wrap:wrap; transition:0.4s; position:relative;}
 body.light-mode header{background:#e3e3e3;}
 header img{height:45px;}
+nav{display:flex; align-items:center; gap:10px;}
 nav a{margin:5px 10px; text-decoration:none; color:inherit; font-weight:bold; cursor:pointer;}
+.menu-btn{display:none; cursor:pointer; font-size:24px; background:none; border:none; color:inherit;}
+.nav-links{display:flex; gap:10px; align-items:center;}
+.nav-links.active{display:flex; flex-direction:column; position:absolute; top:60px; right:20px; background:var(--card-dark); padding:10px; border-radius:10px;}
+body.light-mode .nav-links.active{background:var(--card-light);}
 .toggle-btn{position:fixed; top:20px; right:20px; background:#00eaff; color:black; border:none; padding:10px 15px; font-weight:bold; border-radius:5px; cursor:pointer; z-index:1001;}
-.menu-btn{display:none; font-size:24px; cursor:pointer; margin-left:auto; color:#00eaff;}
-.dropdown-content{display:none; position:absolute; top:60px; right:20px; background:var(--card-dark); flex-direction:column; padding:10px; border-radius:8px; box-shadow:0 0 15px var(--shadow-dark); z-index:1002;}
-body.light-mode .dropdown-content{background:var(--card-light); box-shadow:0 0 15px var(--shadow-light);}
-.dropdown-content a{margin:5px 0; color:inherit; text-decoration:none; font-weight:bold; cursor:pointer;}
 .page{display:none; padding:20px;}
 .hero{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:20px;}
 .hero img{width:100%; max-width:400px; border-radius:10px;}
@@ -34,6 +35,7 @@ body.light-mode .stat-card{background:var(--card-light); box-shadow:0 0 15px var
 body.light-mode .bot-box, body.light-mode .market-card{background:var(--card-light); box-shadow:0 0 15px var(--shadow-light);}
 .market-cards, .gallery-cards{display:flex; flex-wrap:wrap; justify-content:center; gap:20px;}
 iframe{width:100%; height:300px; border:none; margin-top:10px;}
+.fullscreen-btn{display:block; margin-top:10px; background:#00eaff; padding:6px 10px; border:none; border-radius:5px; cursor:pointer; color:black; font-weight:bold;}
 .gallery-cards img{width:100%; max-width:300px; border-radius:10px; cursor:pointer; transition:0.3s;}
 .gallery-cards img:hover{transform:scale(1.05); box-shadow:0 0 20px #00eaff;}
 .team-container{display:flex; flex-wrap:wrap; justify-content:center; gap:40px;}
@@ -49,22 +51,8 @@ body.light-mode .overlay{background: rgba(255,255,255,0.8); color:#111;}
 body.light-mode .modal-content{background:var(--card-light);}
 .close-btn{position:absolute; top:10px; right:15px; cursor:pointer; font-size:24px;}
 .certificate-img{width:100%; max-width:400px; border-radius:10px; margin-top:15px;}
-@media screen and (max-width:768px){
-  .hero{flex-direction:column; text-align:center;}
-  .hero img{max-width:90%; margin-top:20px;}
-  .stats{flex-direction:column; align-items:center;}
-  .stat-card{width:90%; max-width:300px;}
-  .market-cards, .gallery-cards{flex-direction:column; align-items:center;}
-  .menu-btn{display:block;}
-  nav a{display:none;}
-}
-@media screen and (max-width:480px){
-  header{flex-direction:column; align-items:flex-start;}
-  nav{display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;}
-  .hero h1{font-size:28px;}
-  .btn{padding:10px 18px;}
-  iframe{height:200px;}
-}
+@media screen and (max-width:768px){.hero{flex-direction:column; text-align:center;}.hero img{max-width:90%; margin-top:20px;}.stats{flex-direction:column; align-items:center;}.stat-card{width:90%; max-width:300px;}.market-cards, .gallery-cards{flex-direction:column; align-items:center;} nav a{display:none;}}
+@media screen and (max-width:480px){header{flex-direction:column; align-items:flex-start;} nav{display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;} .hero h1{font-size:28px;} .btn{padding:10px 18px;} iframe{height:200px;}}
 </style>
 </head>
 <body>
@@ -73,8 +61,9 @@ body.light-mode .modal-content{background:var(--card-light);}
 
 <header>
 <img src="./assets/logo.png" alt="Logo">
-<span class="menu-btn">&#9776;</span>
-<nav class="dropdown-content">
+<nav>
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div class="nav-links" id="navLinks">
 <a onclick="showPage('home')">Home</a>
 <a onclick="showPage('dashboard')">Dashboard</a>
 <a onclick="showPage('bot')">Trading Bot</a>
@@ -85,6 +74,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <a onclick="showPage('gallery')">Gallery</a>
 <a href="https://wa.me/254786810591" target="_blank">VIP Signals</a>
 <a id="loginLink">Login</a>
+</div>
 </nav>
 </header>
 
@@ -118,15 +108,15 @@ body.light-mode .modal-content{background:var(--card-light);}
 <section id="bot" class="page">
 <h1>Trading Bot Control</h1>
 <div class="bot-box">
+<label for="marketSelect">Select Market:</label>
+<select id="marketSelect">
+<option value="EURUSD">EUR/USD</option>
+<option value="GBPUSD">GBP/USD</option>
+<option value="XAUUSD">XAU/USD</option>
+<option value="BTCUSD">BTC/USD</option>
+</select>
 <p>Live Signal:</p>
 <h2 id="liveSignal">WAIT</h2>
-<label>Select Market:</label>
-<select id="marketSelect">
-  <option value="EURUSD">EUR/USD</option>
-  <option value="GBPUSD">GBP/USD</option>
-  <option value="XAUUSD">XAU/USD</option>
-  <option value="BTCUSD">BTC/USD</option>
-</select>
 <button class="btn" onclick="startBot()">Start Bot</button>
 <button class="btn" onclick="stopBot()">Stop Bot</button>
 </div>
@@ -136,10 +126,10 @@ body.light-mode .modal-content{background:var(--card-light);}
 <section id="market" class="page">
 <h1>Live Market Charts</h1>
 <div class="market-cards">
-<div class="market-card" id="chartContainer">
-<!-- Chart iframe will be injected by JS -->
+<div class="market-card"><h3 id="chartTitle">EUR/USD</h3>
+<iframe id="marketChart" src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD"></iframe>
+<button class="fullscreen-btn" onclick="openFullScreen()">Full Screen</button>
 </div>
-<button class="btn" onclick="openFullChart()">Full Screen Chart</button>
 </div>
 </section>
 
@@ -199,8 +189,8 @@ body.light-mode .modal-content{background:var(--card-light);}
 <div class="modal-content">
 <span class="close-btn" id="closeVip">&times;</span>
 <h2>VIP Access Required</h2>
-<p>To access this feature, complete VIP subscription.</p>
-<button class="btn" onclick="payWithMpesa()">Pay VIP (Simulated)</button>
+<p>To access this feature, complete VIP subscription via Mpesa.</p>
+<button class="btn" onclick="payWithMpesa()">Pay with Mpesa</button>
 </div>
 </div>
 
@@ -212,20 +202,8 @@ let loggedIn = false;
 let isVIP = false;
 let light=false;
 let botInterval;
-let selectedMarket = "EURUSD";
 
 // Navigation
-const menuBtn = document.querySelector('.menu-btn');
-const dropdown = document.querySelector('.dropdown-content');
-
-menuBtn.addEventListener('click', e=>{
-  e.stopPropagation();
-  dropdown.style.display = dropdown.style.display==='flex'?'none':'flex';
-});
-window.addEventListener('click', e=>{
-  if(!dropdown.contains(e.target) && !menuBtn.contains(e.target)) dropdown.style.display='none';
-});
-
 function showPage(pageId){
   if(!loggedIn){ alert("Please login first!"); return; }
   if(!checkVIP(pageId)) return;
@@ -233,7 +211,7 @@ function showPage(pageId){
   document.getElementById(pageId).style.display='block';
 }
 
-// VIP lock
+// VIP lock check
 function checkVIP(pageId){
   if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
     document.getElementById("vipModal").style.display="flex";
@@ -241,7 +219,12 @@ function checkVIP(pageId){
   }
   return true;
 }
-function payWithMpesa(){ alert("VIP Activated (Simulated)"); isVIP=true; document.getElementById("vipModal").style.display="none"; }
+
+function payWithMpesa(){
+  alert("Mpesa payment simulated: You are now VIP!");
+  isVIP = true;
+  document.getElementById("vipModal").style.display="none";
+}
 
 // Dark/Light mode
 function toggleTheme(){ light=!light; document.body.classList.toggle('light-mode', light); }
@@ -251,80 +234,75 @@ const modal=document.getElementById('loginModal');
 document.getElementById('loginLink').onclick=()=>modal.style.display="flex";
 document.getElementById('closeModal').onclick=()=>modal.style.display="none";
 document.getElementById('closeVip').onclick=()=>document.getElementById('vipModal').style.display="none";
-window.onclick=e=>{
-  if(e.target==modal) modal.style.display="none";
-  if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";
-};
+window.onclick=(e)=>{if(e.target==modal) modal.style.display="none"; if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";};
+
+// Login check
 function checkLogin(){
   const pass=document.getElementById('loginPassword').value;
   if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); }
   else alert("Incorrect password!");
 }
 
-// Live dashboard simulation
+// Dashboard live simulation
 function updateDashboard(){
   if(!isVIP) return;
-  const balance=(10000+Math.random()*5000).toFixed(2);
-  const profit=(Math.random()*1000).toFixed(2);
-  const trades=Math.floor(Math.random()*15)+1;
-  document.getElementById("totalBalance").innerText=`$${balance}`;
-  document.getElementById("todayProfit").innerText=`$${profit}`;
-  document.getElementById("activeTrades").innerText=trades;
+  const balance = (10000 + Math.random()*5000).toFixed(2);
+  const profit = (Math.random()*1000).toFixed(2);
+  const trades = Math.floor(Math.random()*15)+1;
+  document.getElementById("totalBalance").innerText = `$${balance}`;
+  document.getElementById("todayProfit").innerText = `$${profit}`;
+  document.getElementById("activeTrades").innerText = trades;
 }
 
-// Bot logic
+// Bot signal
 async function getAISignal(symbol){
   const signals=["BUY","SELL","WAIT"];
   return signals[Math.floor(Math.random()*signals.length)];
 }
 
-async function updateMarketSignals(){
+async function updateSignals(){
   const symbols = ["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
   for(let s of symbols){
     const signal = await getAISignal(s);
     const el = document.getElementById(s.toLowerCase()+"Signal");
-    el.innerText=signal;
+    el.innerText = signal;
     el.style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
   }
   updateDashboard();
-  updateMarketChart();
 }
 
+// Start/Stop Bot
 function startBot(){
   if(!loggedIn){ alert("Please login first!"); return; }
   if(!isVIP){ document.getElementById('vipModal').style.display="flex"; return; }
-  selectedMarket=document.getElementById('marketSelect').value;
+  const market = document.getElementById('marketSelect').value;
   document.getElementById("botStatus").innerText="Running";
-  botInterval=setInterval(updateMarketSignals,2000);
+  document.getElementById("chartTitle").innerText=market.replace(/USD|XAU/,"/$&");
+  document.getElementById("marketChart").src=`https://s.tradingview.com/widgetembed/?symbol=FX:${market}`;
+  botInterval = setInterval(updateSignals,2000);
 }
-function stopBot(){
-  clearInterval(botInterval);
-  document.getElementById("botStatus").innerText="Stopped";
-  document.getElementById("liveSignal").innerText="WAIT";
-}
-
-// Market chart update
-function updateMarketChart(){
-  const container=document.getElementById("chartContainer");
-  let symbol="";
-  switch(selectedMarket){
-    case "EURUSD": symbol="FX:EURUSD"; break;
-    case "GBPUSD": symbol="FX:GBPUSD"; break;
-    case "XAUUSD": symbol="OANDA:XAUUSD"; break;
-    case "BTCUSD": symbol="BINANCE:BTCUSDT"; break;
-  }
-  container.innerHTML=`<h3>${selectedMarket}</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}"></iframe>`;
+function stopBot(){ 
+  clearInterval(botInterval); 
+  document.getElementById("botStatus").innerText="Stopped"; 
+  document.getElementById("liveSignal").innerText="WAIT"; 
 }
 
 // Full screen chart
-function openFullChart(){
-  const url=document.querySelector("#chartContainer iframe").src;
-  window.open(url,"_blank");
+function openFullScreen(){
+  const iframe = document.getElementById('marketChart');
+  if(iframe.requestFullscreen){ iframe.requestFullscreen(); } 
+  else if(iframe.mozRequestFullScreen){ iframe.mozRequestFullScreen(); } 
+  else if(iframe.webkitRequestFullscreen){ iframe.webkitRequestFullscreen(); } 
+  else if(iframe.msRequestFullscreen){ iframe.msRequestFullscreen(); }
 }
 
-// Initial update
-updateMarketSignals();
+// Responsive menu toggle
+function toggleMenu(){
+  document.getElementById('navLinks').classList.toggle('active');
+}
+
+updateSignals();
 </script>
 
 </body>
-</html>
+    </html>
