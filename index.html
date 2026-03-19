@@ -14,12 +14,8 @@ body.light-mode{background:var(--bg-light); color:var(--text-light);}
 header{display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#050814; flex-wrap:wrap; transition:0.4s; position:relative;}
 body.light-mode header{background:#e3e3e3;}
 header img{height:45px;}
-nav{display:flex; align-items:center; gap:10px;}
+nav{display:flex; flex-wrap:wrap; gap:10px;}
 nav a{margin:5px 10px; text-decoration:none; color:inherit; font-weight:bold; cursor:pointer;}
-.menu-btn{display:none; cursor:pointer; font-size:24px; background:none; border:none; color:inherit;}
-.nav-links{display:flex; gap:10px; align-items:center;}
-.nav-links.active{display:flex; flex-direction:column; position:absolute; top:60px; right:20px; background:var(--card-dark); padding:10px; border-radius:10px;}
-body.light-mode .nav-links.active{background:var(--card-light);}
 .toggle-btn{position:fixed; top:20px; right:20px; background:#00eaff; color:black; border:none; padding:10px 15px; font-weight:bold; border-radius:5px; cursor:pointer; z-index:1001;}
 .page{display:none; padding:20px;}
 .hero{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:20px;}
@@ -35,7 +31,6 @@ body.light-mode .stat-card{background:var(--card-light); box-shadow:0 0 15px var
 body.light-mode .bot-box, body.light-mode .market-card{background:var(--card-light); box-shadow:0 0 15px var(--shadow-light);}
 .market-cards, .gallery-cards{display:flex; flex-wrap:wrap; justify-content:center; gap:20px;}
 iframe{width:100%; height:300px; border:none; margin-top:10px;}
-.fullscreen-btn{display:block; margin-top:10px; background:#00eaff; padding:6px 10px; border:none; border-radius:5px; cursor:pointer; color:black; font-weight:bold;}
 .gallery-cards img{width:100%; max-width:300px; border-radius:10px; cursor:pointer; transition:0.3s;}
 .gallery-cards img:hover{transform:scale(1.05); box-shadow:0 0 20px #00eaff;}
 .team-container{display:flex; flex-wrap:wrap; justify-content:center; gap:40px;}
@@ -47,11 +42,14 @@ iframe{width:100%; height:300px; border:none; margin-top:10px;}
 body.light-mode .team-member{box-shadow:0 0 20px rgba(0,0,0,0.2);}
 body.light-mode .overlay{background: rgba(255,255,255,0.8); color:#111;}
 .modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;}
-.modal-content{background:var(--card-dark); padding:20px; border-radius:10px; max-width:400px; width:90%; position:relative; text-align:center;}
+.modal-content{background:var(--card-dark); padding:20px; border-radius:10px; max-width:600px; width:90%; position:relative; text-align:center;}
 body.light-mode .modal-content{background:var(--card-light);}
 .close-btn{position:absolute; top:10px; right:15px; cursor:pointer; font-size:24px;}
 .certificate-img{width:100%; max-width:400px; border-radius:10px; margin-top:15px;}
-@media screen and (max-width:768px){.hero{flex-direction:column; text-align:center;}.hero img{max-width:90%; margin-top:20px;}.stats{flex-direction:column; align-items:center;}.stat-card{width:90%; max-width:300px;}.market-cards, .gallery-cards{flex-direction:column; align-items:center;} nav a{display:none;}}
+#botMarket{width:200px; padding:5px; margin-bottom:10px; border-radius:5px;}
+#tradeJournal{background:#050814; color:white; max-height:200px; overflow-y:auto; padding:10px; border-radius:8px; font-size:12px;}
+body.light-mode #tradeJournal{background:#eee; color:#111;}
+@media screen and (max-width:768px){.hero{flex-direction:column; text-align:center;}.hero img{max-width:90%; margin-top:20px;}.stats{flex-direction:column; align-items:center;}.stat-card{width:90%; max-width:300px;}.market-cards, .gallery-cards{flex-direction:column; align-items:center;}}
 @media screen and (max-width:480px){header{flex-direction:column; align-items:flex-start;} nav{display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;} .hero h1{font-size:28px;} .btn{padding:10px 18px;} iframe{height:200px;}}
 </style>
 </head>
@@ -61,9 +59,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 
 <header>
 <img src="./assets/logo.png" alt="Logo">
-<nav>
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-<div class="nav-links" id="navLinks">
+<nav id="navLinks">
 <a onclick="showPage('home')">Home</a>
 <a onclick="showPage('dashboard')">Dashboard</a>
 <a onclick="showPage('bot')">Trading Bot</a>
@@ -74,11 +70,10 @@ body.light-mode .modal-content{background:var(--card-light);}
 <a onclick="showPage('gallery')">Gallery</a>
 <a href="https://wa.me/254786810591" target="_blank">VIP Signals</a>
 <a id="loginLink">Login</a>
-</div>
 </nav>
 </header>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <section id="home" class="page" style="display:block;">
 <div class="hero">
 <div>
@@ -93,43 +88,44 @@ body.light-mode .modal-content{background:var(--card-light);}
 </div>
 </section>
 
-<!-- DASHBOARD PAGE -->
+<!-- DASHBOARD -->
 <section id="dashboard" class="page">
 <h1>User Dashboard</h1>
 <div class="stats">
-<div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$0</h2></div>
-<div class="stat-card"><h3>Today's Profit</h3><h2 id="todayProfit">$0</h2></div>
+<div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$100.00</h2></div>
+<div class="stat-card"><h3>Today's Profit/Loss</h3><h2 id="todayProfit">0%</h2></div>
 <div class="stat-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
 <div class="stat-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
 </div>
+<h3>Trade Journal</h3>
+<div id="tradeJournal"></div>
 </section>
 
-<!-- BOT PAGE -->
+<!-- BOT CONTROL -->
 <section id="bot" class="page">
 <h1>Trading Bot Control</h1>
 <div class="bot-box">
-<label for="marketSelect">Select Market:</label>
-<select id="marketSelect">
+<p>Select Market:</p>
+<select id="botMarket">
 <option value="EURUSD">EUR/USD</option>
 <option value="GBPUSD">GBP/USD</option>
 <option value="XAUUSD">XAU/USD</option>
 <option value="BTCUSD">BTC/USD</option>
 </select>
-<p>Live Signal:</p>
-<h2 id="liveSignal">WAIT</h2>
+<p>Live Signal: <span id="liveSignal">WAIT</span></p>
 <button class="btn" onclick="startBot()">Start Bot</button>
 <button class="btn" onclick="stopBot()">Stop Bot</button>
 </div>
 </section>
 
-<!-- MARKET PAGE -->
+<!-- MARKET -->
 <section id="market" class="page">
 <h1>Live Market Charts</h1>
 <div class="market-cards">
-<div class="market-card"><h3 id="chartTitle">EUR/USD</h3>
-<iframe id="marketChart" src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD"></iframe>
-<button class="fullscreen-btn" onclick="openFullScreen()">Full Screen</button>
-</div>
+<div class="market-card"><h3>EUR/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD" allowfullscreen></iframe></div>
+<div class="market-card"><h3>GBP/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:GBPUSD" allowfullscreen></iframe></div>
+<div class="market-card"><h3>XAU/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA:XAUUSD" allowfullscreen></iframe></div>
+<div class="market-card"><h3>BTC/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT" allowfullscreen></iframe></div>
 </div>
 </section>
 
@@ -146,18 +142,18 @@ body.light-mode .modal-content{background:var(--card-light);}
 
 <!-- TRADING ACADEMY -->
 <section id="academy" class="page">
-<h1 style="text-align:center; margin-bottom:20px;">Trading Academy</h1>
+<h1 style="text-align:center;">Trading Academy</h1>
 <p style="text-align:center;">Learn trading with structured courses and get certified!</p>
-<img src="./assets/certificate-example.png" alt="Certificate Example" class="certificate-img">
+<img src="./assets/certificate-example.png" class="certificate-img" alt="Certificate Example">
 </section>
 
 <!-- TEAM -->
 <section id="team" class="page">
-<h1 style="text-align:center; margin-bottom:30px;">Our Team</h1>
+<h1 style="text-align:center;">Our Team</h1>
 <div class="team-container">
-<div class="team-member"><img src="./assets/director.jpg" alt="Gibson Mugai"><div class="overlay"><h3>Gibson Mugai</h3><p>Founder & Director</p></div></div>
-<div class="team-member"><img src="./assets/team2.jpg" alt="Lead Dev"><div class="overlay"><h3>Lead Developer</h3><p>Gibson Mugai</p></div></div>
-<div class="team-member"><img src="./assets/team3.jpg" alt="Peter Njuguna"><div class="overlay"><h3>Peter Njuguna</h3><p>Marketing</p></div></div>
+<div class="team-member"><img src="./assets/director.jpg"><div class="overlay"><h3>Gibson Mugai</h3><p>Founder & Director</p></div></div>
+<div class="team-member"><img src="./assets/team2.jpg"><div class="overlay"><h3>Lead Developer</h3><p>Gibson Mugai</p></div></div>
+<div class="team-member"><img src="./assets/team3.jpg"><div class="overlay"><h3>Peter Njuguna</h3><p>Marketing</p></div></div>
 </div>
 </section>
 
@@ -165,11 +161,11 @@ body.light-mode .modal-content{background:var(--card-light);}
 <section id="gallery" class="page">
 <h1>Gallery & Screenshots</h1>
 <div class="gallery-cards">
-<img src="./assets/bot.jpg" alt="Bot Interface">
-<img src="./assets/signals.jpg" alt="VIP Signals">
-<img src="./assets/trades-example1.png" alt="Trade Example 1">
-<img src="./assets/trades-example2.png" alt="Trade Example 2">
-<img src="./assets/profit-summary.png" alt="Profit Summary">
+<img src="./assets/bot.jpg">
+<img src="./assets/signals.jpg">
+<img src="./assets/trades-example1.png">
+<img src="./assets/trades-example2.png">
+<img src="./assets/profit-summary.png">
 </div>
 </section>
 
@@ -178,7 +174,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <div class="modal-content">
 <span class="close-btn" id="closeModal">&times;</span>
 <h2>Login</h2>
-<input type="password" placeholder="Enter Password" id="loginPassword">
+<input type="password" id="loginPassword" placeholder="Enter Password">
 <button class="btn" onclick="checkLogin()">Login</button>
 <p style="font-size:12px; color:#ccc;">Hint: ask admin for password</p>
 </div>
@@ -194,24 +190,33 @@ body.light-mode .modal-content{background:var(--card-light);}
 </div>
 </div>
 
+<!-- FULL SCREEN CHART MODAL -->
+<div id="fullChartModal" class="modal">
+<div class="modal-content">
+<span class="close-btn" onclick="closeFullChart()">&times;</span>
+<div id="fullChartContainer" style="height:500px;"></div>
+</div>
+</div>
+
 <footer><p>© 2026 GIBSONFX Trading Platform</p></footer>
 
 <script>
-// Global state
+// ---------- GLOBAL STATE ----------
+let botInterval;
 let loggedIn = false;
 let isVIP = false;
-let light=false;
-let botInterval;
+let light = false;
+let dashboardBalance = 100;
+let activeSymbol = "";
 
-// Navigation
+// ---------- NAVIGATION ----------
 function showPage(pageId){
   if(!loggedIn){ alert("Please login first!"); return; }
-  if(!checkVIP(pageId)) return;
   document.querySelectorAll('.page').forEach(p=>p.style.display='none');
   document.getElementById(pageId).style.display='block';
 }
 
-// VIP lock check
+// ---------- VIP ----------
 function checkVIP(pageId){
   if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
     document.getElementById("vipModal").style.display="flex";
@@ -219,89 +224,75 @@ function checkVIP(pageId){
   }
   return true;
 }
-
 function payWithMpesa(){
-  alert("Mpesa payment simulated: You are now VIP!");
+  alert("VIP activated!");
   isVIP = true;
   document.getElementById("vipModal").style.display="none";
 }
 
-// Dark/Light mode
-function toggleTheme(){ light=!light; document.body.classList.toggle('light-mode', light); }
+// ---------- DARK/LIGHT MODE ----------
+function toggleTheme(){
+  light = !light;
+  document.body.classList.toggle('light-mode', light);
+}
 
-// Login modal
-const modal=document.getElementById('loginModal');
-document.getElementById('loginLink').onclick=()=>modal.style.display="flex";
-document.getElementById('closeModal').onclick=()=>modal.style.display="none";
-document.getElementById('closeVip').onclick=()=>document.getElementById('vipModal').style.display="none";
-window.onclick=(e)=>{if(e.target==modal) modal.style.display="none"; if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";};
+// ---------- LOGIN ----------
+const modal = document.getElementById('loginModal');
+document.getElementById('loginLink').onclick = ()=>modal.style.display="flex";
+document.getElementById('closeModal').onclick = ()=>modal.style.display="none";
+document.getElementById('closeVip').onclick = ()=>document.getElementById('vipModal').style.display="none";
+window.onclick = e => {if(e.target==modal) modal.style.display="none";};
 
-// Login check
 function checkLogin(){
-  const pass=document.getElementById('loginPassword').value;
+  const pass = document.getElementById('loginPassword').value;
   if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); }
   else alert("Incorrect password!");
 }
 
-// Dashboard live simulation
-function updateDashboard(){
-  if(!isVIP) return;
-  const balance = (10000 + Math.random()*5000).toFixed(2);
-  const profit = (Math.random()*1000).toFixed(2);
-  const trades = Math.floor(Math.random()*15)+1;
-  document.getElementById("totalBalance").innerText = `$${balance}`;
-  document.getElementById("todayProfit").innerText = `$${profit}`;
-  document.getElementById("activeTrades").innerText = trades;
+// ---------- DASHBOARD ----------
+function updateDashboard(profitPerc=0){
+  document.getElementById("totalBalance").innerText = `$${dashboardBalance.toFixed(2)}`;
+  document.getElementById("todayProfit").innerText = `${profitPerc.toFixed(2)}%`;
 }
 
-// Bot signal
+// ---------- BOT ----------
 async function getAISignal(symbol){
   const signals=["BUY","SELL","WAIT"];
   return signals[Math.floor(Math.random()*signals.length)];
 }
 
-async function updateSignals(){
-  const symbols = ["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
-  for(let s of symbols){
-    const signal = await getAISignal(s);
-    const el = document.getElementById(s.toLowerCase()+"Signal");
-    el.innerText = signal;
-    el.style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
-  }
-  updateDashboard();
+async function runBot(){
+  if(!activeSymbol) return;
+  const signal = await getAISignal(activeSymbol);
+  document.getElementById("liveSignal").innerText = signal;
+  document.getElementById("liveSignal").style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
+  
+  const profitPerc = signal==="BUY"?Math.random():signal==="SELL"?-Math.random():0;
+  dashboardBalance += dashboardBalance*(profitPerc/100);
+  updateDashboard(profitPerc);
+  
+  const journal = document.getElementById('tradeJournal');
+  journal.innerHTML = `${new Date().toLocaleTimeString()} | ${activeSymbol} | ${signal} | Δ${profitPerc.toFixed(2)}%<br>` + journal.innerHTML;
 }
 
-// Start/Stop Bot
 function startBot(){
   if(!loggedIn){ alert("Please login first!"); return; }
   if(!isVIP){ document.getElementById('vipModal').style.display="flex"; return; }
-  const market = document.getElementById('marketSelect').value;
+  activeSymbol = document.getElementById('botMarket').value;
   document.getElementById("botStatus").innerText="Running";
-  document.getElementById("chartTitle").innerText=market.replace(/USD|XAU/,"/$&");
-  document.getElementById("marketChart").src=`https://s.tradingview.com/widgetembed/?symbol=FX:${market}`;
-  botInterval = setInterval(updateSignals,2000);
-}
-function stopBot(){ 
-  clearInterval(botInterval); 
-  document.getElementById("botStatus").innerText="Stopped"; 
-  document.getElementById("liveSignal").innerText="WAIT"; 
+  if(botInterval) clearInterval(botInterval);
+  botInterval = setInterval(runBot, 2000);
 }
 
-// Full screen chart
-function openFullScreen(){
-  const iframe = document.getElementById('marketChart');
-  if(iframe.requestFullscreen){ iframe.requestFullscreen(); } 
-  else if(iframe.mozRequestFullScreen){ iframe.mozRequestFullScreen(); } 
-  else if(iframe.webkitRequestFullscreen){ iframe.webkitRequestFullscreen(); } 
-  else if(iframe.msRequestFullscreen){ iframe.msRequestFullscreen(); }
+function stopBot(){
+  if(botInterval) clearInterval(botInterval);
+  document.getElementById("botStatus").innerText="Stopped";
+  document.getElementById("liveSignal").innerText="WAIT";
+  activeSymbol="";
 }
 
-// Responsive menu toggle
-function toggleMenu(){
-  document.getElementById('navLinks').classList.toggle('active');
-}
-
-updateSignals();
+// ---------- INIT ----------
+updateDashboard();
 </script>
 
 </body>
