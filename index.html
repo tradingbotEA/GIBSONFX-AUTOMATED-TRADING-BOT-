@@ -14,10 +14,10 @@ body.light-mode{background:var(--bg-light);color:var(--text-light);}
 header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#050814;flex-wrap:wrap;transition:0.4s;position:relative;}
 body.light-mode header{background:#e3e3e3;}
 header img{height:45px;}
-nav{display:flex;gap:10px;align-items:center;}
+nav{display:flex;align-items:center;gap:10px;}
 nav a{margin:0 5px;text-decoration:none;color:inherit;font-weight:bold;cursor:pointer;}
+.menu-btn{display:none;font-size:22px;cursor:pointer;}
 .toggle-btn{position:fixed;top:20px;right:20px;background:#00eaff;color:black;border:none;padding:10px 15px;font-weight:bold;border-radius:5px;cursor:pointer;z-index:1001;}
-.menu-btn{display:none; font-size:24px; cursor:pointer; color:#00eaff;}
 .page{display:none;padding:20px;}
 .hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:20px;}
 .hero img{width:100%;max-width:400px;border-radius:10px;}
@@ -29,7 +29,7 @@ body.light-mode .hero h1{color:#00bfff;}
 .stat-card{width:180px;background:var(--card-dark);padding:15px;border-radius:10px;box-shadow:0 0 15px var(--shadow-dark);text-align:center;}
 body.light-mode .stat-card{background:var(--card-light);box-shadow:0 0 15px var(--shadow-light);}
 .bot-box,.market-card,.card,.modal-content,.gallery-card{background:var(--card-dark);box-shadow:0 0 15px var(--shadow-dark);border-radius:10px;padding:15px;margin-bottom:20px;}
-body.light-mode .bot-box,body.light-mode .market-card{background:var(--card-light);box-shadow:0 0 15px var(--shadow-light);}
+body.light-mode .bot-box, body.light-mode .market-card{background:var(--card-light);box-shadow:0 0 15px var(--shadow-light);}
 .market-cards,.gallery-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
 iframe{width:100%;height:300px;border:none;margin-top:10px;}
 .gallery-cards img{width:100%;max-width:300px;border-radius:10px;cursor:pointer;transition:0.3s;}
@@ -41,18 +41,16 @@ iframe{width:100%;height:300px;border:none;margin-top:10px;}
 .overlay{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,0.7);color:white;padding:10px;text-align:center;opacity:0;transition:opacity 0.3s;}
 .team-member:hover .overlay{opacity:1;}
 body.light-mode .team-member{box-shadow:0 0 20px rgba(0,0,0,0.2);}
-body.light-mode .overlay{background: rgba(255,255,255,0.8);color:#111;}
+body.light-mode .overlay{background:rgba(255,255,255,0.8);color:#111;}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1000;justify-content:center;align-items:center;}
 .modal-content{background:var(--card-dark);padding:20px;border-radius:10px;max-width:500px;width:90%;position:relative;text-align:center;}
 body.light-mode .modal-content{background:var(--card-light);}
 .close-btn{position:absolute;top:10px;right:15px;cursor:pointer;font-size:24px;}
 .certificate-img{width:100%;max-width:400px;border-radius:10px;margin-top:15px;}
-.dashboard-trades{max-height:200px;overflow-y:auto;text-align:left;margin-top:15px;background:rgba(0,0,0,0.3);padding:10px;border-radius:10px;}
-.dashboard-trades p{margin:5px 0;font-size:14px;}
-.market-select{margin:10px 0;}
-.fullscreen-btn{margin-left:10px; padding:6px 10px; font-size:14px; cursor:pointer;}
+#tradeJournal{max-height:250px;overflow-y:auto;background:var(--card-dark);padding:10px;border-radius:8px;margin-top:10px;}
+body.light-mode #tradeJournal{background:var(--card-light);}
 @media screen and (max-width:768px){.hero{flex-direction:column;text-align:center;}.hero img{max-width:90%;margin-top:20px;}.stats{flex-direction:column;align-items:center;}.stat-card{width:90%;max-width:300px;}.market-cards,.gallery-cards{flex-direction:column;align-items:center;}}
-@media screen and (max-width:480px){header{flex-direction:column;align-items:flex-start;} nav{display:none;flex-wrap:wrap;gap:5px;margin-top:10px;} nav.active{display:flex;flex-direction:column;width:100%;} .menu-btn{display:block;} .hero h1{font-size:28px;} .btn{padding:10px 18px;} iframe{height:200px;}}
+@media screen and (max-width:480px){header{flex-direction:row;align-items:center;} nav{display:none;flex-direction:column;gap:5px;position:absolute;top:60px;right:20px;background:#050814;padding:10px;border-radius:8px;} nav.show{display:flex;} .menu-btn{display:block;} .hero h1{font-size:28px;} .btn{padding:10px 18px;} iframe{height:200px;}}
 </style>
 </head>
 <body>
@@ -61,7 +59,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 
 <header>
 <img src="./assets/logo.png" alt="Logo">
-<span class="menu-btn" id="menuBtn">&#9776;</span>
+<span class="menu-btn" onclick="toggleMenu()">☰ Menu</span>
 <nav id="navMenu">
 <a onclick="showPage('home')">Home</a>
 <a onclick="showPage('dashboard')">Dashboard</a>
@@ -95,51 +93,43 @@ body.light-mode .modal-content{background:var(--card-light);}
 <section id="dashboard" class="page">
 <h1>User Dashboard</h1>
 <div class="stats">
-<div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$100.00</h2></div>
-<div class="stat-card"><h3>Today's P/L</h3><h2 id="todayProfit">$0 (0%)</h2></div>
+<div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$100</h2></div>
+<div class="stat-card"><h3>Today's P/L (%)</h3><h2 id="todayProfit">0%</h2></div>
 <div class="stat-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
 <div class="stat-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
 </div>
-<div class="dashboard-trades" id="tradeJournal">
-<p><strong>Trade Journal:</strong></p>
-</div>
+<h3>Trade Journal (Last 20 trades)</h3>
+<div id="tradeJournal"></div>
 </section>
 
 <!-- BOT PAGE -->
 <section id="bot" class="page">
 <h1>Trading Bot Control</h1>
-<div class="market-select">
-<label for="marketChoice">Select Market(s):</label>
-<select id="marketChoice" multiple>
-<option value="EURUSD">EUR/USD</option>
-<option value="GBPUSD">GBP/USD</option>
-<option value="XAUUSD">XAU/USD</option>
-<option value="BTCUSD">BTC/USD</option>
-</select>
-<button class="btn" onclick="startBot()">Start Bot</button>
-<button class="btn" onclick="stopBot()">Stop Bot</button>
-</div>
 <div class="bot-box">
+<p>Select markets for bot:</p>
+<select id="botMarkets" multiple>
+<option value="EURUSD" selected>EUR/USD</option>
+<option value="GBPUSD" selected>GBP/USD</option>
+<option value="XAUUSD" selected>XAU/USD</option>
+<option value="BTCUSD" selected>BTC/USD</option>
+</select>
 <p>Live Signal:</p>
 <h2 id="liveSignal">WAIT</h2>
+<button class="btn" onclick="startBot()">Start Bot</button>
+<button class="btn" onclick="stopBot()">Stop Bot</button>
 </div>
 </section>
 
 <!-- MARKET PAGE -->
 <section id="market" class="page">
 <h1>Live Market Charts</h1>
-<div class="market-cards" id="marketCards"></div>
+<div class="market-cards" id="marketCharts"></div>
 </section>
 
 <!-- MARKET REVIEW -->
 <section id="market-review" class="page">
 <h1>Market Review & Signals</h1>
-<div class="market-cards">
-<div class="market-card"><h3>EUR/USD</h3><p id="eurSignal">WAIT</p></div>
-<div class="market-card"><h3>GBP/USD</h3><p id="gbpSignal">WAIT</p></div>
-<div class="market-card"><h3>XAU/USD</h3><p id="xauSignal">WAIT</p></div>
-<div class="market-card"><h3>BTC/USD</h3><p id="btcSignal">WAIT</p></div>
-</div>
+<div class="market-cards" id="marketSignals"></div>
 </section>
 
 <!-- TRADING ACADEMY -->
@@ -187,8 +177,8 @@ body.light-mode .modal-content{background:var(--card-light);}
 <div class="modal-content">
 <span class="close-btn" id="closeVip">&times;</span>
 <h2>VIP Access Required</h2>
-<p>To access this feature, VIP subscription required (simulate Mpesa for now).</p>
-<button class="btn" onclick="payWithMpesa()">Simulate VIP Payment</button>
+<p>To access this feature, complete VIP subscription via Mpesa.</p>
+<button class="btn" onclick="payWithMpesa()">Pay with Mpesa</button>
 </div>
 </div>
 
@@ -196,30 +186,32 @@ body.light-mode .modal-content{background:var(--card-light);}
 
 <script>
 // Global state
-let loggedIn=false, isVIP=false, light=false, botInterval=null;
-let userBalance=100, tradeJournal=[];
+let loggedIn=false;
+let isVIP=false;
+let light=false;
+let tradeJournal=[];
+const MAX_TRADES=20;
+let botInterval;
 
 // Navigation
 function showPage(pageId){
-  if(!loggedIn){ alert("Please login first!"); return; }
-  if(!checkVIP(pageId)) return;
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(pageId).style.display='block';
+    if(!loggedIn){ alert("Please login first!"); return; }
+    if(!checkVIP(pageId)) return;
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+    document.getElementById(pageId).style.display='block';
+    document.getElementById('navMenu').classList.remove('show');
 }
-
-// VIP lock check
 function checkVIP(pageId){
-  if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
-    document.getElementById("vipModal").style.display="flex";
-    return false;
-  }
-  return true;
+    if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
+        document.getElementById("vipModal").style.display="flex";
+        return false;
+    }
+    return true;
 }
-
 function payWithMpesa(){
-  alert("VIP payment simulated: You are now VIP!");
-  isVIP=true;
-  document.getElementById("vipModal").style.display="none";
+    alert("Mpesa payment simulated: You are now VIP!");
+    isVIP=true;
+    document.getElementById("vipModal").style.display="none";
 }
 
 // Dark/Light mode
@@ -230,73 +222,85 @@ const modal=document.getElementById('loginModal');
 document.getElementById('loginLink').onclick=()=>modal.style.display="flex";
 document.getElementById('closeModal').onclick=()=>modal.style.display="none";
 document.getElementById('closeVip').onclick=()=>document.getElementById('vipModal').style.display="none";
-const menuBtn=document.getElementById('menuBtn'), navMenu=document.getElementById('navMenu');
-menuBtn.onclick=()=>navMenu.classList.toggle('active');
 window.onclick=(e)=>{if(e.target==modal) modal.style.display="none"; if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";};
-
-// Login check
 function checkLogin(){
-  const pass=document.getElementById('loginPassword').value;
-  if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); updateDashboard(); }
-  else alert("Incorrect password!");
+    const pass=document.getElementById('loginPassword').value;
+    if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); }
+    else alert("Incorrect password!");
 }
 
-// Bot & Market logic
-const markets={
-  "EURUSD":"FX:EURUSD",
-  "GBPUSD":"FX:GBPUSD",
-  "XAUUSD":"OANDA:XAUUSD",
-  "BTCUSD":"BINANCE:BTCUSDT"
-};
+// Toggle mobile menu
+function toggleMenu(){ document.getElementById('navMenu').classList.toggle('show'); }
 
-function updateMarketCharts(){
-  const container=document.getElementById('marketCards');
-  container.innerHTML="";
-  Object.entries(markets).forEach(([key,val])=>{
-    const card=document.createElement('div'); card.className='market-card';
-    const h3=document.createElement('h3'); h3.innerText=key;
-    const iframe=document.createElement('iframe'); iframe.src=`https://s.tradingview.com/widgetembed/?symbol=${val}`;
-    const fsBtn=document.createElement('button'); fsBtn.className='fullscreen-btn'; fsBtn.innerText='Full Screen';
-    fsBtn.onclick=()=>iframe.requestFullscreen();
-    card.append(h3,iframe,fsBtn); container.appendChild(card);
-  });
+// Trade journal
+function addTrade(symbol,signal,pl){
+    const time=new Date().toLocaleTimeString();
+    tradeJournal.push({symbol,signal,pl,time});
+    if(tradeJournal.length>MAX_TRADES) tradeJournal.shift();
+    updateTradeJournalDisplay();
+}
+function updateTradeJournalDisplay(){
+    const container=document.getElementById('tradeJournal');
+    container.innerHTML='';
+    tradeJournal.forEach(trade=>{
+        const div=document.createElement('div');
+        div.innerText=`${trade.time} | ${trade.symbol} | ${trade.signal} | P/L: ${trade.pl}%`;
+        container.appendChild(div);
+    });
 }
 
-// AI Signal Simulation
+// Bot logic
 async function getAISignal(symbol){
-  const signals=["BUY","SELL","WAIT"];
-  return signals[Math.floor(Math.random()*signals.length)];
+    const signals=["BUY","SELL","WAIT"];
+    return signals[Math.floor(Math.random()*signals.length)];
 }
-
-async function updateDashboard(){
-  const todayProfit=Math.random()*5-2.5; // simulate daily % change -2.5% to +2.5%
-  const profitValue=(userBalance*todayProfit/100).toFixed(2);
-  document.getElementById("totalBalance").innerText=`$${(userBalance+parseFloat(profitValue)).toFixed(2)}`;
-  document.getElementById("todayProfit").innerText=`$${profitValue} (${todayProfit.toFixed(2)}%)`;
-  document.getElementById("activeTrades").innerText=tradeJournal.length;
-  const journal=document.getElementById("tradeJournal"); journal.innerHTML='<strong>Trade Journal:</strong>';
-  tradeJournal.forEach(t=>{
-    const p=document.createElement('p'); p.innerText=`[${t.time}] ${t.symbol} - ${t.signal} - P/L: $${t.pl}`;
-    journal.appendChild(p);
-  });
-}
-
 async function updateMarketSignals(){
-  const selectedMarkets=[...document.getElementById("marketChoice").selectedOptions].map(o=>o.value);
-  let liveSignalText="WAIT";
-  for(const symbol of selectedMarkets){
-    const sig=await getAISignal(symbol);
-    liveSignalText=sig;
-    const el=document.getElementById(symbol.toLowerCase()+"Signal");
-    if(el){ el.innerText=sig; el.style.color=sig==="BUY"?"lime":sig==="SELL"?"red":"white"; }
-    const pl=(Math.random()*5-2.5).toFixed(2); // simulate P/L
-    tradeJournal.push({symbol,signal:sig,pl,time:new Date().toLocaleTimeString()});
-    userBalance+=parseFloat(pl);
-  }
-  document.getElementById("liveSignal").innerText=liveSignalText;
-  updateDashboard();
+    const selectedMarkets=Array.from(document.getElementById('botMarkets').selectedOptions).map(o=>o.value);
+    const marketCharts=document.getElementById('marketCharts');
+    const marketSignals=document.getElementById('marketSignals');
+    marketCharts.innerHTML='';
+    marketSignals.innerHTML='';
+    let totalPL=0;
+    for(let s of selectedMarkets){
+        const signal=await getAISignal(s);
+        const pl=(Math.random()*2-1).toFixed(2);
+        addTrade(s,signal,pl);
+        totalPL+=parseFloat(pl);
+
+        // Market charts
+        const chartDiv=document.createElement('div');
+        chartDiv.classList.add('market-card');
+        chartDiv.innerHTML=`<h3>${s}</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:${s}"></iframe>`;
+        marketCharts.appendChild(chartDiv);
+
+        // Market signals
+        const sigDiv=document.createElement('div');
+        sigDiv.classList.add('market-card');
+        sigDiv.innerHTML=`<h3>${s}</h3><p style="color:${signal==='BUY'?'lime':signal==='SELL'?'red':'white'}">${signal}</p>`;
+        marketSignals.appendChild(sigDiv);
+    }
+    // Update dashboard
+    document.getElementById("totalBalance").innerText=`$${(100+tradeJournal.reduce((acc,t)=>acc+parseFloat(t.pl),0)).toFixed(2)}`;
+    document.getElementById("todayProfit").innerText=`${(totalPL).toFixed(2)}%`;
+    document.getElementById("activeTrades").innerText=selectedMarkets.length;
+    document.getElementById("liveSignal").innerText=selectedMarkets.map(s=>s+": "+tradeJournal[tradeJournal.length-1].signal).join(" | ");
 }
 
-// Bot control
+// Bot start/stop
 function startBot(){
-  if(!loggedIn){ alert("Login first
+    if(!loggedIn){ alert("Please login first!"); return; }
+    if(!isVIP){ document.getElementById('vipModal').style.display="flex"; return; }
+    document.getElementById("botStatus").innerText="Running";
+    botInterval=setInterval(updateMarketSignals,2000);
+}
+function stopBot(){
+    clearInterval(botInterval);
+    document.getElementById("botStatus").innerText="Stopped";
+    document.getElementById("liveSignal").innerText="WAIT";
+}
+
+// Initialize market signals
+updateMarketSignals();
+</script>
+</body>
+</html>
