@@ -64,7 +64,6 @@ body.light-mode .modal-content{background:var(--card-light);}
 <a onclick="showPage('academy')">Trading Academy</a>
 <a onclick="showPage('team')">Team</a>
 <a onclick="showPage('gallery')">Gallery</a>
-<a href="https://wa.me/254786810591" target="_blank">VIP Signals</a>
 <a id="loginLink">Login</a>
 </nav>
 </header>
@@ -78,7 +77,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <p>We offer Trading Academy courses with certificates.</p>
 <p><strong>MISSION:</strong> Empower traders with AI-driven strategies.</p>
 <p><strong>VISION:</strong> To be the leading platform for profitable trading education.</p>
-<a href="https://wa.me/254786810591" class="btn" target="_blank">Join VIP Signals</a>
+<a class="btn" onclick="showPage('academy')">Learn More</a>
 </div>
 <img src="./assets/hero.jpg" alt="Hero Image">
 </div>
@@ -168,45 +167,19 @@ body.light-mode .modal-content{background:var(--card-light);}
 </div>
 </div>
 
-<!-- VIP MODAL -->
-<div id="vipModal" class="modal">
-<div class="modal-content">
-<span class="close-btn" id="closeVip">&times;</span>
-<h2>VIP Access Required</h2>
-<p>To access this feature, complete VIP subscription via Mpesa.</p>
-<button class="btn" onclick="payWithMpesa()">Pay with Mpesa</button>
-</div>
-</div>
-
 <footer><p>© 2026 GIBSONFX Trading Platform</p></footer>
 
 <script>
 // Global state
 let loggedIn = false;
-let isVIP = false;
+let botInterval;
 let light=false;
 
 // Navigation
 function showPage(pageId){
   if(!loggedIn){ alert("Please login first!"); return; }
-  if(!checkVIP(pageId)) return;
   document.querySelectorAll('.page').forEach(p=>p.style.display='none');
   document.getElementById(pageId).style.display='block';
-}
-
-// VIP lock check
-function checkVIP(pageId){
-  if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
-    document.getElementById("vipModal").style.display="flex";
-    return false;
-  }
-  return true;
-}
-
-function payWithMpesa(){
-  alert("Mpesa payment simulated: You are now VIP!");
-  isVIP = true;
-  document.getElementById("vipModal").style.display="none";
 }
 
 // Dark/Light mode
@@ -216,19 +189,21 @@ function toggleTheme(){ light=!light; document.body.classList.toggle('light-mode
 const modal=document.getElementById('loginModal');
 document.getElementById('loginLink').onclick=()=>modal.style.display="flex";
 document.getElementById('closeModal').onclick=()=>modal.style.display="none";
-document.getElementById('closeVip').onclick=()=>document.getElementById('vipModal').style.display="none";
-window.onclick=(e)=>{if(e.target==modal) modal.style.display="none"; if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";};
+window.onclick=(e)=>{if(e.target==modal) modal.style.display="none";};
 
 // Login check
 function checkLogin(){
   const pass=document.getElementById('loginPassword').value;
-  if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); }
-  else alert("Incorrect password!");
+  if(pass==="GIBSONFX2026"){ 
+    loggedIn=true; 
+    modal.style.display="none"; 
+    alert("Login successful!"); 
+    showPage('home'); 
+  } else alert("Incorrect password!");
 }
 
-// Live Dashboard Simulation
+// Dashboard live updates
 function updateDashboard(){
-  if(!isVIP) return;
   const balance = (10000 + Math.random()*5000).toFixed(2);
   const profit = (Math.random()*1000).toFixed(2);
   const trades = Math.floor(Math.random()*15)+1;
@@ -236,15 +211,13 @@ function updateDashboard(){
   document.getElementById("todayProfit").innerText = `$${profit}`;
   document.getElementById("activeTrades").innerText = trades;
 }
+setInterval(updateDashboard, 2000);
 
 // Bot logic
-let botInterval;
 async function getAISignal(symbol){
-  // Replace with AI API for real signals
   const signals=["BUY","SELL","WAIT"];
   return signals[Math.floor(Math.random()*signals.length)];
 }
-
 async function updateMarketSignals(){
   const symbols = ["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
   for(let s of symbols){
@@ -253,18 +226,16 @@ async function updateMarketSignals(){
     el.innerText = signal;
     el.style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
   }
-  updateDashboard();
 }
-
 function startBot(){
-  if(!loggedIn){ alert("Please login first!"); return; }
-  if(!isVIP){ document.getElementById('vipModal').style.display="flex"; return; }
   document.getElementById("botStatus").innerText="Running";
   botInterval = setInterval(updateMarketSignals,2000);
 }
-function stopBot(){ clearInterval(botInterval); document.getElementById("botStatus").innerText="Stopped"; document.getElementById("liveSignal").innerText="WAIT"; }
-
-updateMarketSignals();
+function stopBot(){ 
+  clearInterval(botInterval); 
+  document.getElementById("botStatus").innerText="Stopped"; 
+  document.getElementById("liveSignal").innerText="WAIT"; 
+}
 </script>
 
 </body>
