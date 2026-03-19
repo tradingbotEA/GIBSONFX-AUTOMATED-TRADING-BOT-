@@ -64,6 +64,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <a onclick="showPage('academy')">Trading Academy</a>
 <a onclick="showPage('team')">Team</a>
 <a onclick="showPage('gallery')">Gallery</a>
+<a href="https://wa.me/254786810591" target="_blank">VIP Signals</a>
 <a id="loginLink">Login</a>
 </nav>
 </header>
@@ -77,7 +78,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <p>We offer Trading Academy courses with certificates.</p>
 <p><strong>MISSION:</strong> Empower traders with AI-driven strategies.</p>
 <p><strong>VISION:</strong> To be the leading platform for profitable trading education.</p>
-<a class="btn" onclick="showPage('academy')">Learn More</a>
+<a href="https://wa.me/254786810591" class="btn" target="_blank">Join VIP Signals</a>
 </div>
 <img src="./assets/hero.jpg" alt="Hero Image">
 </div>
@@ -97,6 +98,16 @@ body.light-mode .modal-content{background:var(--card-light);}
 <!-- BOT PAGE -->
 <section id="bot" class="page">
 <h1>Trading Bot Control</h1>
+
+<label for="botMarketSelect">Choose Market for Bot:</label>
+<select id="botMarketSelect">
+  <option value="EURUSD">EUR/USD</option>
+  <option value="GBPUSD">GBP/USD</option>
+  <option value="XAUUSD">XAU/USD</option>
+  <option value="BTCUSD">BTC/USD</option>
+  <option value="ETHUSD">ETH/USD</option>
+</select>
+
 <div class="bot-box">
 <p>Live Signal:</p>
 <h2 id="liveSignal">WAIT</h2>
@@ -108,11 +119,8 @@ body.light-mode .modal-content{background:var(--card-light);}
 <!-- MARKET PAGE -->
 <section id="market" class="page">
 <h1>Live Market Charts</h1>
-<div class="market-cards">
-<div class="market-card"><h3>EUR/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:EURUSD"></iframe></div>
-<div class="market-card"><h3>GBP/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=FX:GBPUSD"></iframe></div>
-<div class="market-card"><h3>XAU/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA:XAUUSD"></iframe></div>
-<div class="market-card"><h3>BTC/USD</h3><iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT"></iframe></div>
+<div class="market-cards" id="marketChartsContainer">
+  <!-- Chart will load dynamically based on bot selection -->
 </div>
 </section>
 
@@ -124,6 +132,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <div class="market-card"><h3>GBP/USD</h3><p id="gbpSignal">WAIT</p></div>
 <div class="market-card"><h3>XAU/USD</h3><p id="xauSignal">WAIT</p></div>
 <div class="market-card"><h3>BTC/USD</h3><p id="btcSignal">WAIT</p></div>
+<div class="market-card"><h3>ETH/USD</h3><p id="ethSignal">WAIT</p></div>
 </div>
 </section>
 
@@ -167,19 +176,45 @@ body.light-mode .modal-content{background:var(--card-light);}
 </div>
 </div>
 
+<!-- VIP MODAL -->
+<div id="vipModal" class="modal">
+<div class="modal-content">
+<span class="close-btn" id="closeVip">&times;</span>
+<h2>VIP Access Required</h2>
+<p>To access this feature, complete VIP subscription via Mpesa.</p>
+<button class="btn" onclick="payWithMpesa()">Pay with Mpesa</button>
+</div>
+</div>
+
 <footer><p>© 2026 GIBSONFX Trading Platform</p></footer>
 
 <script>
 // Global state
 let loggedIn = false;
-let botInterval;
+let isVIP = false;
 let light=false;
 
 // Navigation
 function showPage(pageId){
   if(!loggedIn){ alert("Please login first!"); return; }
+  if(!checkVIP(pageId)) return;
   document.querySelectorAll('.page').forEach(p=>p.style.display='none');
   document.getElementById(pageId).style.display='block';
+}
+
+// VIP lock check
+function checkVIP(pageId){
+  if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
+    document.getElementById("vipModal").style.display="flex";
+    return false;
+  }
+  return true;
+}
+
+function payWithMpesa(){
+  alert("Mpesa payment simulated: You are now VIP!");
+  isVIP = true;
+  document.getElementById("vipModal").style.display="none";
 }
 
 // Dark/Light mode
@@ -189,52 +224,84 @@ function toggleTheme(){ light=!light; document.body.classList.toggle('light-mode
 const modal=document.getElementById('loginModal');
 document.getElementById('loginLink').onclick=()=>modal.style.display="flex";
 document.getElementById('closeModal').onclick=()=>modal.style.display="none";
-window.onclick=(e)=>{if(e.target==modal) modal.style.display="none";};
+document.getElementById('closeVip').onclick=()=>document.getElementById('vipModal').style.display="none";
+window.onclick=(e)=>{if(e.target==modal) modal.style.display="none"; if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";};
 
 // Login check
 function checkLogin(){
   const pass=document.getElementById('loginPassword').value;
-  if(pass==="GIBSONFX2026"){ 
-    loggedIn=true; 
-    modal.style.display="none"; 
-    alert("Login successful!"); 
-    showPage('home'); 
-  } else alert("Incorrect password!");
+  if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); }
+  else alert("Incorrect password!");
 }
 
-// Dashboard live updates
-function updateDashboard(){
-  const balance = (10000 + Math.random()*5000).toFixed(2);
-  const profit = (Math.random()*1000).toFixed(2);
-  const trades = Math.floor(Math.random()*15)+1;
-  document.getElementById("totalBalance").innerText = `$${balance}`;
-  document.getElementById("todayProfit").innerText = `$${profit}`;
-  document.getElementById("activeTrades").innerText = trades;
-}
-setInterval(updateDashboard, 2000);
+// Bot and Market integration
+let botInterval;
 
-// Bot logic
-async function getAISignal(symbol){
+function getAISignal(symbol){
   const signals=["BUY","SELL","WAIT"];
   return signals[Math.floor(Math.random()*signals.length)];
 }
-async function updateMarketSignals(){
-  const symbols = ["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
-  for(let s of symbols){
-    const signal = await getAISignal(s);
-    const el = document.getElementById(s.toLowerCase()+"Signal");
-    el.innerText = signal;
-    el.style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
-  }
+
+function updateMarketChart(market){
+  const container = document.getElementById("marketChartsContainer");
+  let symbol;
+  if(market === "BTCUSD") symbol = "BINANCE:BTCUSDT";
+  else if(market === "ETHUSD") symbol = "BINANCE:ETHUSDT";
+  else if(market === "XAUUSD") symbol = "OANDA:XAUUSD";
+  else if(market === "EURUSD") symbol = "FX:EURUSD";
+  else if(market === "GBPUSD") symbol = "FX:GBPUSD";
+
+  container.innerHTML = `
+    <div class="market-card">
+      <h3>${market}</h3>
+      <iframe id="marketChartFrame" src="https://s.tradingview.com/widgetembed/?symbol=${symbol}" allowfullscreen></iframe>
+      <button class="btn" onclick="toggleFullscreen('marketChartFrame')">Fullscreen</button>
+    </div>
+  `;
 }
+
+function toggleFullscreen(iframeId){
+  const iframe = document.getElementById(iframeId);
+  if(iframe.requestFullscreen){ iframe.requestFullscreen(); }
+  else if(iframe.webkitRequestFullscreen){ iframe.webkitRequestFullscreen(); }
+  else if(iframe.msRequestFullscreen){ iframe.msRequestFullscreen(); }
+}
+
+// Start bot
 function startBot(){
+  if(!loggedIn){ alert("Please login first!"); return; }
+  if(!isVIP){ document.getElementById('vipModal').style.display="flex"; return; }
+
+  const market = document.getElementById("botMarketSelect").value;
+  updateMarketChart(market);
+
   document.getElementById("botStatus").innerText="Running";
-  botInterval = setInterval(updateMarketSignals,2000);
+
+  botInterval = setInterval(()=>{
+    const signal = getAISignal(market);
+    document.getElementById("liveSignal").innerText = signal;
+    document.getElementById("liveSignal").style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
+
+    // Update Dashboard live
+    const balance = (10000 + Math.random()*5000).toFixed(2);
+    const profit = (Math.random()*1000).toFixed(2);
+    const trades = Math.floor(Math.random()*15)+1;
+    document.getElementById("totalBalance").innerText = `$${balance}`;
+    document.getElementById("todayProfit").innerText = `$${profit}`;
+    document.getElementById("activeTrades").innerText = trades;
+
+    // Update Market Review signals
+    const symbolId = market.toLowerCase()+"Signal";
+    if(document.getElementById(symbolId)) document.getElementById(symbolId).innerText = signal;
+
+  }, 2000);
 }
-function stopBot(){ 
-  clearInterval(botInterval); 
-  document.getElementById("botStatus").innerText="Stopped"; 
-  document.getElementById("liveSignal").innerText="WAIT"; 
+
+// Stop bot
+function stopBot(){
+  clearInterval(botInterval);
+  document.getElementById("botStatus").innerText="Stopped";
+  document.getElementById("liveSignal").innerText="WAIT";
 }
 </script>
 
