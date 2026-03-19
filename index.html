@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Trading Platform</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b0f1a;color:white;}
+header{display:flex;justify-content:space-between;padding:15px;background:#050814;}
+nav{display:flex;gap:10px;}
+nav a{cursor:pointer;font-weight:bold;}
+.menu-btn{display:none;color:#00eaff;font-size:22px;cursor:pointer;}
+.page{display:none;padding:20px;}
+.hero{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;}
+.hero img{max-width:400px;border-radius:10px;}
+.btn{background:#00eaff;padding:10px;border:none;cursor:pointer;}
+.market-card{background:#121a2b;padding:10px;border-radius:10px;margin:10px;}
+iframe{width:100%;height:250px;border:none;}
+.modal{display:none;position:fixed;top:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;}
+.modal-content{background:#121a2b;padding:20px;border-radius:10px;}
+.close-btn{cursor:pointer;font-size:20px;float:right;}
+@media(max-width:480px){
+nav{display:none;flex-direction:column;}
+nav.active{display:flex;}
+.menu-btn{display:block;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>GIBSONFX</h2>
+<span class="menu-btn" id="menuBtn">☰</span>
+<nav id="navMenu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+<a id="loginLink">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page" style="display:block;">
+<div class="hero">
+<div>
+<h1>GIBSONFX AI Trading Bot</h1>
+<p>Smart trading system running 24/7</p>
+<button class="btn">Join VIP</button>
+</div>
+
+<!-- FIXED IMAGE -->
+<img src="https://images.unsplash.com/photo-1642790106117-e829e14a795f" alt="Trading">
+</div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h2>Dashboard</h2>
+<p id="totalBalance">$100</p>
+<p id="botStatus">Stopped</p>
+<div id="tradeJournal"></div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h2>Bot Control</h2>
+<select id="marketChoice" multiple>
+<option value="EURUSD">EURUSD</option>
+<option value="GBPUSD">GBPUSD</option>
+<option value="XAUUSD">XAUUSD</option>
+<option value="BTCUSD">BTCUSD</option>
+</select>
+<br><br>
+<button onclick="startBot()">Start</button>
+<button onclick="stopBot()">Stop</button>
+<h3 id="liveSignal">WAIT</h3>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+<h2>Charts</h2>
+<div id="marketCards"></div>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="page">
+<h2>Our Team</h2>
+
+<img src="https://randomuser.me/api/portraits/men/32.jpg">
+<p>Gibson Mugai - Director</p>
+
+<img src="https://randomuser.me/api/portraits/men/45.jpg">
+<p>Lead Developer</p>
+
+<img src="https://randomuser.me/api/portraits/men/65.jpg">
+<p>Marketing</p>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="page">
+<h2>Gallery</h2>
+
+<img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3" width="250">
+<img src="https://images.unsplash.com/photo-1581091870627-3f89f89f0a7a" width="250">
+<img src="https://images.unsplash.com/photo-1621761191319-c6fb62004040" width="250">
+
+</section>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<span class="close-btn" onclick="loginModal.style.display='none'">×</span>
+<input id="loginPassword" type="password">
+<button onclick="checkLogin()">Login</button>
+</div>
+</div>
+
+<script>
+// STATE
+let loggedIn=false, botInterval=null, balance=100;
+
+// MENU
+menuBtn.onclick=()=>navMenu.classList.toggle('active');
+
+// NAV
+function showPage(id){
+if(!loggedIn){alert("Login first");return;}
+document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+document.getElementById(id).style.display='block';
+}
+
+// LOGIN
+loginLink.onclick=()=>loginModal.style.display="flex";
+function checkLogin(){
+if(loginPassword.value==="GIBSONFX2026"){
+loggedIn=true;
+loginModal.style.display="none";
+alert("Welcome");
+}
+}
+
+// CHARTS
+function updateMarketCharts(){
+marketCards.innerHTML="";
+["EURUSD","GBPUSD","XAUUSD","BTCUSD"].forEach(sym=>{
+let div=document.createElement('div');
+div.className="market-card";
+
+let iframe=document.createElement('iframe');
+iframe.src=`https://s.tradingview.com/widgetembed/?symbol=FX:${sym}`;
+
+div.append(sym,iframe);
+marketCards.appendChild(div);
+});
+}
+
+// BOT
+function getSignal(){
+let rsi=Math.random()*100;
+if(rsi<30)return "BUY";
+if(rsi>70)return "SELL";
+return "WAIT";
+}
+
+function startBot(){
+if(botInterval)return;
+botStatus.innerText="Running";
+botInterval=setInterval(()=>{
+let sig=getSignal();
+liveSignal.innerText=sig;
+balance+=Math.random()*2-1;
+totalBalance.innerText="$"+balance.toFixed(2);
+},3000);
+}
+
+function stopBot(){
+clearInterval(botInterval);
+botInterval=null;
+botStatus.innerText="Stopped";
+}
+
+// INIT
+window.onload=()=>updateMarketCharts();
+</script>
+
+</body>
+  </html>
