@@ -44,7 +44,6 @@ body.light-mode .overlay{background: rgba(255,255,255,0.8); color:#111;}
 .modal-content{background:var(--card-dark); padding:20px; border-radius:10px; max-width:400px; width:90%; position:relative; text-align:center;}
 body.light-mode .modal-content{background:var(--card-light);}
 .close-btn{position:absolute; top:10px; right:15px; cursor:pointer; font-size:24px;}
-.certificate-img{width:100%; max-width:400px; border-radius:10px; margin-top:15px;}
 @media screen and (max-width:768px){.hero{flex-direction:column; text-align:center;}.hero img{max-width:90%; margin-top:20px;}.stats{flex-direction:column; align-items:center;}.stat-card{width:90%; max-width:300px;}.market-cards, .gallery-cards{flex-direction:column; align-items:center;}}
 @media screen and (max-width:480px){header{flex-direction:column; align-items:flex-start;} nav{display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;} .hero h1{font-size:28px;} .btn{padding:10px 18px;} iframe{height:200px;}}
 </style>
@@ -61,7 +60,6 @@ body.light-mode .modal-content{background:var(--card-light);}
 <a onclick="showPage('bot')">Trading Bot</a>
 <a onclick="showPage('market')">Market</a>
 <a onclick="showPage('market-review')">Market Review</a>
-<a onclick="showPage('academy')">Trading Academy</a>
 <a onclick="showPage('team')">Team</a>
 <a onclick="showPage('gallery')">Gallery</a>
 <a href="https://wa.me/254786810591" target="_blank">VIP Signals</a>
@@ -78,6 +76,7 @@ body.light-mode .modal-content{background:var(--card-light);}
 <p>We offer Trading Academy courses with certificates.</p>
 <p><strong>MISSION:</strong> Empower traders with AI-driven strategies.</p>
 <p><strong>VISION:</strong> To be the leading platform for profitable trading education.</p>
+<img src="./assets/certificate-example.jpg" alt="Certificate Example" style="width:80%; max-width:400px; margin-top:15px; border-radius:10px; box-shadow:0 0 15px #00eaff;">
 <a href="https://wa.me/254786810591" class="btn" target="_blank">Join VIP Signals</a>
 </div>
 <img src="./assets/hero.jpg" alt="Hero Image">
@@ -87,10 +86,13 @@ body.light-mode .modal-content{background:var(--card-light);}
 <!-- DASHBOARD PAGE -->
 <section id="dashboard" class="page">
 <h1>User Dashboard</h1>
+<div style="text-align:center; margin-bottom:30px;">
+<img src="./assets/dashboard-screenshot.png" alt="PRO Dashboard" style="width:90%; max-width:900px; border-radius:12px; box-shadow:0 0 25px #00eaff;">
+</div>
 <div class="stats">
-<div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$0</h2></div>
-<div class="stat-card"><h3>Today's Profit</h3><h2 id="todayProfit">$0</h2></div>
-<div class="stat-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
+<div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$12,450</h2></div>
+<div class="stat-card"><h3>Today's Profit</h3><h2 id="todaysProfit">$640</h2></div>
+<div class="stat-card"><h3>Active Trades</h3><h2 id="activeTrades">8</h2></div>
 <div class="stat-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
 </div>
 </section>
@@ -121,18 +123,11 @@ body.light-mode .modal-content{background:var(--card-light);}
 <section id="market-review" class="page">
 <h1>Market Review & Signals</h1>
 <div class="market-cards">
-<div class="market-card"><h3>EUR/USD</h3><p id="eurSignal">WAIT</p></div>
-<div class="market-card"><h3>GBP/USD</h3><p id="gbpSignal">WAIT</p></div>
-<div class="market-card"><h3>XAU/USD</h3><p id="xauSignal">WAIT</p></div>
-<div class="market-card"><h3>BTC/USD</h3><p id="btcSignal">WAIT</p></div>
+<div class="market-card"><h3>EUR/USD</h3><p id="eurusdSignal">WAIT</p></div>
+<div class="market-card"><h3>GBP/USD</h3><p id="gbpusdSignal">WAIT</p></div>
+<div class="market-card"><h3>XAU/USD</h3><p id="xauusdSignal">WAIT</p></div>
+<div class="market-card"><h3>BTC/USD</h3><p id="btcusdSignal">WAIT</p></div>
 </div>
-</section>
-
-<!-- TRADING ACADEMY -->
-<section id="academy" class="page">
-<h1 style="text-align:center; margin-bottom:20px;">Trading Academy</h1>
-<p style="text-align:center;">Learn trading with structured courses and get certified!</p>
-<img src="./assets/certificate-example.png" alt="Certificate Example" class="certificate-img">
 </section>
 
 <!-- TEAM -->
@@ -184,7 +179,6 @@ body.light-mode .modal-content{background:var(--card-light);}
 // Global state
 let loggedIn = false;
 let isVIP = false;
-let light=false;
 
 // Navigation
 function showPage(pageId){
@@ -210,6 +204,7 @@ function payWithMpesa(){
 }
 
 // Dark/Light mode
+let light=false;
 function toggleTheme(){ light=!light; document.body.classList.toggle('light-mode', light); }
 
 // Login modal
@@ -226,45 +221,43 @@ function checkLogin(){
   else alert("Incorrect password!");
 }
 
-// Live Dashboard Simulation
-function updateDashboard(){
-  if(!isVIP) return;
-  const balance = (10000 + Math.random()*5000).toFixed(2);
-  const profit = (Math.random()*1000).toFixed(2);
-  const trades = Math.floor(Math.random()*15)+1;
-  document.getElementById("totalBalance").innerText = `$${balance}`;
-  document.getElementById("todayProfit").innerText = `$${profit}`;
-  document.getElementById("activeTrades").innerText = trades;
-}
-
-// Bot logic
+// -------------------- LIVE AI SIGNALS --------------------
 let botInterval;
-async function getAISignal(symbol){
-  // Replace with AI API for real signals
-  const signals=["BUY","SELL","WAIT"];
-  return signals[Math.floor(Math.random()*signals.length)];
-}
+async function fetchAISignals(){
+  // Replace with your real backend URL
+  const API_URL = "https://your-backend.com/signals"; 
+  try{
+    const res = await fetch(API_URL);
+    const data = await res.json(); // {"EURUSD":"BUY","GBPUSD":"SELL",...}
+    document.getElementById("eurusdSignal").innerText = data.EURUSD || "WAIT";
+    document.getElementById("gbpusdSignal").innerText = data.GBPUSD || "WAIT";
+    document.getElementById("xauusdSignal").innerText = data.XAUUSD || "WAIT";
+    document.getElementById("btcusdSignal").innerText = data.BTCUSD || "WAIT";
 
-async function updateMarketSignals(){
-  const symbols = ["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
-  for(let s of symbols){
-    const signal = await getAISignal(s);
-    const el = document.getElementById(s.toLowerCase()+"Signal");
-    el.innerText = signal;
-    el.style.color = signal==="BUY"?"lime":signal==="SELL"?"red":"white";
+    // Update bot page live signal (first symbol example)
+    document.getElementById("liveSignal").innerText = data.EURUSD || "WAIT";
+    document.getElementById("liveSignal").style.color = data.EURUSD==="BUY"?"lime":data.EURUSD==="SELL"?"red":"white";
+  }catch(e){
+    console.error("Error fetching AI signals:", e);
   }
-  updateDashboard();
 }
 
 function startBot(){
   if(!loggedIn){ alert("Please login first!"); return; }
   if(!isVIP){ document.getElementById('vipModal').style.display="flex"; return; }
   document.getElementById("botStatus").innerText="Running";
-  botInterval = setInterval(updateMarketSignals,2000);
+  fetchAISignals(); // first fetch immediately
+  botInterval = setInterval(fetchAISignals,2000);
 }
-function stopBot(){ clearInterval(botInterval); document.getElementById("botStatus").innerText="Stopped"; document.getElementById("liveSignal").innerText="WAIT"; }
 
-updateMarketSignals();
+function stopBot(){
+  clearInterval(botInterval);
+  document.getElementById("botStatus").innerText="Stopped";
+  document.getElementById("liveSignal").innerText="WAIT";
+}
+
+// Initial load
+fetchAISignals();
 </script>
 
 </body>
