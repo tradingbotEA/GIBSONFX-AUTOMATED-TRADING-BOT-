@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Trading Platform</title>
+
+<style>
+:root{
+    --bg-dark:#0b0f1a; --text-dark:white; --card-dark:#121a2b;
+    --bg-light:#f5f5f5; --text-light:#111; --card-light:#fff;
+}
+body{margin:0;font-family:Arial;background:var(--bg-dark);color:var(--text-dark);}
+body.light-mode{background:var(--bg-light);color:var(--text-light);}
+header{display:flex;justify-content:space-between;padding:15px;background:#050814;flex-wrap:wrap;}
+body.light-mode header{background:#e3e3e3;}
+header img{height:45px;}
+nav a{margin:5px 10px;cursor:pointer;font-weight:bold;}
+.toggle-btn{position:fixed;top:20px;right:20px;background:#00eaff;border:none;padding:10px;cursor:pointer;}
+.page{display:none;padding:20px;}
+.hero{display:flex;flex-wrap:wrap;}
+.hero img{max-width:400px;width:100%;}
+.btn{background:#00eaff;padding:10px 20px;border:none;cursor:pointer;margin:5px;}
+.stats{display:flex;gap:15px;flex-wrap:wrap;}
+.stat-card{background:#121a2b;padding:10px;border-radius:10px;}
+.market-card{background:#121a2b;padding:10px;border-radius:10px;margin:10px;}
+.modal{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+.modal-content{background:#121a2b;padding:20px;border-radius:10px;}
+</style>
+</head>
+
+<body>
+
+<button class="toggle-btn" onclick="toggleTheme()">Mode</button>
+
+<header>
+<img src="./assets/logo.png" onerror="this.src='https://via.placeholder.com/200x60?text=GIBSONFX'">
+<nav>
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('market-review')">Signals</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+<a id="loginLink">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page" style="display:block;">
+<h1>GIBSONFX AI Trading Bot</h1>
+<img src="./assets/hero.jpg" onerror="this.src='https://via.placeholder.com/400x250'">
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h2>Dashboard</h2>
+<div class="stats">
+<div class="stat-card">Balance: <span id="totalBalance">$0</span></div>
+<div class="stat-card">Profit: <span id="todayProfit">$0</span></div>
+<div class="stat-card">Trades: <span id="activeTrades">0</span></div>
+<div class="stat-card">Status: <span id="botStatus">Stopped</span></div>
+</div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h2>Trading Bot</h2>
+
+<p>Live Signal:</p>
+<h2 id="liveSignal">WAIT</h2>
+
+<select id="marketSelect" multiple>
+<option value="EURUSD">EUR/USD</option>
+<option value="GBPUSD">GBP/USD</option>
+<option value="XAUUSD">XAU/USD</option>
+<option value="BTCUSD">BTC/USD</option>
+</select>
+
+<br>
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+<div id="marketCharts"></div>
+</section>
+
+<!-- SIGNALS -->
+<section id="market-review" class="page">
+<p id="eurSignal">WAIT</p>
+<p id="gbpSignal">WAIT</p>
+<p id="xauSignal">WAIT</p>
+<p id="btcSignal">WAIT</p>
+</section>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<input type="password" id="loginPassword">
+<button onclick="checkLogin()">Login</button>
+</div>
+</div>
+
+<!-- VIP -->
+<div id="vipModal" class="modal">
+<div class="modal-content">
+<p>VIP Required</p>
+<button onclick="payWithMpesa()">Pay</button>
+</div>
+</div>
+
+<script>
+// STATE
+let loggedIn = localStorage.getItem("loggedIn")==="true";
+let isVIP = localStorage.getItem("isVIP")==="true";
+let balance = parseFloat(localStorage.getItem("balance"))||10000;
+let trades = parseInt(localStorage.getItem("trades"))||0;
+let botInterval=null;
+
+// NAV
+function showPage(id){
+ if(!loggedIn){alert("Login first");return;}
+ if(!isVIP && ["dashboard","bot","market-review"].includes(id)){
+  document.getElementById("vipModal").style.display="flex";return;
+ }
+ document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+ document.getElementById(id).style.display='block';
+}
+
+// LOGIN
+document.getElementById("loginLink").onclick=()=>{
+ if(loggedIn){
+  localStorage.clear();location.reload();
+ }else document.getElementById("loginModal").style.display="flex";
+};
+
+function checkLogin(){
+ if(document.getElementById("loginPassword").value==="GIBSONFX2026"){
+  loggedIn=true;localStorage.setItem("loggedIn",true);
+  alert("Logged in");location.reload();
+ }else alert("Wrong password");
+}
+
+// VIP
+function payWithMpesa(){
+ isVIP=true;localStorage.setItem("isVIP",true);
+ alert("VIP activated");
+ document.getElementById("vipModal").style.display="none";
+}
+
+// BOT
+function startBot(){
+ document.getElementById("botStatus").innerText="Running";
+ if(botInterval)clearInterval(botInterval);
+ botInterval=setInterval(updateBot,2000);
+}
+
+function stopBot(){
+ document.getElementById("botStatus").innerText="Stopped";
+ clearInterval(botInterval);
+}
+
+function updateBot(){
+ const sig=["BUY","SELL","WAIT"][Math.floor(Math.random()*3)];
+ document.getElementById("liveSignal").innerText=sig;
+
+ let profit=Math.random()*200-100;
+ balance+=profit;trades++;
+
+ localStorage.setItem("balance",balance);
+ localStorage.setItem("trades",trades);
+
+ document.getElementById("totalBalance").innerText="$"+balance.toFixed(2);
+ document.getElementById("todayProfit").innerText="$"+profit.toFixed(2);
+ document.getElementById("activeTrades").innerText=trades;
+
+ ["eur","gbp","xau","btc"].forEach(id=>{
+  let el=document.getElementById(id+"Signal");
+  if(el){el.innerText=sig;}
+ });
+}
+
+// THEME
+function toggleTheme(){
+ document.body.classList.toggle("light-mode");
+}
+
+// INIT
+window.onload=()=>{
+ document.getElementById("totalBalance").innerText="$"+balance.toFixed(2);
+ document.getElementById("activeTrades").innerText=trades;
+};
+
+// IMAGE FIX
+document.querySelectorAll("img").forEach(img=>{
+ img.onerror=()=>img.src="https://via.placeholder.com/400";
+});
+</script>
+
+</body>
+</html>
