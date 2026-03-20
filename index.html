@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX PRO</title>
+
+<style>
+:root{
+--bg:#0b0f1a;
+--card:#121a2b;
+--accent:#00eaff;
+}
+body{margin:0;font-family:Arial;background:var(--bg);color:white}
+header{display:flex;justify-content:space-between;padding:15px;background:#050814}
+nav a{margin:5px;cursor:pointer;font-weight:bold}
+.page{display:none;padding:20px}
+.hero{display:flex;flex-wrap:wrap;justify-content:space-between}
+.hero img{max-width:400px;width:100%}
+.btn{background:var(--accent);padding:10px;border-radius:5px;color:black;cursor:pointer;margin:5px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat-card{background:var(--card);padding:10px;border-radius:8px}
+.modal{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.8);top:0;left:0;justify-content:center;align-items:center}
+.modal-content{background:var(--card);padding:20px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="https://via.placeholder.com/120x40?text=GIBSONFX">
+<nav>
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a id="loginLink">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page" style="display:block">
+<div class="hero">
+<div>
+<h1>GIBSONFX AI Trading Bot</h1>
+<p>Automated trading system 24/7</p>
+<button class="btn" onclick="openAuth()">Get Started</button>
+</div>
+<img src="https://images.unsplash.com/photo-1640340434855-6084b1f4901c">
+</div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h2>Dashboard</h2>
+
+<div class="stats">
+<div class="stat-card">Balance: $<span id="balance">100</span></div>
+</div>
+
+<button class="btn" onclick="openDeposit()">Deposit</button>
+<button class="btn" onclick="openWithdraw()">Withdraw</button>
+<button class="btn" onclick="logout()">Logout</button>
+
+<ul id="journal"></ul>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h2>Trading Bot</h2>
+<h3 id="signal">WAIT</h3>
+
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+</section>
+
+<!-- AUTH -->
+<div id="authModal" class="modal">
+<div class="modal-content">
+<h2 id="authTitle">Login</h2>
+<input id="user" placeholder="Username"><br><br>
+<input id="pass" type="password" placeholder="Password"><br><br>
+<button class="btn" onclick="handleAuth()">Submit</button>
+<p onclick="toggleAuth()" style="cursor:pointer;color:#00eaff" id="switchAuth">
+No account? Register
+</p>
+</div>
+</div>
+
+<!-- DEPOSIT -->
+<div id="depositModal" class="modal">
+<div class="modal-content">
+<h2>Deposit</h2>
+<input id="depAmt" type="number"><br><br>
+<button class="btn" onclick="deposit()">Confirm</button>
+</div>
+</div>
+
+<!-- WITHDRAW -->
+<div id="withdrawModal" class="modal">
+<div class="modal-content">
+<h2>Withdraw</h2>
+<input id="withAmt" type="number"><br><br>
+<button class="btn" onclick="withdraw()">Confirm</button>
+</div>
+</div>
+
+<script>
+let loggedIn=false,currentUser=null,authMode="login";
+let balance=100,bot=null;
+
+// NAV
+function showPage(id){
+if(!loggedIn && id!=="home"){alert("Login first");return;}
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
+}
+
+// AUTH
+function openAuth(){authModal.style.display="flex";}
+loginLink.onclick=()=> currentUser?logout():openAuth();
+
+function toggleAuth(){
+authMode=authMode==="login"?"register":"login";
+authTitle.innerText=authMode;
+switchAuth.innerText=authMode==="login"?"No account? Register":"Have account? Login";
+}
+
+function handleAuth(){
+let u=user.value;
+let users=JSON.parse(localStorage.getItem("users"))||{};
+
+if(authMode==="register"){
+if(users[u]) return alert("User exists");
+users[u]={balance:100};
+localStorage.setItem("users",JSON.stringify(users));
+alert("Registered");
+toggleAuth();
+return;
+}
+
+if(!users[u]) return alert("User not found");
+
+currentUser=u;
+loggedIn=true;
+localStorage.setItem("session",u);
+loginLink.innerText="Logout("+u+")";
+loadUser();
+authModal.style.display="none";
+}
+
+function logout(){
+currentUser=null;loggedIn=false;
+localStorage.removeItem("session");
+loginLink.innerText="Login";
+}
+
+// SESSION
+window.onload=()=>{
+let s=localStorage.getItem("session");
+if(s){currentUser=s;loggedIn=true;loginLink.innerText="Logout("+s+")";loadUser();}
+};
+
+// USER
+function loadUser(){
+let users=JSON.parse(localStorage.getItem("users"));
+balance=users[currentUser].balance;
+document.getElementById("balance").innerText=balance.toFixed(2);
+}
+function saveUser(){
+let users=JSON.parse(localStorage.getItem("users"));
+users[currentUser].balance=balance;
+localStorage.setItem("users",JSON.stringify(users));
+}
+
+// WALLET
+function openDeposit(){if(!loggedIn)return alert("Login first");depositModal.style.display="flex";}
+function deposit(){
+let amt=Number(depAmt.value);
+balance+=amt;
+document.getElementById("balance").innerText=balance.toFixed(2);
+saveUser();
+depositModal.style.display="none";
+}
+
+function openWithdraw(){if(!loggedIn)return alert("Login first");withdrawModal.style.display="flex";}
+function withdraw(){
+let amt=Number(withAmt.value);
+if(amt>balance)return alert("Insufficient");
+balance-=amt;
+document.getElementById("balance").innerText=balance.toFixed(2);
+saveUser();
+withdrawModal.style.display="none";
+}
+
+// BOT
+function startBot(){
+if(!loggedIn)return alert("Login first");
+
+bot=setInterval(()=>{
+let signals=["BUY","SELL","WAIT"];
+let s=signals[Math.floor(Math.random()*3)];
+signal.innerText=s;
+
+let profit=(Math.random()*4-2);
+balance+=balance*(profit/100);
+
+document.getElementById("balance").innerText=balance.toFixed(2);
+
+let li=document.createElement("li");
+li.innerText=s+" "+profit.toFixed(2)+"%";
+journal.prepend(li);
+
+saveUser();
+
+},2000);
+}
+
+function stopBot(){clearInterval(bot);}
+</script>
+
+</body>
+  </html>
