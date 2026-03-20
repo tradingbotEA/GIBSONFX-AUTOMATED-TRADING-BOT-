@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Trading Platform</title>
+<style>
+:root{
+    --bg-dark:#0b0f1a; --text-dark:white; --card-dark:#121a2b; --shadow-dark:rgba(0,234,255,0.3);
+    --bg-light:#f5f5f5; --text-light:#111; --card-light:#fff; --shadow-light:rgba(0,0,0,0.15);
+}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg-dark);color:var(--text-dark);transition:0.4s;}
+body.light-mode{background:var(--bg-light);color:var(--text-light);}header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#050814;position:relative;} body.light-mode header{background:#e3e3e3;}
+
+/* NAV */ nav{display:flex;gap:10px;align-items:center;} nav a, nav span{margin:5px;text-decoration:none;color:inherit;font-weight:bold;cursor:pointer;}
+
+/* MOBILE MENU BUTTON */ .menu-toggle{ display:none; font-size:26px; cursor:pointer; }
+
+/* MOBILE NAV */ @media(max-width:768px){ nav{ display:none; flex-direction:column; position:absolute; top:60px; left:0; width:100%; background:#050814; padding:10px; } body.light-mode nav{background:#e3e3e3;} nav.active{display:flex;} .menu-toggle{display:block;} }
+
+.toggle-btn{position:fixed;top:20px;right:20px;background:#00eaff;color:black;border:none;padding:10px;border-radius:5px;cursor:pointer;} .page{display:none;padding:20px;} .hero{display:flex;flex-wrap:wrap;justify-content:space-between;} .hero img{max-width:400px;width:100%;border-radius:10px;} .btn{background:#00eaff;padding:10px 15px;border:none;border-radius:5px;cursor:pointer;} .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;} .modal-content{background:#121a2b;padding:20px;border-radius:10px;} </style>
+
+</head>
+<body><button class="toggle-btn" onclick="toggleTheme()">Mode</button>
+
+<header>
+<h2>GIBSONFX</h2><div class="menu-toggle" onclick="toggleMenu()">☰</div><nav id="navMenu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+<a id="loginLink">Login</a>
+<a id="signupLink">Sign Up</a>
+<span id="userDisplay" style="display:none;"></span>
+</nav>
+</header><section id="home" class="page" style="display:block;">
+<h1>Welcome to GIBSONFX</h1>
+</section><section id="dashboard" class="page"><h1>Dashboard</h1></section>
+<section id="bot" class="page"><h1>Bot</h1></section>
+<section id="market" class="page"><h1>Market</h1></section>
+<section id="academy" class="page"><h1>Academy</h1></section>
+<section id="team" class="page"><h1>Team</h1></section>
+<section id="gallery" class="page"><h1>Gallery</h1></section><!-- LOGIN --><div id="loginModal" class="modal">
+<div class="modal-content">
+<h2>Login</h2>
+<input type="text" id="loginUsername" placeholder="Username"><br><br>
+<input type="password" id="loginPassword" placeholder="Password"><br><br>
+<button onclick="checkLogin()">Login</button>
+</div>
+</div><!-- SIGNUP --><div id="signupModal" class="modal">
+<div class="modal-content">
+<h2>Sign Up</h2>
+<input type="text" id="signupUsername" placeholder="Username"><br><br>
+<input type="password" id="signupPassword" placeholder="Password"><br><br>
+<button onclick="registerUser()">Sign Up</button>
+</div>
+</div><script>
+let loggedIn=false;
+let currentUser=null;
+let light=false;
+
+function toggleTheme(){
+  light=!light;
+  document.body.classList.toggle('light-mode',light);
+}
+
+function toggleMenu(){
+  document.getElementById('navMenu').classList.toggle('active');
+}
+
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById(page).style.display='block';
+
+  // auto close mobile menu
+  document.getElementById('navMenu').classList.remove('active');
+}
+
+const loginModal=document.getElementById('loginModal');
+const signupModal=document.getElementById('signupModal');
+
+document.getElementById('loginLink').onclick=()=>loginModal.style.display='flex';
+document.getElementById('signupLink').onclick=()=>signupModal.style.display='flex';
+
+function registerUser(){
+  const u=document.getElementById('signupUsername').value;
+  const p=document.getElementById('signupPassword').value;
+  if(!u||!p){alert('Fill all');return;}
+  localStorage.setItem('user_'+u,p);
+  alert('Signup success');
+  signupModal.style.display='none';
+}
+
+function checkLogin(){
+  const u=document.getElementById('loginUsername').value;
+  const p=document.getElementById('loginPassword').value;
+  const sp=localStorage.getItem('user_'+u);
+  if(sp&&sp===p){
+    loggedIn=true;
+    currentUser=u;
+    loginModal.style.display='none';
+    document.getElementById('userDisplay').style.display='inline';
+    document.getElementById('userDisplay').innerText='👤 '+u;
+    document.getElementById('loginLink').style.display='none';
+    document.getElementById('signupLink').style.display='none';
+    showPage('home');
+  }else alert('Invalid');
+}
+</script></body>
+</html>
