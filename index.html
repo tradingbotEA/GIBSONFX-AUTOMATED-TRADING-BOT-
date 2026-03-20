@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX PRO</title>
+
+<style>
+:root{
+--bg:#0b0f1a;
+--card:#121a2b;
+--accent:#00eaff;
+}
+body{margin:0;font-family:Arial;background:var(--bg);color:white}
+
+/* HEADER */
+header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#050814}
+nav{display:flex;gap:10px;flex-wrap:wrap}
+nav a{cursor:pointer;font-weight:bold}
+.menu-btn{display:none}
+
+/* PAGES */
+.page{display:none;padding:20px}
+.active{display:block}
+
+/* BUTTON */
+.btn{background:var(--accent);padding:10px 15px;border-radius:5px;color:black;cursor:pointer}
+
+/* DASHBOARD */
+.stats{display:flex;gap:15px;flex-wrap:wrap}
+.stat{background:var(--card);padding:15px;border-radius:8px}
+
+/* BOT */
+.bot-box{background:var(--card);padding:15px;border-radius:8px}
+
+/* MODAL */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.8);justify-content:center;align-items:center}
+.modal-content{background:var(--card);padding:20px;border-radius:10px}
+
+/* MOBILE */
+@media(max-width:600px){
+nav{display:none}
+nav.show{display:flex;flex-direction:column}
+.menu-btn{display:block}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>GIBSONFX PRO</h2>
+<button class="menu-btn" onclick="toggleMenu()">Menu</button>
+
+<nav id="nav">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+<a onclick="openLogin()">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page active">
+<h1>GIBSONFX AI Trading System</h1>
+<p>Automated AI trading + academy + signals</p>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h1>Dashboard</h1>
+<div class="stats">
+<div class="stat">Balance: $<span id="balance">100</span></div>
+<div class="stat">Trades: <span id="trades">0</span></div>
+<div class="stat">Status: <span id="status">OFF</span></div>
+</div>
+<ul id="journal"></ul>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h1>Trading Bot</h1>
+<div class="bot-box">
+<p id="signal">WAIT</p>
+
+<label><input type="checkbox" class="pair" value="EURUSD">EURUSD</label>
+<label><input type="checkbox" class="pair" value="BTCUSD">BTCUSD</label>
+
+<br><br>
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+</div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+<h1>Live Charts</h1>
+<div id="chart"></div>
+</section>
+
+<!-- ACADEMY -->
+<section id="academy" class="page">
+<h1>Trading Academy</h1>
+<p>Learn Forex & Crypto trading</p>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="page">
+<h1>Team</h1>
+<p>Founder: Gibson Mugai</p>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="page">
+<h1>Gallery</h1>
+<p>Proof & results</p>
+</section>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<h2>Login</h2>
+<input type="password" id="pass" placeholder="Enter password"><br><br>
+<button onclick="login()">Login</button>
+<button onclick="closeLogin()">Close</button>
+</div>
+</div>
+
+<!-- TradingView -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+let loggedIn=false;
+let bot=null;
+let balance=100;
+let trades=0;
+
+/* NAV */
+function toggleMenu(){
+document.getElementById('nav').classList.toggle('show');
+}
+
+function showPage(id){
+if(!loggedIn && id!=="home"){alert("Login first");return;}
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* LOGIN */
+function openLogin(){
+document.getElementById('loginModal').style.display='flex';
+}
+function closeLogin(){
+document.getElementById('loginModal').style.display='none';
+}
+
+function login(){
+if(document.getElementById('pass').value==="1234"){
+loggedIn=true;
+alert("Welcome to GIBSONFX PRO");
+closeLogin();
+}else alert("Wrong password");
+}
+
+/* BOT */
+function startBot(){
+document.getElementById('status').innerText="RUNNING";
+
+bot=setInterval(()=>{
+let signals=["BUY","SELL","WAIT"];
+let s=signals[Math.floor(Math.random()*3)];
+document.getElementById('signal').innerText=s;
+
+let profit=(Math.random()*4-2);
+balance+=balance*(profit/100);
+trades++;
+
+document.getElementById('balance').innerText=balance.toFixed(2);
+document.getElementById('trades').innerText=trades;
+
+let li=document.createElement('li');
+li.innerText=s+" | "+profit.toFixed(2)+"%";
+document.getElementById('journal').prepend(li);
+
+},2000);
+}
+
+function stopBot(){
+clearInterval(bot);
+document.getElementById('status').innerText="OFF";
+}
+
+/* CHART */
+new TradingView.widget({
+container_id:"chart",
+symbol:"BTCUSD",
+interval:"60"
+});
+</script>
+
+</body>
+  </html>
