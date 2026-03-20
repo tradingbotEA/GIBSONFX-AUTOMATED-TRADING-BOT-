@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX PRO</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b0f1a;color:white}
+header{display:flex;justify-content:space-between;padding:15px;background:#050814}
+nav a{margin:5px;cursor:pointer;font-weight:bold}
+.page{display:none;padding:20px}
+.active{display:block}
+.btn{background:#00eaff;padding:10px;border-radius:5px;color:black;cursor:pointer;margin:5px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center}
+.modal-content{background:#121a2b;padding:20px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>GIBSONFX PRO</h2>
+<nav>
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a id="loginLink">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page active">
+<h1>Welcome to GIBSONFX</h1>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h2>Dashboard</h2>
+
+<p>Balance: $<span id="totalBalance">100</span></p>
+
+<button class="btn" onclick="openDeposit()">Deposit</button>
+<button class="btn" onclick="openWithdraw()">Withdraw</button>
+<button class="btn" onclick="logout()">Logout</button>
+
+<ul id="tradeJournal"></ul>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h2>Trading Bot</h2>
+
+<p id="signal">WAIT</p>
+
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+</section>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal">
+<div class="modal-content">
+<h2 id="authTitle">Login</h2>
+<input id="username" placeholder="Username"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+<button class="btn" onclick="handleAuth()">Submit</button>
+<p id="switchAuth" onclick="toggleAuth()" style="cursor:pointer;color:#00eaff">
+No account? Register
+</p>
+</div>
+</div>
+
+<!-- DEPOSIT -->
+<div id="depositModal" class="modal">
+<div class="modal-content">
+<h2>Deposit</h2>
+<input id="depositAmount" type="number"><br><br>
+<button class="btn" onclick="deposit()">Confirm</button>
+</div>
+</div>
+
+<!-- WITHDRAW -->
+<div id="withdrawModal" class="modal">
+<div class="modal-content">
+<h2>Withdraw</h2>
+<input id="withdrawAmount" type="number"><br><br>
+<button class="btn" onclick="withdraw()">Confirm</button>
+</div>
+</div>
+
+<script>
+let loggedIn=false;
+let currentUser=null;
+let authMode="login";
+let dashboardBalance=100;
+let bot=null;
+
+// NAVIGATION
+function showPage(id){
+if(!loggedIn && id!=="home"){alert("Login first");return;}
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+// AUTH
+loginLink.onclick=()=>{
+if(currentUser){logout();}
+else{authModal.style.display="flex";}
+};
+
+function toggleAuth(){
+authMode=authMode==="login"?"register":"login";
+authTitle.innerText=authMode==="login"?"Login":"Register";
+switchAuth.innerText=authMode==="login"?"No account? Register":"Have account? Login";
+}
+
+function handleAuth(){
+let u=username.value;
+let users=JSON.parse(localStorage.getItem("users"))||{};
+
+if(authMode==="register"){
+if(users[u]) return alert("User exists");
+users[u]={balance:100};
+localStorage.setItem("users",JSON.stringify(users));
+alert("Registered!");
+toggleAuth();
+return;
+}
+
+if(!users[u]) return alert("User not found");
+
+currentUser=u;
+loggedIn=true;
+localStorage.setItem("session",u);
+loginLink.innerText="Logout ("+u+")";
+loadUser();
+authModal.style.display="none";
+}
+
+function logout(){
+currentUser=null;
+loggedIn=false;
+localStorage.removeItem("session");
+loginLink.innerText="Login";
+}
+
+// SESSION
+window.onload=()=>{
+let s=localStorage.getItem("session");
+if(s){
+currentUser=s;
+loggedIn=true;
+loginLink.innerText="Logout ("+s+")";
+loadUser();
+}
+};
+
+// USER DATA
+function loadUser(){
+let users=JSON.parse(localStorage.getItem("users"));
+dashboardBalance=users[currentUser].balance;
+totalBalance.innerText=dashboardBalance.toFixed(2);
+}
+
+function saveUser(){
+let users=JSON.parse(localStorage.getItem("users"));
+users[currentUser].balance=dashboardBalance;
+localStorage.setItem("users",JSON.stringify(users));
+}
+
+// DEPOSIT
+function openDeposit(){
+if(!loggedIn) return alert("Login first");
+depositModal.style.display="flex";
+}
+
+function deposit(){
+let amt=Number(depositAmount.value);
+dashboardBalance+=amt;
+totalBalance.innerText=dashboardBalance.toFixed(2);
+saveUser();
+depositModal.style.display="none";
+}
+
+// WITHDRAW
+function openWithdraw(){
+if(!loggedIn) return alert("Login first");
+withdrawModal.style.display="flex";
+}
+
+function withdraw(){
+let amt=Number(withdrawAmount.value);
+if(amt>dashboardBalance) return alert("Insufficient");
+dashboardBalance-=amt;
+totalBalance.innerText=dashboardBalance.toFixed(2);
+saveUser();
+withdrawModal.style.display="none";
+}
+
+// BOT
+function startBot(){
+if(!loggedIn) return alert("Login first");
+
+bot=setInterval(()=>{
+let signals=["BUY","SELL","WAIT"];
+let s=signals[Math.floor(Math.random()*3)];
+signal.innerText=s;
+
+let profit=(Math.random()*4-2);
+dashboardBalance+=dashboardBalance*(profit/100);
+
+totalBalance.innerText=dashboardBalance.toFixed(2);
+
+let li=document.createElement("li");
+li.innerText=s+" "+profit.toFixed(2)+"%";
+tradeJournal.prepend(li);
+
+saveUser();
+
+},2000);
+}
+
+function stopBot(){
+clearInterval(bot);
+}
+</script>
+
+</body>
+</html>
