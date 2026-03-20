@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX PRO</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b0f1a;color:white;}
+body.light{background:#f5f5f5;color:#111;}
+
+header{display:flex;justify-content:space-between;padding:15px;background:#050814;flex-wrap:wrap;}
+nav{display:flex;gap:10px;}
+nav a{cursor:pointer;font-weight:bold;}
+
+.menu{display:none;font-size:22px;cursor:pointer;}
+
+.page{display:none;padding:20px;}
+#home{display:block;}
+
+.btn{background:#00eaff;border:none;padding:10px;margin:5px;cursor:pointer;font-weight:bold;}
+.card{background:#121a2b;padding:15px;border-radius:10px;margin:10px 0;}
+iframe{width:100%;height:300px;border:none;}
+
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+
+.modal-box{background:#121a2b;padding:20px;border-radius:10px;width:90%;max-width:400px;text-align:center;}
+
+@media(max-width:600px){
+nav{display:none;flex-direction:column;width:100%;}
+nav.active{display:flex;}
+.menu{display:block;}
+}
+</style>
+</head>
+
+<body>
+
+<button class="btn" onclick="toggleTheme()">Theme</button>
+
+<header>
+<h2>GIBSONFX</h2>
+<span class="menu" onclick="toggleMenu()">☰</span>
+<nav id="nav">
+<a onclick="go('home')">Home</a>
+<a onclick="go('dashboard')">Dashboard</a>
+<a onclick="go('bot')">Bot</a>
+<a onclick="go('market')">Market</a>
+<a onclick="go('signals')">Signals</a>
+<a onclick="openLogin()">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page">
+<h1>AI Trading Platform</h1>
+<p>Trade smarter with automation.</p>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h2>Dashboard</h2>
+<div class="card">Balance: $<span id="bal">100</span></div>
+<div class="card">Trades: <span id="trades">0</span></div>
+<div class="card">Bot: <span id="status">OFF</span></div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h2>Trading Bot</h2>
+
+<select id="pair">
+<option>EURUSD</option>
+<option>GBPUSD</option>
+<option>XAUUSD</option>
+<option>BTCUSD</option>
+</select>
+
+<br>
+
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+
+<h3>Signal: <span id="signal">WAIT</span></h3>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+<h2>Charts</h2>
+<div id="charts"></div>
+</section>
+
+<!-- SIGNALS -->
+<section id="signals" class="page">
+<h2>Market Signals</h2>
+<div class="card">EURUSD: <span id="s1">WAIT</span></div>
+<div class="card">GBPUSD: <span id="s2">WAIT</span></div>
+<div class="card">XAUUSD: <span id="s3">WAIT</span></div>
+<div class="card">BTCUSD: <span id="s4">WAIT</span></div>
+</section>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+<div class="modal-box">
+<h3>Login</h3>
+<input type="password" id="pass" placeholder="Password"><br><br>
+<button class="btn" onclick="login()">Login</button>
+</div>
+</div>
+
+<!-- VIP -->
+<div class="modal" id="vipModal">
+<div class="modal-box">
+<h3>VIP Required</h3>
+<button class="btn" onclick="activateVIP()">Activate VIP</button>
+</div>
+</div>
+
+<script>
+
+let logged=false;
+let vip=false;
+let bot=null;
+let balance=100;
+let trades=0;
+
+// MENU
+function toggleMenu(){
+document.getElementById("nav").classList.toggle("active");
+}
+
+// THEME
+function toggleTheme(){
+document.body.classList.toggle("light");
+}
+
+// LOGIN
+function openLogin(){
+document.getElementById("loginModal").style.display="flex";
+}
+
+function login(){
+let p=document.getElementById("pass").value;
+if(p==="GIBSONFX2026"){
+logged=true;
+document.getElementById("loginModal").style.display="none";
+alert("Login success");
+}else alert("Wrong password");
+}
+
+// VIP
+function activateVIP(){
+vip=true;
+document.getElementById("vipModal").style.display="none";
+alert("VIP Activated");
+}
+
+// NAVIGATION
+function go(id){
+if(!logged){ alert("Login first"); return; }
+
+if(!vip && ["dashboard","bot","signals"].includes(id)){
+document.getElementById("vipModal").style.display="flex";
+return;
+}
+
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
+
+if(id==="market") loadCharts();
+}
+
+// CHARTS
+function loadCharts(){
+let pairs=["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
+let c=document.getElementById("charts");
+c.innerHTML="";
+
+pairs.forEach(p=>{
+let d=document.createElement("div");
+d.className="card";
+d.innerHTML=`
+<h3>${p}</h3>
+<iframe src="https://s.tradingview.com/widgetembed/?symbol=${p}"></iframe>
+`;
+c.appendChild(d);
+});
+}
+
+// SIGNAL
+function signal(){
+let s=["BUY","SELL","WAIT"];
+return s[Math.floor(Math.random()*3)];
+}
+
+// BOT
+function startBot(){
+if(bot) return;
+
+bot=setInterval(()=>{
+
+let sig=signal();
+document.getElementById("signal").innerText=sig;
+
+balance+=Math.random()*3-1.5;
+trades++;
+
+document.getElementById("bal").innerText=balance.toFixed(2);
+document.getElementById("trades").innerText=trades;
+document.getElementById("status").innerText="RUNNING";
+
+// signals
+document.getElementById("s1").innerText=signal();
+document.getElementById("s2").innerText=signal();
+document.getElementById("s3").innerText=signal();
+document.getElementById("s4").innerText=signal();
+
+},2000);
+
+}
+
+function stopBot(){
+clearInterval(bot);
+bot=null;
+document.getElementById("status").innerText="STOPPED";
+}
+
+</script>
+
+</body>
+</html>
