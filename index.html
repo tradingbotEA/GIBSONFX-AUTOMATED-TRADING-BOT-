@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Trading Platform</title>
+
+<style>
+:root{
+    --bg-dark:#0b0f1a; --text-dark:white; --card-dark:#121a2b;
+    --bg-light:#f5f5f5; --text-light:#111; --card-light:#fff;
+}
+
+body{margin:0;font-family:Arial;background:var(--bg-dark);color:var(--text-dark);}
+body.light-mode{background:var(--bg-light);color:var(--text-light);}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#050814;flex-wrap:wrap;}
+header img{height:45px;}
+
+.menu-toggle{font-size:26px;cursor:pointer;display:none;}
+
+#navMenu a{margin:5px 10px;cursor:pointer;text-decoration:none;color:inherit;font-weight:bold;}
+
+@media(max-width:768px){
+  .menu-toggle{display:block;}
+  #navMenu{display:none;flex-direction:column;width:100%;}
+  #navMenu.active{display:flex;}
+}
+
+.page{display:none;padding:20px;}
+.hero{display:flex;flex-wrap:wrap;}
+.btn{background:#00eaff;padding:10px;border-radius:5px;cursor:pointer;}
+.stat-card{background:#121a2b;padding:10px;margin:10px;border-radius:8px;}
+.modal{display:none;position:fixed;top:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;}
+.modal-content{background:#121a2b;padding:20px;border-radius:10px;}
+</style>
+</head>
+
+<body>
+
+<button onclick="toggleTheme()">Dark/Light</button>
+
+<header>
+<img src="./assets/logo.png">
+
+<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+<nav id="navMenu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('market-review')">Review</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+
+<a id="loginLink">Login</a>
+<a id="signupLink">Sign Up</a>
+<span id="userDisplay"></span>
+<a onclick="logout()">Logout</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page" style="display:block;">
+<h1>Welcome to GIBSONFX</h1>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h1>Dashboard</h1>
+<div class="stat-card">Balance: <span id="totalBalance">$0</span></div>
+<div class="stat-card">Profit: <span id="todayProfit">$0</span></div>
+<div class="stat-card">Trades: <span id="activeTrades">0</span></div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h1>Bot</h1>
+<button onclick="startBot()">Start</button>
+<button onclick="stopBot()">Stop</button>
+<p id="liveSignal">WAIT</p>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page"><h1>Market</h1></section>
+
+<!-- REVIEW -->
+<section id="market-review" class="page"><h1>Signals</h1></section>
+
+<!-- OTHER -->
+<section id="academy" class="page"><h1>Academy</h1></section>
+<section id="team" class="page"><h1>Team</h1></section>
+<section id="gallery" class="page"><h1>Gallery</h1></section>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<h2>Login</h2>
+<input id="loginUser" placeholder="Username"><br>
+<input id="loginPass" type="password" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+</div>
+</div>
+
+<!-- SIGNUP -->
+<div id="signupModal" class="modal">
+<div class="modal-content">
+<h2>Sign Up</h2>
+<input id="signupUser" placeholder="Username"><br>
+<input id="signupPass" type="password"><br>
+<button onclick="signup()">Create</button>
+</div>
+</div>
+
+<script>
+
+// ===== MENU =====
+function toggleMenu(){
+  document.getElementById("navMenu").classList.toggle("active");
+}
+
+// ===== THEME =====
+function toggleTheme(){
+  document.body.classList.toggle("light-mode");
+}
+
+// ===== NAVIGATION =====
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+// ===== USER SYSTEM =====
+function getUsers(){return JSON.parse(localStorage.getItem("users")||"{}");}
+function saveUsers(u){localStorage.setItem("users",JSON.stringify(u));}
+
+let currentUser=null;
+
+function signup(){
+  let u=getUsers();
+  let user=document.getElementById("signupUser").value;
+  let pass=document.getElementById("signupPass").value;
+
+  if(u[user]){alert("Exists");return;}
+
+  u[user]={password:pass,balance:10000,profit:0,trades:0,isVIP:false};
+  saveUsers(u);
+  alert("Created");
+}
+
+function login(){
+  let u=getUsers();
+  let user=document.getElementById("loginUser").value;
+  let pass=document.getElementById("loginPass").value;
+
+  if(u[user] && u[user].password===pass){
+    currentUser=user;
+    localStorage.setItem("session",user);
+    document.getElementById("userDisplay").innerText="👤 "+user;
+    loadDashboard();
+    alert("Logged in");
+  } else alert("Wrong");
+}
+
+function loadSession(){
+  let s=localStorage.getItem("session");
+  if(s){
+    currentUser=s;
+    document.getElementById("userDisplay").innerText="👤 "+s;
+    loadDashboard();
+  }
+}
+window.onload=loadSession;
+
+function logout(){
+  localStorage.removeItem("session");
+  location.reload();
+}
+
+// ===== DASHBOARD =====
+function loadDashboard(){
+  let u=getUsers()[currentUser];
+  document.getElementById("totalBalance").innerText=u.balance;
+  document.getElementById("todayProfit").innerText=u.profit;
+  document.getElementById("activeTrades").innerText=u.trades;
+}
+
+// ===== BOT =====
+let bot;
+
+function startBot(){
+  bot=setInterval(()=>{
+    let sig=["BUY","SELL","WAIT"][Math.floor(Math.random()*3)];
+    document.getElementById("liveSignal").innerText=sig;
+
+    let users=getUsers();
+    let u=users[currentUser];
+
+    u.balance+=Math.random()*100;
+    u.profit+=Math.random()*50;
+    u.trades+=1;
+
+    saveUsers(users);
+    loadDashboard();
+
+  },2000);
+}
+
+function stopBot(){
+  clearInterval(bot);
+}
+
+</script>
+
+</body>
+  </html>
