@@ -298,3 +298,66 @@ async function updateDashboard(){
 }
 
 // AI signal simulation
+async function getAISignal(symbol){
+  const signals=["BUY","SELL","WAIT"];
+  return signals[Math.floor(Math.random()*signals.length)];
+}
+
+// UPDATE MARKET SIGNALS
+async function updateMarketSignals(){
+  const selectedMarkets=[...document.getElementById("marketChoice").selectedOptions].map(o=>o.value);
+  let liveSignalText="WAIT";
+
+  for(const symbol of selectedMarkets){
+    const sig=await getAISignal(symbol);
+    liveSignalText=sig;
+
+    const el=document.getElementById(symbol.toLowerCase()+"Signal");
+    if(el){
+      el.innerText=sig;
+      el.style.color=sig==="BUY"?"lime":sig==="SELL"?"red":"white";
+    }
+
+    const pl=(Math.random()*5-2.5).toFixed(2);
+
+    tradeJournal.push({
+      symbol,
+      signal:sig,
+      pl,
+      time:new Date().toLocaleTimeString(),
+      isVIP:isVIP
+    });
+
+    userBalance+=parseFloat(pl);
+  }
+
+  document.getElementById("liveSignal").innerText=liveSignalText;
+  updateDashboard();
+}
+
+// BOT CONTROL
+function startBot(){
+  if(!loggedIn){ alert("Login first!"); return; }
+
+  document.getElementById("botStatus").innerText="Running";
+
+  if(botInterval) clearInterval(botInterval);
+
+  botInterval=setInterval(()=>{
+    updateMarketSignals();
+  },4000);
+}
+
+function stopBot(){
+  document.getElementById("botStatus").innerText="Stopped";
+
+  if(botInterval){
+    clearInterval(botInterval);
+    botInterval=null;
+  }
+}
+
+// AUTO LOAD
+window.onload=function(){
+  updateMarketCharts();
+};
