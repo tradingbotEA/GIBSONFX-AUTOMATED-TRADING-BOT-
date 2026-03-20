@@ -199,51 +199,63 @@ body.light-mode .overlay{background:rgba(255,255,255,0.8);color:#111;}
 <footer><p>© 2026 GIBSONFX Trading Platform</p></footer>
 
 <script>
-// Global state
-let loggedIn=false;
-let isVIP=false;
-let light=false;
-let botInterval=null;
+let loggedIn = false;
+let isVIP = false;
+let currentUser = null;
 
-// Navigation
-function showPage(pageId){
-  if(!loggedIn){ alert("Please login first!"); return; }
-  if(!checkVIP(pageId)) return;
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(pageId).style.display='block';
-}
+// Open modals
+const loginModal = document.getElementById('loginModal');
+const signupModal = document.getElementById('signupModal');
 
-// VIP lock
-function checkVIP(pageId){
-  if(!isVIP && ["dashboard","bot","market-review"].includes(pageId)){
-    document.getElementById("vipModal").style.display="flex";
-    return false;
+document.getElementById('loginLink').onclick = () => loginModal.style.display = "flex";
+document.getElementById('signupLink').onclick = () => signupModal.style.display = "flex";
+
+document.getElementById('closeModal').onclick = () => loginModal.style.display = "none";
+document.getElementById('closeSignup').onclick = () => signupModal.style.display = "none";
+
+// REGISTER USER (stored locally)
+function registerUser(){
+  const username = document.getElementById('signupUsername').value;
+  const password = document.getElementById('signupPassword').value;
+
+  if(!username || !password){
+    alert("Fill all fields!");
+    return;
   }
-  return true;
-}
-function payWithMpesa(){
-  alert("VIP access granted!");
-  isVIP=true;
-  document.getElementById("vipModal").style.display="none";
+
+  localStorage.setItem("user_"+username, password);
+  alert("Signup successful! Now login.");
+  signupModal.style.display = "none";
 }
 
-// Dark/light mode
-function toggleTheme(){ light=!light; document.body.classList.toggle('light-mode',light); }
-
-// Login modal
-const modal=document.getElementById('loginModal');
-document.getElementById('loginLink').onclick=()=>modal.style.display="flex";
-document.getElementById('closeModal').onclick=()=>modal.style.display="none";
-document.getElementById('closeVip').onclick=()=>document.getElementById('vipModal').style.display="none";
-window.onclick=(e)=>{if(e.target==modal) modal.style.display="none"; if(e.target==document.getElementById('vipModal')) document.getElementById('vipModal').style.display="none";};
-
-// Login check
+// LOGIN
 function checkLogin(){
-  const pass=document.getElementById('loginPassword').value;
-  if(pass==="GIBSONFX2026"){ loggedIn=true; modal.style.display="none"; alert("Login successful!"); showPage('home'); }
-  else alert("Incorrect password!");
-}
+  const username = prompt("Enter Username:");
+  const password = document.getElementById('loginPassword').value;
 
+  const storedPass = localStorage.getItem("user_"+username);
+
+  if(storedPass && storedPass === password){
+    loggedIn = true;
+    currentUser = username;
+
+    loginModal.style.display = "none";
+
+    // Show username
+    document.getElementById("userDisplay").style.display = "inline";
+    document.getElementById("userDisplay").innerText = "👤 " + username;
+
+    // Hide login/signup
+    document.getElementById("loginLink").style.display = "none";
+    document.getElementById("signupLink").style.display = "none";
+
+    alert("Login successful!");
+    showPage('home');
+  } else {
+    alert("Invalid login!");
+  }
+          }
+    
 // Bot + live charts logic
 const availableMarkets={
   "EURUSD":"FX:EURUSD",
