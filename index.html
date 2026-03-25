@@ -139,7 +139,133 @@ body.light-mode #tradeJournal{background:var(--card-light);}
   </div>
 </section>
 
-<!-- The rest (Market Review, Academy, Team, Gallery, Login Modal, Fullscreen Chart Modal) remains the same as before -->
+<!-- HOME -->
+<section id="home" class="page" style="display:block;">
+  <div class="hero">
+    <div>
+      <h1>GIBSONFX AI Trading Bot</h1>
+      <p>Automated AI-powered trading system 24/7.</p>
+      <p>We offer Trading Academy courses with certificates.</p>
+      <p><strong>MISSION:</strong> Empower traders with AI-driven strategies.</p>
+      <p><strong>VISION:</strong> To be the leading platform for profitable trading education.</p>
+      <a href="https://wa.me/254786810591" class="btn" target="_blank">Join VIP Signals</a>
+    </div>
+    <img src="./assets/hero.jpg" alt="Hero Image">
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+  <h1>User Dashboard</h1>
+  <div class="stats">
+    <div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$0</h2></div>
+    <div class="stat-card"><h3>Today's P/L (%)</h3><h2 id="todayProfit">0%</h2></div>
+    <div class="stat-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
+    <div class="stat-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
+  </div>
+  <h3>Trade Journal (Last 20 trades)</h3>
+  <div id="tradeJournal"></div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+  <h1>Trading Bot Control</h1>
+  <div class="bot-box">
+    <p>Select markets for bot:</p>
+    <select id="botMarkets" multiple>
+      <option value="EURUSD" selected>EUR/USD</option>
+      <option value="GBPUSD" selected>GBP/USD</option>
+      <option value="XAUUSD" selected>XAU/USD</option>
+      <option value="BTCUSD" selected>BTC/USD</option>
+    </select>
+    <p>Live Signal:</p>
+    <h2 id="liveSignal">WAIT</h2>
+    <button class="btn" onclick="startBot()">Start Bot</button>
+    <button class="btn" onclick="stopBot()">Stop Bot</button>
+    <button class="btn" onclick="toggleBacktestMode()">Backtest Mode</button>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+  <h1>Live Market Charts</h1>
+  <div class="market-cards">
+    <div id="chartEURUSD" class="tradingview-widget-container" onclick="openFullChart('FX:EURUSD')"></div>
+    <div id="chartGBPUSD" class="tradingview-widget-container" onclick="openFullChart('FX:GBPUSD')"></div>
+    <div id="chartXAUUSD" class="tradingview-widget-container" onclick="openFullChart('OANDA:XAUUSD')"></div>
+    <div id="chartBTCUSD" class="tradingview-widget-container" onclick="openFullChart('BITSTAMP:BTCUSD')"></div>
+  </div>
+</section>
+
+<!-- MARKET REVIEW -->
+<section id="market-review" class="page">
+  <h1>Market Review & Signals</h1>
+  <div class="market-cards">
+    <div class="market-card"><h3>EUR/USD</h3><div id="chartEURUSDReview" class="tradingview-widget-container"></div><p>Live Signal: <span id="signalEURUSD">WAIT</span></p></div>
+    <div class="market-card"><h3>GBP/USD</h3><div id="chartGBPUSDReview" class="tradingview-widget-container"></div><p>Live Signal: <span id="signalGBPUSD">WAIT</span></p></div>
+    <div class="market-card"><h3>XAU/USD</h3><div id="chartXAUUSDReview" class="tradingview-widget-container"></div><p>Live Signal: <span id="signalXAUUSD">WAIT</span></p></div>
+    <div class="market-card"><h3>BTC/USD</h3><div id="chartBTCUSDReview" class="tradingview-widget-container"></div><p>Live Signal: <span id="signalBTCUSD">WAIT</span></p></div>
+  </div>
+</section>
+
+<!-- ACADEMY -->
+<section id="academy" class="page">
+  <h1 style="text-align:center;">Trading Academy</h1>
+  <p style="text-align:center;">Learn trading with structured courses and get certified!</p>
+  <img src="./assets/certificate-example.png" alt="Certificate Example" class="certificate-img">
+</section>
+
+<!-- TEAM -->
+<section id="team" class="page">
+  <h1 style="text-align:center;">Our Team</h1>
+  <div class="team-container">
+    <div class="team-member">
+      <img src="./assets/director.jpg" alt="Gibson Mugai">
+      <div class="overlay"><h3>Gibson Mugai</h3><p>Founder & Director</p></div>
+    </div>
+    <div class="team-member">
+      <img src="./assets/team2.jpg" alt="Lead Dev">
+      <div class="overlay"><h3>Lead Developer</h3><p>Gibson Mugai</p></div>
+    </div>
+    <div class="team-member">
+      <img src="./assets/team3.jpg" alt="Peter Njuguna">
+      <div class="overlay"><h3>Peter Njuguna</h3><p>Marketing</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="page">
+  <h1>Gallery & Screenshots</h1>
+  <div class="gallery-cards">
+    <img src="./assets/bot.jpg" alt="Bot Interface">
+    <img src="./assets/signals.jpg" alt="VIP Signals">
+    <img src="./assets/trades-example1.png" alt="Trade Example 1">
+    <img src="./assets/trades-example2.png" alt="Trade Example 2">
+    <img src="./assets/profit-summary.png" alt="Profit Summary">
+  </div>
+</section>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeModal">&times;</span>
+    <h2>Login / Sign Up</h2>
+    <input id="email" placeholder="Email"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+    <button class="btn" onclick="signup()">Sign Up</button>
+    <button class="btn" onclick="login()">Login</button>
+    <button class="btn" onclick="upgradeVIP()">Upgrade to VIP</button>
+  </div>
+</div>
+
+<!-- FULLSCREEN CHART MODAL -->
+<div id="fullChartModal" class="modal">
+  <div class="modal-content" style="width:95%;height:95%;">
+    <span class="close-btn" onclick="closeFullChart()">&times;</span>
+    <div id="fullChartContainer" style="width:100%;height:100%;"></div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer><p>© 2026 GIBSONFX Elite PRO AI Trading Platform</p></footer>
