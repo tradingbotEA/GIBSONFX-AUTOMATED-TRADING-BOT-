@@ -158,7 +158,88 @@ body.light-mode #tradeJournal{background:var(--card-light);}
   </div>
 </section>
 
-<!-- ... Keep rest of your sections (Market Review, Academy, Team, Gallery, Login Modal, Footer) ... -->
+<!-- ================= MARKET REVIEW ================= -->
+<section id="market-review" class="page">
+  <h1>Market Review & Signals</h1>
+  <div class="market-cards">
+    <div class="market-card">
+      <h3>EUR/USD</h3>
+      <div id="chartEURUSDReview" class="tradingview-widget-container"></div>
+      <p>Live Signal: <span id="signalEURUSD">WAIT</span></p>
+    </div>
+    <div class="market-card">
+      <h3>GBP/USD</h3>
+      <div id="chartGBPUSDReview" class="tradingview-widget-container"></div>
+      <p>Live Signal: <span id="signalGBPUSD">WAIT</span></p>
+    </div>
+    <div class="market-card">
+      <h3>XAU/USD</h3>
+      <div id="chartXAUUSDReview" class="tradingview-widget-container"></div>
+      <p>Live Signal: <span id="signalXAUUSD">WAIT</span></p>
+    </div>
+    <div class="market-card">
+      <h3>BTC/USD</h3>
+      <div id="chartBTCUSDReview" class="tradingview-widget-container"></div>
+      <p>Live Signal: <span id="signalBTCUSD">WAIT</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRADING ACADEMY ================= -->
+<section id="academy" class="page">
+  <h1 style="text-align:center;">Trading Academy</h1>
+  <p style="text-align:center;">Learn trading with structured courses and get certified!</p>
+  <img src="./assets/certificate-example.png" alt="Certificate Example" class="certificate-img">
+</section>
+
+<!-- ================= TEAM ================= -->
+<section id="team" class="page">
+  <h1 style="text-align:center;">Our Team</h1>
+  <div class="team-container">
+    <div class="team-member">
+      <img src="./assets/director.jpg" alt="Gibson Mugai">
+      <div class="overlay"><h3>Gibson Mugai</h3><p>Founder & Director</p></div>
+    </div>
+    <div class="team-member">
+      <img src="./assets/team2.jpg" alt="Lead Dev">
+      <div class="overlay"><h3>Lead Developer</h3><p>Gibson Mugai</p></div>
+    </div>
+    <div class="team-member">
+      <img src="./assets/team3.jpg" alt="Peter Njuguna">
+      <div class="overlay"><h3>Peter Njuguna</h3><p>Marketing</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section id="gallery" class="page">
+  <h1>Gallery & Screenshots</h1>
+  <div class="gallery-cards">
+    <img src="./assets/bot.jpg" alt="Bot Interface">
+    <img src="./assets/signals.jpg" alt="VIP Signals">
+    <img src="./assets/trades-example1.png" alt="Trade Example 1">
+    <img src="./assets/trades-example2.png" alt="Trade Example 2">
+    <img src="./assets/profit-summary.png" alt="Profit Summary">
+  </div>
+</section>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeModal">&times;</span>
+    <h2>Login / Sign Up</h2>
+    <input id="email" placeholder="Email"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+    <button class="btn" onclick="signup()">Sign Up</button>
+    <button class="btn" onclick="login()">Login</button>
+    <button class="btn" onclick="upgradeVIP()">Upgrade to VIP</button>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <p>© 2026 GIBSONFX Trading Platform</p>
+</footer>
 
 // FIREBASE CONFIG
 const firebaseConfig = {
