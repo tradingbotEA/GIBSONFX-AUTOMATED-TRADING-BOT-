@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO AI Trading Platform</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- TradingView -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b0f1a;color:white;}
+header{display:flex;justify-content:space-between;padding:15px;background:#050814;}
+nav{display:flex;gap:10px;}
+nav a{cursor:pointer;font-weight:bold;}
+.menu-btn{display:none;cursor:pointer;}
+
+.page{display:none;padding:20px;}
+#home{display:block;}
+
+.btn{background:#00eaff;padding:10px;border:none;cursor:pointer;margin:5px;}
+.stat-card{background:#121a2b;padding:10px;margin:5px;border-radius:8px;}
+
+.modal{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;}
+.modal-content{background:#121a2b;padding:20px;border-radius:10px;}
+
+@media(max-width:768px){
+  nav{display:none;flex-direction:column;}
+  nav.show{display:flex;}
+  .menu-btn{display:block;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>GIBSONFX</h2>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
+<nav id="navMenu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showLogin()">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page">
+<h1>Elite AI Trading Bot</h1>
+<p>Smart AI trading with real-time logic</p>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h1>Dashboard</h1>
+<div class="stat-card">Balance: <span id="balance">$0</span></div>
+<div class="stat-card">Trades: <span id="trades">0</span></div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h1>Bot Control</h1>
+<h2 id="signal">WAIT</h2>
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+</section>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<h2>Login</h2>
+<input id="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+<button class="btn" onclick="signup()">Signup</button>
+<button class="btn" onclick="login()">Login</button>
+</div>
+</div>
+
+<script>
+
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey: "AIzaSyBBQekvGDpZWmCy1Cz1R5oxHPJeTlqSoVw",
+  authDomain: "gibsonfx-web.firebaseapp.com",
+  projectId: "gibsonfx-web"
+};
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ===== STATE =====
+let balance = 0;
+let trades = [];
+let bot;
+
+// ===== MENU FIX =====
+function toggleMenu(){
+  document.getElementById("navMenu").classList.toggle("show");
+}
+
+// ===== PAGE NAV =====
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
+}
+
+// ===== LOGIN MODAL =====
+function showLogin(){
+  document.getElementById("loginModal").style.display="flex";
+}
+
+// ===== SIGNUP =====
+function signup(){
+  const email=emailInput(), pass=passInput();
+
+  auth.createUserWithEmailAndPassword(email,pass)
+  .then(res=>{
+    balance=100;
+    db.collection("users").doc(res.user.uid).set({
+      balance:100,
+      trades:[]
+    });
+    alert("Account created");
+  }).catch(e=>alert(e.message));
+}
+
+// ===== LOGIN =====
+function login(){
+  auth.signInWithEmailAndPassword(emailInput(),passInput())
+  .then(()=>alert("Logged in"))
+  .catch(e=>alert(e.message));
+}
+
+// ===== AUTH STATE =====
+auth.onAuthStateChanged(user=>{
+  if(user){
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      if(doc.exists){
+        const data=doc.data();
+        balance=data.balance || 100;
+        trades=data.trades || [];
+        updateUI();
+      }
+    });
+  }
+});
+
+// ===== HELPERS =====
+function emailInput(){ return document.getElementById("email").value; }
+function passInput(){ return document.getElementById("password").value; }
+
+// ===== SAVE =====
+function save(){
+  const user=auth.currentUser;
+  if(!user) return;
+
+  db.collection("users").doc(user.uid).update({
+    balance,
+    trades
+  });
+}
+
+// ===== UI =====
+function updateUI(){
+  document.getElementById("balance").innerText="$"+balance.toFixed(2);
+  document.getElementById("trades").innerText=trades.length;
+}
+
+// ===== ELITE BOT =====
+function getSignal(){
+  let rsi=Math.random()*100;
+  if(rsi<30) return "BUY";
+  if(rsi>70) return "SELL";
+  return "WAIT";
+}
+
+// ===== TRADE =====
+function trade(){
+  let signal=getSignal();
+  if(signal==="WAIT") return;
+
+  let risk=balance*0.02;
+  let win=Math.random()>0.45;
+  let pl=win?risk:-risk;
+
+  balance+=pl;
+
+  trades.push({signal,pl,time:new Date().toLocaleTimeString()});
+  if(trades.length>20) trades.shift();
+
+  document.getElementById("signal").innerText=signal;
+
+  updateUI();
+  save();
+}
+
+// ===== BOT CONTROL =====
+function startBot(){
+  if(!auth.currentUser) return alert("Login first");
+  bot=setInterval(trade,3000);
+}
+
+function stopBot(){
+  clearInterval(bot);
+}
+
+</script>
+
+</body>
+</html>
