@@ -568,39 +568,44 @@ function requestWithdraw(){
 }
 
 // Dark/Light Mode
-function toggleTheme(){document.body.classList.toggle("light-mode");}
-
+function getTheme(){
+  return document.body.classList.contains("light-mode") ? "light" : "dark";
+}
+  
 // TradingView charts
 function initCharts(){
   const symbols=["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
+  const theme = getTheme();
+
   symbols.forEach(sym=>{
     new TradingView.widget({
-      "container_id":"chart"+sym,
-      "autosize":true,
-      "symbol": sym=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+sym,
-      "interval":"60",
-      "timezone":"Etc/UTC",
-      "theme":"dark",
-      "style":"1",
-      "locale":"en",
-      "toolbar_bg":"#000000",
-      "enable_publishing":false,
-      "hide_top_toolbar":true,
-      "withdateranges":true
+      container_id:"chart"+sym,
+      autosize:true,
+      symbol: sym=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+sym,
+      interval:"60",
+      timezone:"Etc/UTC",
+      theme: theme,
+      style:"1",
+      locale:"en",
+      toolbar_bg:"#000000",
+      enable_publishing:false,
+      hide_top_toolbar:true,
+      withdateranges:true
     });
+
     new TradingView.widget({
-      "container_id":"chart"+sym+"Review",
-      "autosize":true,
-      "symbol": sym=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+sym,
-      "interval":"60",
-      "timezone":"Etc/UTC",
-      "theme":"dark",
-      "style":"1",
-      "locale":"en",
-      "toolbar_bg":"#000000",
-      "enable_publishing":false,
-      "hide_top_toolbar":true,
-      "withdateranges":true
+      container_id:"chart"+sym+"Review",
+      autosize:true,
+      symbol: sym=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+sym,
+      interval:"60",
+      timezone:"Etc/UTC",
+      theme: theme,
+      style:"1",
+      locale:"en",
+      toolbar_bg:"#000000",
+      enable_publishing:false,
+      hide_top_toolbar:true,
+      withdateranges:true
     });
   });
 }
