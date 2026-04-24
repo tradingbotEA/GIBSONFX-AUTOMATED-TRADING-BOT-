@@ -568,8 +568,16 @@ function requestWithdraw(){
 }
 
 // Dark/Light Mode
-function getTheme(){
-  return document.body.classList.contains("light-mode") ? "light" : "dark";
+function toggleTheme(){
+  document.body.classList.toggle("light-mode");
+
+  const btn = document.querySelector(".toggle-btn");
+  btn.innerText = document.body.classList.contains("light-mode")
+    ? "Dark Mode"
+    : "Light Mode";
+
+  document.querySelectorAll(".tradingview-widget-container").forEach(el => el.innerHTML = "");
+  initCharts();
 }
   
 // TradingView charts
