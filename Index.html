@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO AI Trading Platform</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- TradingView -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --text:#ffffff;
+  --card:#121a2b;
+  --accent:#00eaff;
+  --header:#050814;
+  --shadow:rgba(0,234,255,0.3);
+}
+
+body.light-mode{
+  --bg:#f5f5f5;
+  --text:#111;
+  --card:#ffffff;
+  --accent:#007bff;
+  --header:#ffffff;
+  --shadow:rgba(0,0,0,0.15);
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:0.4s;
+}
+
+/* HEADER */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:var(--header);
+  flex-wrap:wrap;
+  position:relative;
+  z-index:1000;
+}
+
+header img{height:45px;}
+
+nav{display:flex;gap:10px;align-items:center;}
+nav a{color:inherit;font-weight:bold;cursor:pointer;text-decoration:none;}
+
+.menu-btn{display:none;font-size:22px;cursor:pointer;color:#00eaff;}
+
+.toggle-btn{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#00eaff;
+  color:black;
+  border:none;
+  padding:10px 15px;
+  font-weight:bold;
+  border-radius:5px;
+  cursor:pointer;
+  z-index:1001;
+}
+
+.page{display:none;padding:20px;}
+
+.hero{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;}
+.hero img{max-width:400px;width:100%;border-radius:10px;}
+.hero h1{color:#00eaff;font-size:36px;}
+
+.btn{
+  display:inline-block;
+  background:#00eaff;
+  padding:12px 20px;
+  border-radius:6px;
+  color:black;
+  font-weight:bold;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.stats{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
+
+.stat-card{
+  width:180px;
+  background:var(--card);
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 0 15px var(--shadow);
+  text-align:center;
+}
+
+.market-cards,.gallery-cards{
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  justify-content:center;
+}
+
+.market-card,.admin-box,.bot-box{
+  background:var(--card);
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 0 15px var(--shadow);
+}
+
+.tradingview-widget-container{
+  width:100%;
+  height:300px;
+}
+
+.team-container{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;}
+
+.team-member{
+  width:180px;
+  border-radius:12px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 0 20px #00eaff;
+}
+
+.team-member img{width:100%;}
+.overlay{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  background:rgba(0,0,0,0.7);
+  color:white;
+  padding:10px;
+  opacity:0;
+  transition:0.3s;
+}
+.team-member:hover .overlay{opacity:1;}
+
+.modal{
+  display:none;
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  top:0;
+  left:0;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+
+.modal-content{
+  background:var(--card);
+  padding:20px;
+  border-radius:10px;
+  width:90%;
+  max-width:500px;
+}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:15px;
+  cursor:pointer;
+  font-size:24px;
+}
+
+#tradeJournal{
+  max-height:250px;
+  overflow-y:auto;
+  background:var(--card);
+  padding:10px;
+  border-radius:8px;
+}
+
+@media(max-width:768px){
+  .hero{flex-direction:column;text-align:center;}
+  nav{display:none;flex-direction:column;position:absolute;top:60px;right:20px;background:var(--header);padding:10px;}
+  nav.show{display:flex;}
+  .menu-btn{display:block;}
+}
+</style>
+</head>
+
+<body>
+
+<button class="toggle-btn" onclick="toggleTheme()">Dark/Light</button>
+
+<header>
+<img src="./assets/logo.png">
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
+<nav id="navMenu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('market-review')">Review</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+<a onclick="showPage('deposit')">Deposit</a>
+<a onclick="showPage('withdraw')">Withdraw</a>
+<a onclick="upgradeVIP()">VIP</a>
+<a onclick="document.getElementById('loginModal').style.display='flex'">Login</a>
+</nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page" style="display:block;">
+<div class="hero">
+  <div>
+    <h1>Trade Gold Like Institutions</h1>
+    <p>AI Smart Money Trading System</p>
+    <a class="btn">Join VIP</a>
+  </div>
+  <img src="./assets/hero.jpg">
+</div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<h2>Dashboard</h2>
+<div class="stats">
+  <div class="stat-card"><h3>Balance</h3><h2 id="totalBalance">$0</h2></div>
+  <div class="stat-card"><h3>P/L</h3><h2 id="todayProfit">0%</h2></div>
+  <div class="stat-card"><h3>Trades</h3><h2 id="activeTrades">0</h2></div>
+</div>
+<div id="tradeJournal"></div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<h2>Trading Bot</h2>
+<div class="bot-box">
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+<h3 id="liveSignal">WAIT</h3>
+</div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+<h2>Market</h2>
+<div id="chartEURUSD" class="tradingview-widget-container"></div>
+</section>
+
+<!-- REVIEW -->
+<section id="market-review" class="page">
+<h2>Review</h2>
+<div id="chartEURUSDReview" class="tradingview-widget-container"></div>
+</section>
+
+<!-- ACADEMY -->
+<section id="academy" class="page">
+<h2>Academy</h2>
+<p>Smart Money Course</p>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="page">
+<h2>Team</h2>
+<div class="team-container">
+<div class="team-member">
+<img src="./assets/director.jpg">
+<div class="overlay">Founder</div>
+</div>
+</div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="page">
+<h2>Gallery</h2>
+<img src="./assets/trades-example1.png">
+</section>
+
+<!-- DEPOSIT -->
+<section id="deposit" class="page">
+<h2>Deposit</h2>
+<input id="depositAmount">
+<button class="btn" onclick="createDeposit()">Deposit</button>
+</section>
+
+<!-- WITHDRAW -->
+<section id="withdraw" class="page">
+<h2>Withdraw</h2>
+<input id="withdrawAmount">
+<button class="btn" onclick="requestWithdraw()">Withdraw</button>
+</section>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">×</span>
+<input id="email">
+<input id="password" type="password">
+<button class="btn" onclick="signup()">Signup</button>
+<button class="btn" onclick="login()">Login</button>
+</div>
+</div>
+
+<script>
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
+}
+function toggleTheme(){document.body.classList.toggle("light-mode");}
+
+/* FIX MISSING FUNCTION */
+function getTheme(){
+return document.body.classList.contains("light-mode") ? "light" : "dark";
+}
+
+/* SIMPLE BOT */
+let bot;
+function startBot(){
+bot=setInterval(()=>document.getElementById("liveSignal").innerText=Math.random()>0.5?"BUY":"SELL",2000);
+}
+function stopBot(){clearInterval(bot);}
+
+function upgradeVIP(){alert("VIP Activated");}
+
+function createDeposit(){alert("Deposit requested");}
+function requestWithdraw(){alert("Withdrawal requested");}
+
+/* CHART FIX SAFE */
+function initCharts(){
+if(typeof TradingView==="undefined")return;
+new TradingView.widget({
+container_id:"chartEURUSD",
+symbol:"OANDA:EURUSD",
+interval:"60",
+theme:getTheme()
+});
+new TradingView.widget({
+container_id:"chartEURUSDReview",
+symbol:"OANDA:EURUSD",
+interval:"60",
+theme:getTheme()
+});
+}
+
+initCharts();
+</script>
+
+</body>
+</html>
