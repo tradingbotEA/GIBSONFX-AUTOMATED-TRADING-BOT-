@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO AI Trading Platform</title><!-- Firebase --><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script><!-- TradingView --><script src="https://s3.tradingview.com/tv.js"></script><style>
+:root{
+  --bg:#0b0f1a;
+  --text:#fff;
+  --card:#121a2b;
+  --accent:#00eaff;
+  --shadow:rgba(0,234,255,0.3);
+}
+
+body.light-mode{
+  --bg:#f5f5f5;
+  --text:#111;
+  --card:#fff;
+  --shadow:rgba(0,0,0,0.15);
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:0.3s;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  background:#050814;
+  position:relative;
+  z-index:1000;
+}
+
+nav a{
+  margin:0 8px;
+  cursor:pointer;
+  text-decoration:none;
+  color:inherit;
+  font-weight:bold;
+}
+
+.menu-btn{display:none;cursor:pointer;color:var(--accent);}
+
+.page{display:none;padding:20px;}
+#home{display:block;}
+
+.stats,.market-cards,.team-container,.gallery-cards{
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  justify-content:center;
+}
+
+.stat-card,.market-card,.bot-box,.admin-box,.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 0 10px var(--shadow);
+}
+
+.btn{
+  background:var(--accent);
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.tradingview-widget-container{
+  width:100%;
+  height:300px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:var(--card);
+  padding:20px;
+  border-radius:10px;
+  width:90%;max-width:500px;
+}
+
+.team-member{
+  width:180px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+}
+
+.team-member img{width:100%;}
+
+.overlay{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  background:rgba(0,0,0,0.7);
+  color:white;
+  text-align:center;
+  opacity:0;
+  transition:0.3s;
+}
+
+.team-member:hover .overlay{opacity:1;}
+
+@media(max-width:768px){nav{display:none;position:absolute;top:60px;right:10px;background:#050814;padding:10px;flex-direction:column;}nav.show{display:flex;}.menu-btn{display:block;}}
+</style></head>
+<body><header>
+<h2>GIBSONFX</h2>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
+<nav id="navMenu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('market-review')">Market Review</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('team')">Team</a>
+<a onclick="showPage('gallery')">Gallery</a>
+<a onclick="showPage('deposit')">Deposit</a>
+<a onclick="showPage('withdraw')">Withdraw</a>
+<a onclick="openLogin()">Login</a>
+</nav>
+<button class="btn" onclick="toggleTheme()">Theme</button>
+</header><!-- HOME --><section id="home" class="page">
+<h1>Trade Like Institutions 🚀</h1>
+<p>Smart Money | VIP Signals | AI Bot</p>
+</section><!-- DASHBOARD --><section id="dashboard" class="page">
+<h1>Dashboard</h1>
+<div class="stats">
+<div class="stat-card"><h3>Balance</h3><h2 id="totalBalance">$100</h2></div>
+<div class="stat-card"><h3>Bot</h3><h2 id="botStatus">Stopped</h2></div>
+</div>
+<div id="tradeJournal"></div>
+</section><!-- BOT --><section id="bot" class="page">
+<h1>Trading Bot</h1>
+<div class="bot-box">
+<select id="botMarkets" multiple>
+<option>EURUSD</option>
+<option>GBPUSD</option>
+<option>XAUUSD</option>
+<option>BTCUSD</option>
+</select>
+<h2 id="liveSignal">WAIT</h2>
+<button class="btn" onclick="startBot()">Start</button>
+<button class="btn" onclick="stopBot()">Stop</button>
+</div>
+</section><!-- MARKET --><section id="market" class="page">
+<h1>Market Charts</h1>
+<div class="market-cards">
+<div id="chartEURUSD" class="tradingview-widget-container"></div>
+<div id="chartGBPUSD" class="tradingview-widget-container"></div>
+<div id="chartXAUUSD" class="tradingview-widget-container"></div>
+<div id="chartBTCUSD" class="tradingview-widget-container"></div>
+</div>
+</section><!-- MARKET REVIEW --><section id="market-review" class="page">
+<h1>Market Review</h1>
+<div id="liveSignalsFeed"></div>
+</section><!-- ACADEMY --><section id="academy" class="page"><h1>Academy</h1></section><!-- TEAM --><section id="team" class="page">
+<h1>Team</h1>
+<div class="team-container">
+<div class="team-member"><img src="./assets/director.jpg"><div class="overlay">Founder</div></div>
+<div class="team-member"><img src="./assets/team2.jpg"><div class="overlay">Dev</div></div>
+</div>
+</section><!-- GALLERY --><section id="gallery" class="page">
+<h1>Gallery</h1>
+<div class="gallery-cards"></div>
+</section><!-- DEPOSIT --><section id="deposit" class="page">
+<h1>Deposit</h1>
+<input id="depositAmount">
+<button class="btn" onclick="createDeposit()">Deposit</button>
+<div id="depositStatus"></div>
+</section><!-- WITHDRAW --><section id="withdraw" class="page">
+<h1>Withdraw</h1>
+<input id="withdrawAmount">
+<button class="btn" onclick="requestWithdraw()">Withdraw</button>
+<div id="withdrawStatus"></div>
+</section><!-- LOGIN --><div id="loginModal" class="modal">
+<div class="modal-content">
+<h3>Login</h3>
+<input id="email" placeholder="Email">
+<input id="password" type="password">
+<button class="btn" onclick="login()">Login</button>
+<button class="btn" onclick="signup()">Signup</button>
+</div>
+</div><script>
+let botInterval=null;
+let balance=100;
+let tradeJournal=[];
+
+function showPage(id){
+document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+document.getElementById(id).style.display='block';
+}
+
+function toggleMenu(){document.getElementById('navMenu').classList.toggle('show');}
+
+function toggleTheme(){document.body.classList.toggle('light-mode');initCharts();}
+
+function openLogin(){document.getElementById('loginModal').style.display='flex';}
+
+function login(){alert('login');}
+function signup(){alert('signup');}
+
+function updateUI(){
+document.getElementById('totalBalance').innerText='$'+balance;
+document.getElementById('tradeJournal').innerHTML=tradeJournal.slice(-10).map(t=>`<p>${t}</p>`).join('');
+}
+
+function startBot(){
+if(botInterval) return;
+botInterval=setInterval(()=>{
+let signal=Math.random()>0.5?'BUY':'SELL';
+balance+=Math.random()*10;
+tradeJournal.push('Trade '+signal);
+document.getElementById('liveSignal').innerText=signal;
+updateUI();
+},3000);
+}
+
+function stopBot(){clearInterval(botInterval);botInterval=null;}
+
+function createDeposit(){balance+=100;updateUI();document.getElementById('depositStatus').innerText='Done';}
+function requestWithdraw(){balance-=50;updateUI();document.getElementById('withdrawStatus').innerText='Done';}
+
+function initCharts(){
+['EURUSD','GBPUSD','XAUUSD','BTCUSD'].forEach(s=>{
+let el=document.getElementById('chart'+s);
+if(el){el.innerHTML='';new TradingView.widget({container_id:'chart'+s,symbol:'OANDA:'+s,interval:'60',autosize:true});}
+});
+}
+
+setInterval(()=>{
+document.getElementById('liveSignalsFeed').innerHTML='BUY XAUUSD | SELL EURUSD';
+},5000);
+
+window.onload=()=>{initCharts();updateUI();};
+</script></body>
+</html>
