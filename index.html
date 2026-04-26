@@ -15,15 +15,22 @@
 
 <style>
 /* ================= THEME SYSTEM ================= */
---bg-dark:#0b0f1a;
---text-dark:#ffffff;
---card-dark:#121a2b;
---shadow-dark:rgba(0,234,255,0.3);
+:root
+  body.dark-mode{
+  --bg:#0b0f1a;
+  --text:#ffffff;
+  --card:#121a2b;
+  --accent:#00eaff;
+  --shadow:rgba(0,234,255,0.3);
+}
 
---bg-light:#f5f5f5;
---text-light:#111;
---card-light:#ffffff;
---shadow-light:rgba(0,0,0,0.15);
+body.light-mode{
+  --bg:#f5f5f5;
+  --text:#111;
+  --card:#ffffff;
+  --accent:#007bff;
+  --shadow:rgba(0,0,0,0.15);
+}
 
 body.gold-mode{
   --bg:#0a0a0a;
@@ -31,6 +38,7 @@ body.gold-mode{
   --card:#111;
   --accent:#FFD700;
   --shadow:rgba(255,215,0,0.3);
+}
 
 /* Header */
 header{
