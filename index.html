@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<style>
+
+/* ================= THEME SYSTEM ================= */
+:root{
+  --bg:#0b0f1a;
+  --text:#ffffff;
+  --card:#121a2b;
+  --accent:#00eaff;
+  --shadow:rgba(0,234,255,0.3);
+}
+
+body.light-mode{
+  --bg:#f5f5f5;
+  --text:#111;
+  --card:#ffffff;
+  --accent:#007bff;
+  --shadow:rgba(0,0,0,0.15);
+}
+
+body.gold-mode{
+  --bg:#0a0a0a;
+  --text:#FFD700;
+  --card:#111;
+  --accent:#FFD700;
+  --shadow:rgba(255,215,0,0.3);
+}
+
+/* ================= GLOBAL ================= */
+*{transition:0.3s;}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* HEADER */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  background:var(--card);
+}
+
+/* NAV */
+nav a{
+  margin:0 8px;
+  cursor:pointer;
+}
+
+/* BUTTON */
+.btn{
+  background:var(--accent);
+  color:black;
+  padding:10px 15px;
+  border-radius:6px;
+  display:inline-block;
+  cursor:pointer;
+}
+
+/* CARD */
+.card{
+  background:var(--card);
+  padding:15px;
+  margin:10px;
+  border-radius:10px;
+  box-shadow:0 0 10px var(--shadow);
+}
+
+/* PAGE */
+.page{display:none;padding:20px;}
+.active{display:block;}
+
+/* TOGGLE */
+.toggle-btn{
+  position:fixed;
+  top:15px;
+  right:15px;
+  background:var(--accent);
+  border:none;
+  padding:10px;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<button class="toggle-btn" onclick="switchTheme()">Theme</button>
+
+<header>
+<div>GIBSONFX</div>
+
+<nav>
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('bot')">Bot</a>
+<a onclick="showPage('market')">Market</a>
+<a onclick="showPage('academy')">Academy</a>
+<a onclick="showPage('vip')">VIP</a>
+<a id="loginLink">Login</a>
+<a id="logoutLink" style="display:none;">Logout</a>
+</nav>
+
+</header>
+
+<!-- HOME -->
+<section id="home" class="page active">
+<div class="card">
+<h1>GIBSONFX Trading Platform 🚀</h1>
+<p>Smart Money System</p>
+</div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<div class="card">
+<h2>Balance: <span id="balance">$0</span></h2>
+</div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+<div class="card">
+<h2>Trading Bot</h2>
+<p id="signal">WAIT</p>
+</div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+<div class="card">
+<h2>Market Charts</h2>
+<div id="chartEURUSD"></div>
+</div>
+</section>
+
+<!-- ACADEMY -->
+<section id="academy" class="page">
+<div class="card">
+<h2>Trading Academy</h2>
+<p>Learn Smart Money Concepts</p>
+</div>
+</section>
+
+<!-- VIP -->
+<section id="vip" class="page">
+<div class="card">
+<h2>VIP Signals</h2>
+</div>
+</section>
+
+<!-- LOGIN MODAL -->
+<div id="modal" style="display:none;position:fixed;top:30%;left:30%;background:white;padding:20px;">
+<input id="email" placeholder="Email"><br>
+<input id="password" type="password" placeholder="Password"><br>
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
+</div>
+
+<script>
+
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "gibsonfx-web.firebaseapp.com",
+  projectId: "gibsonfx-web"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ================= THEME ================= */
+let themes=["dark","light","gold"];
+let current=0;
+
+function switchTheme(){
+  document.body.classList.remove("light-mode","gold-mode");
+
+  current++;
+  if(current>2) current=0;
+
+  if(themes[current]=="light") document.body.classList.add("light-mode");
+  if(themes[current]=="gold") document.body.classList.add("gold-mode");
+
+  localStorage.setItem("theme",themes[current]);
+
+  initCharts();
+}
+
+window.onload=()=>{
+  let t=localStorage.getItem("theme");
+  if(t=="light"){document.body.classList.add("light-mode");current=1;}
+  if(t=="gold"){document.body.classList.add("gold-mode");current=2;}
+}
+
+/* ================= NAV ================= */
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ================= LOGIN ================= */
+document.getElementById("loginLink").onclick=()=>{
+  document.getElementById("modal").style.display="block";
+};
+
+document.getElementById("logoutLink").onclick=()=>{
+  auth.signOut();
+};
+
+function signup(){
+  auth.createUserWithEmailAndPassword(email.value,password.value);
+}
+
+function login(){
+  auth.signInWithEmailAndPassword(email.value,password.value);
+}
+
+/* ================= AUTH STATE ================= */
+auth.onAuthStateChanged(user=>{
+  if(user){
+
+    document.getElementById("loginLink").style.display="none";
+    document.getElementById("logoutLink").style.display="inline";
+
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      if(doc.exists){
+        balance.innerText="$"+(doc.data().balance||0);
+      }
+    });
+
+  }else{
+    document.getElementById("loginLink").style.display="inline";
+    document.getElementById("logoutLink").style.display="none";
+  }
+});
+
+/* ================= GET THEME FIX ================= */
+function getTheme(){
+  if(document.body.classList.contains("light-mode")) return "light";
+  if(document.body.classList.contains("gold-mode")) return "gold";
+  return "dark";
+}
+
+/* ================= CHARTS ================= */
+function initCharts(){
+
+  new TradingView.widget({
+    container_id:"chartEURUSD",
+    autosize:true,
+    symbol:"OANDA:EURUSD",
+    interval:"60",
+    theme:getTheme(),
+    style:"1",
+    locale:"en"
+  });
+
+}
+
+initCharts();
+
+</script>
+</body>
+</html>
