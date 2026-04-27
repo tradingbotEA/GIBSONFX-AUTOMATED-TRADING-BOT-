@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO</title><!-- Firebase --><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script><!-- TradingView --><script src="https://s3.tradingview.com/tv.js"></script><style>
+:root{
+  --bg:#0b0f1a;
+  --text:#fff;
+  --card:#121a2b;
+  --accent:#00eaff;
+}
+
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);}
+
+/* HEADER */
+header{display:flex;justify-content:space-between;padding:10px 20px;background:#050814;}
+.hamburger{cursor:pointer;display:flex;flex-direction:column;gap:5px;}
+.hamburger span{height:3px;width:25px;background:#00eaff;}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;right:-260px;top:0;width:250px;height:100%;
+  background:#050814;padding:20px;transition:0.4s;z-index:1000;
+}
+.sidebar.show{right:0;}
+.sidebar a{display:block;padding:10px;color:white;text-decoration:none;}
+.sidebar a:hover{background:#00eaff;color:black;}
+
+/* TOPBAR */
+.topbar{display:flex;justify-content:space-between;padding:10px 20px;background:#050814;}
+.top-btn{background:#00eaff;border:none;padding:5px 10px;margin-left:5px;}
+
+/* PAGES */
+.page{display:none;padding:20px;}
+#home{display:block;}
+
+.card{background:var(--card);padding:15px;margin:10px 0;border-radius:10px;}
+
+/* NOTIFICATIONS */
+.notif-panel{
+  position:fixed;top:60px;right:10px;width:220px;
+  background:#121a2b;display:none;padding:10px;border-radius:8px;
+}
+</style></head><body><header>
+  <h3>GIBSONFX</h3>
+  <div class="hamburger" id="menuBtn">
+    <span></span><span></span><span></span>
+  </div>
+</header><nav id="navMenu" class="sidebar">
+  <p id="userStatus">Guest</p>
+  <a onclick="showPage('home')">Home</a>
+  <a onclick="showPage('dashboard')">Dashboard</a>
+  <a onclick="showPage('bot')">Bot</a>
+  <a onclick="showPage('market')">Market</a>
+  <a onclick="showPage('market-review')">Market Review</a>
+  <a onclick="showPage('academy')">Academy</a>
+  <a onclick="showPage('team')">Team</a>
+  <a onclick="showPage('gallery')">Gallery</a>
+  <a onclick="showPage('vipSignals')">VIP Signals</a>
+  <a onclick="showPage('deposit')">Deposit</a>
+  <a onclick="showPage('withdraw')">Withdraw</a>
+  <a onclick="showPage('profile')">Profile</a>
+  <a onclick="logout()">Logout</a>
+</nav><div class="topbar">
+  <span id="topBalance">$0</span>
+  <div>
+    <button class="top-btn" onclick="showPage('deposit')">Deposit</button>
+    <button class="top-btn" onclick="showPage('withdraw')">Withdraw</button>
+    <button onclick="toggleNotifications()">🔔</button>
+  </div>
+</div><div id="notifPanel" class="notif-panel"></div><!-- HOME --><section id="home" class="page"><h1>Welcome to GIBSONFX</h1></section><!-- DASHBOARD --><section id="dashboard" class="page">
+  <div class="card"><h3>Balance</h3><h2 id="totalBalance">$0</h2></div>
+  <div id="tradeJournal"></div>
+</section><!-- BOT --><section id="bot" class="page">
+  <h2>Trading Bot</h2>
+  <button onclick="startBot()">Start</button>
+  <button onclick="stopBot()">Stop</button>
+  <h3 id="liveSignal">WAIT</h3>
+</section><!-- MARKET --><section id="market" class="page">
+  <div id="chartEURUSD"></div>
+  <div id="chartGBPUSD"></div>
+  <div id="chartXAUUSD"></div>
+  <div id="chartBTCUSD"></div>
+</section><!-- MARKET REVIEW --><section id="market-review" class="page">
+  <p>EURUSD: <span id="signalEURUSD">WAIT</span></p>
+  <p>GBPUSD: <span id="signalGBPUSD">WAIT</span></p>
+  <p>XAUUSD: <span id="signalXAUUSD">WAIT</span></p>
+  <p>BTCUSD: <span id="signalBTCUSD">WAIT</span></p>
+</section><!-- ACADEMY --><section id="academy" class="page">
+  <a href="GIBSONFX-ACADEMY.pdf" target="_blank">Download Book</a>
+</section><!-- TEAM --><section id="team" class="page">
+  <p>Gibson Mugai - Founder</p>
+</section><!-- GALLERY --><section id="gallery" class="page">
+  <img src="./assets/trades-example1.png" width="100%">
+</section><!-- VIP --><section id="vipSignals" class="page">
+  <div id="liveSignalsFeed"></div>
+</section><!-- DEPOSIT --><section id="deposit" class="page">
+  <input id="depositAmount" placeholder="Amount">
+  <button onclick="createDeposit()">Submit</button>
+</section><!-- WITHDRAW --><section id="withdraw" class="page">
+  <input id="withdrawAmount" placeholder="Amount">
+  <button onclick="requestWithdraw()">Submit</button>
+</section><!-- PROFILE --><section id="profile" class="page">
+  <p id="profileEmail"></p>
+</section><script>
+// Firebase
+firebase.initializeApp({apiKey:"YOUR_KEY",authDomain:"gibsonfx-web.firebaseapp.com"});
+const auth=firebase.auth();
+
+// STATE
+let balance=0, botInterval, notifications=[];
+
+// MENU
+menuBtn.onclick=()=>navMenu.classList.toggle("show");
+
+// NAV
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
+  navMenu.classList.remove("show");
+}
+
+// BOT
+function startBot(){
+  if(botInterval) return;
+  botInterval=setInterval(()=>{
+    let s=Math.random()>0.5?"BUY":"SELL";
+    liveSignal.innerText=s;
+    pushNotification("Signal: "+s);
+  },3000);
+}
+function stopBot(){clearInterval(botInterval);}
+
+// BALANCE
+function updateUI(){
+  totalBalance.innerText="$"+balance;
+  topBalance.innerText="$"+balance;
+}
+
+// DEPOSIT/WITHDRAW
+function createDeposit(){let a=parseFloat(depositAmount.value); if(!a) return; balance+=a; updateUI();}
+function requestWithdraw(){let a=parseFloat(withdrawAmount.value); if(a>balance)return; balance-=a; updateUI();}
+
+// NOTIF
+function pushNotification(msg){notifications.unshift(msg);}
+function toggleNotifications(){
+  notifPanel.style.display=notifPanel.style.display==="block"?"none":"block";
+  notifPanel.innerHTML="";
+  notifications.forEach(n=>notifPanel.innerHTML+="<p>"+n+"</p>");
+}
+
+// AUTH
+auth.onAuthStateChanged(u=>{
+  if(u){userStatus.innerText=u.email; profileEmail.innerText=u.email;}
+});
+function logout(){auth.signOut();}
+
+// CHARTS
+function initCharts(){
+  ["EURUSD","GBPUSD","XAUUSD","BTCUSD"].forEach(sym=>{
+    new TradingView.widget({
+      container_id:"chart"+sym,
+      autosize:true,
+      symbol:"OANDA:"+sym,
+      interval:"15",
+      theme:"dark"
+    });
+  });
+}
+
+// INIT
+window.onload=()=>{updateUI();initCharts();}
+</script></body>
+  </html>
