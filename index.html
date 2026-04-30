@@ -15,16 +15,45 @@
 
 <style>
 :root{
-  --bg-dark:#0b0f1a; --text-dark:white; --card-dark:#121a2b; --shadow-dark:rgba(0,234,255,0.3);
-  --bg-light:#f5f5f5; --text-light:#111; --card-light:#fff; --shadow-light:rgba(0,0,0,0.15);
+  --bg-dark:#0b0f1a;
+  --bg-gradient: linear-gradient(135deg,#0b0f1a,#121a2b,#1a2238);
+
+  --gold:#FFD700;
+  --gold-soft:#f7c948;
+  --gold-glow:rgba(255,215,0,0.35);
+
+  --text-dark:white;
+  --card-dark:#121a2b;
+  --glass:rgba(255,255,255,0.05);
+
+  --bg-light:#f5f5f5;
+  --text-light:#111;
+  --card-light:#fff;
+}body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:var(--bg-gradient);
+  color:var(--text-dark);
+  transition:0.4s;
 }
-body{margin:0;font-family:Arial,sans-serif;background:var(--bg-dark);color:var(--text-dark);transition:0.4s;}
 body.light-mode{background:var(--bg-light);color:var(--text-light);}
 header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#050814;flex-wrap:wrap;transition:0.4s;position:relative;z-index:1002;}
 body.light-mode header{background:#e3e3e3;}
 header img{height:45px;}
-nav{display:flex;align-items:center;gap:10px;}
-nav a{margin:0 5px;text-decoration:none;color:inherit;font-weight:bold;cursor:pointer;}
+nav a{
+  margin:0 5px;
+  text-decoration:none;
+  color:inherit;
+  font-weight:600;
+  padding:8px 12px;
+  border-radius:6px;
+  transition:0.3s;
+}
+
+nav a:hover{
+  background:rgba(255,215,0,0.1);
+  color:var(--gold);
+}
 .menu-btn{display:none;font-size:22px;cursor:pointer;color:#00eaff;}
 .toggle-btn{position:fixed;top:20px;right:20px;background:#00eaff;color:black;border:none;padding:10px 15px;font-weight:bold;border-radius:5px;cursor:pointer;z-index:1001;}
 .page{display:none;padding:20px;}
@@ -347,6 +376,9 @@ function toggleMenu(){document.getElementById('navMenu').classList.toggle('show'
 function showPage(pageId){
   document.querySelectorAll('.page').forEach(p=>p.style.display='none');
   document.getElementById(pageId).style.display='block';
+
+  // CLOSE MENU AFTER CLICK
+  document.getElementById('navMenu').classList.remove('show');
 }
 
 // Login modal
@@ -357,21 +389,35 @@ document.getElementById("closeModal").onclick=()=>{document.getElementById("logi
 function signup(){
   const email=document.getElementById("email").value;
   const password=document.getElementById("password").value;
+
   auth.createUserWithEmailAndPassword(email,password)
-  .then(user=>{balance=100;db.collection("users").doc(user.user.uid).set({balance,vip:false,trades:[],deposits:[],withdrawals:[]});alert("Account Created ✅");})
+  .then(user=>{
+    balance=100;
+    db.collection("users").doc(user.user.uid).set({
+      balance,vip:false,trades:[],deposits:[],withdrawals:[]
+    });
+
+    alert("Account Created ✅");
+
+    // CLOSE MODAL
+    document.getElementById("loginModal").style.display="none";
+  })
   .catch(err=>alert(err.message));
 }
+
 function login(){
   const email=document.getElementById("email").value;
   const password=document.getElementById("password").value;
+
   auth.signInWithEmailAndPassword(email,password)
-  .then(()=>{alert("Login Successful ✅");})
+  .then(()=>{
+    alert("Login Successful ✅");
+
+    // CLOSE MODAL
+    document.getElementById("loginModal").style.display="none";
+  })
   .catch(err=>alert(err.message));
 }
-auth.onAuthStateChanged(user=>{
-  if(user){loggedIn=true;db.collection("users").doc(user.uid).get().then(doc=>{
-    if(doc.exists){const data=doc.data();balance=data.balance||100;isVIP=data.vip||false;tradeJournal=data.trades||[];updateUI();}});}
-});
 
 // Save user
 function saveUser(){const user=auth.currentUser; if(user){db.collection("users").doc(user.uid).update({
