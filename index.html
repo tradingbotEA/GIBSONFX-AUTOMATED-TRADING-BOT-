@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO SaaS Platform</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- TradingView -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<style>
+/* ================= SAAS DESIGN SYSTEM ================= */
+:root{
+  --bg:#0b0f1a;
+  --panel:#121a2b;
+  --panel2:#0f172a;
+  --text:#ffffff;
+  --muted:#9ca3af;
+  --gold:#FFD700;
+  --blue:#00eaff;
+  --border:rgba(255,255,255,0.08);
+  --shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* LIGHT MODE FIX (NAV ALWAYS VISIBLE) */
+body.light-mode{
+  --bg:#f5f7fb;
+  --panel:#ffffff;
+  --panel2:#f1f5f9;
+  --text:#111;
+  --muted:#555;
+  --border:rgba(0,0,0,0.1);
+  --shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial;
+  background:var(--bg);
+  color:var(--text);
+  transition:0.3s;
+}
+
+/* ================= TOP NAV (SAAS STYLE) ================= */
+header{
+  position:sticky;
+  top:0;
+  z-index:9999;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 18px;
+  background:var(--panel2);
+  border-bottom:1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+header img{height:40px}
+
+nav{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+nav a{
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+  font-size:13px;
+  padding:8px 10px;
+  border-radius:8px;
+  transition:0.2s;
+  cursor:pointer;
+}
+
+nav a:hover{
+  background:rgba(0,234,255,0.1);
+  color:var(--blue);
+}
+
+/* MOBILE MENU */
+.menu-btn{display:none;color:var(--blue);font-size:22px;cursor:pointer;}
+
+@media(max-width:900px){
+  nav{display:none;position:absolute;right:10px;top:60px;background:var(--panel);padding:10px;border-radius:12px;flex-direction:column;}
+  nav.show{display:flex;}
+  .menu-btn{display:block;}
+}
+
+/* ================= UI COMPONENTS ================= */
+.page{display:none;padding:20px}
+.page.active{display:block}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:15px;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+}
+
+.btn{
+  background:linear-gradient(45deg,var(--gold),#f7c948);
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.2s;
+}
+.btn:hover{transform:scale(1.05)}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+}
+
+/* ================= HERO ================= */
+.hero{
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:20px;
+}
+
+.hero h1{font-size:34px;color:var(--blue)}
+
+/* ================= MODAL ================= */
+.modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:var(--panel);
+  padding:20px;
+  border-radius:14px;
+  width:90%;
+  max-width:500px;
+}
+
+/* ================= CHART ================= */
+.chart{
+  height:300px;
+  width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header>
+  <img src="./assets/logo.png">
+
+  <span class="menu-btn" onclick="toggleMenu()">☰</span>
+
+  <nav id="nav">
+    <a onclick="show('home')">Home</a>
+    <a onclick="show('dashboard')">Dashboard</a>
+    <a onclick="show('bot')">Bot</a>
+    <a onclick="show('market')">Market</a>
+    <a onclick="show('academy')">Academy</a>
+    <a onclick="show('team')">Team</a>
+    <a onclick="show('gallery')">Gallery</a>
+    <a onclick="show('deposit')">Deposit</a>
+    <a onclick="show('withdraw')">Withdraw</a>
+  </nav>
+</header>
+
+<button class="btn" style="position:fixed;top:80px;right:15px;" onclick="toggleTheme()">Theme</button>
+
+<!-- ================= HOME ================= -->
+<section id="home" class="page active">
+  <div class="hero">
+    <div>
+      <h1>GIBSONFX SaaS Trading Platform</h1>
+      <p>AI Trading Bot + VIP Signals + SaaS Dashboard</p>
+      <button class="btn">Join VIP</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DASHBOARD ================= -->
+<section id="dashboard" class="page">
+  <div class="grid">
+    <div class="card"><h3>Balance</h3><h2 id="bal">$0</h2></div>
+    <div class="card"><h3>Trades</h3><h2 id="tr">0</h2></div>
+    <div class="card"><h3>Status</h3><h2 id="st">OFF</h2></div>
+  </div>
+</section>
+
+<!-- ================= BOT ================= -->
+<section id="bot" class="page">
+  <div class="card">
+    <h2>AI BOT</h2>
+    <button class="btn" onclick="startBot()">Start</button>
+    <button class="btn" onclick="stopBot()">Stop</button>
+    <h3 id="sig">WAIT</h3>
+  </div>
+</section>
+
+<!-- ================= MARKET ================= -->
+<section id="market" class="page">
+  <div class="card">
+    <div id="tv" class="chart"></div>
+  </div>
+</section>
+
+<!-- ================= JS ENGINE ================= -->
+<script>
+
+let balance=0,trades=0,bot;
+
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleMenu(){
+  document.getElementById('nav').classList.toggle('show');
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('light-mode');
+}
+
+function startBot(){
+  bot=setInterval(()=>{
+    let s=Math.random()>0.5?"BUY":"SELL";
+    document.getElementById("sig").innerText=s;
+    trades++;
+    balance+=Math.random()*10;
+    document.getElementById("bal").innerText="$"+balance.toFixed(2);
+    document.getElementById("tr").innerText=trades;
+  },3000);
+}
+
+function stopBot(){
+  clearInterval(bot);
+}
+
+new TradingView.widget({
+  container_id:"tv",
+  symbol:"OANDA:EURUSD",
+  interval:"60",
+  theme:"dark",
+  style:"1",
+  autosize:true
+});
+
+<script>
+
+/* ======================= ADVANCED STATE ENGINE ======================= */
+
+let isVIP=false;
+let user=null;
+let journal=[];
+let botRunning=false;
+let botEngine;
+
+/* ======================= AUTH ENHANCEMENT ======================= */
+
+firebase.auth().onAuthStateChanged(u=>{
+  user=u;
+  if(u){
+    firebase.firestore().collection("users").doc(u.uid)
+    .get().then(doc=>{
+      if(doc.exists){
+        const d=doc.data();
+        balance=d.balance||0;
+        journal=d.trades||[];
+        isVIP=d.vip||false;
+        refreshUI();
+      }
+    });
+  }
+});
+
+/* ======================= UI ENGINE ======================= */
+
+function refreshUI(){
+  document.getElementById("bal").innerText="$"+balance.toFixed(2);
+  document.getElementById("tr").innerText=journal.length;
+}
+
+/* ======================= NAV FIX (ALL PAGES SAFE SWITCH) ======================= */
+
+function show(page){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(page).style.display="block";
+  document.getElementById("nav").classList.remove("show");
+}
+
+/* ======================= BOT ENGINE (PRODUCTION STYLE SIMULATION) ======================= */
+
+function startBot(){
+  if(botRunning) return;
+  botRunning=true;
+
+  botEngine=setInterval(()=>{
+    const markets=["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
+    const m=markets[Math.floor(Math.random()*markets.length)];
+
+    const signal=Math.random()>0.5?"BUY":"SELL";
+    const profit=(Math.random()*20-5);
+
+    balance+=profit;
+
+    journal.push({
+      time:new Date().toLocaleTimeString(),
+      market:m,
+      signal:signal,
+      profit:profit.toFixed(2)
+    });
+
+    document.getElementById("sig").innerText=signal;
+    refreshUI();
+  },2500);
+}
+
+function stopBot(){
+  clearInterval(botEngine);
+  botRunning=false;
+}
+
+/* ======================= DEPOSIT ENGINE ======================= */
+
+function deposit(){
+  let amt=parseFloat(document.getElementById("depAmt").value);
+  if(!amt || amt<=0) return alert("Invalid amount");
+
+  balance+=amt;
+  refreshUI();
+  saveUser();
+  alert("Deposit successful");
+}
+
+/* ======================= WITHDRAW ENGINE ======================= */
+
+function withdraw(){
+  let amt=parseFloat(document.getElementById("withAmt").value);
+  if(!amt || amt<=0) return alert("Invalid amount");
+  if(amt>balance) return alert("Insufficient balance");
+
+  balance-=amt;
+  refreshUI();
+  saveUser();
+  alert("Withdrawal requested");
+}
+
+/* ======================= SAVE USER ======================= */
+
+function saveUser(){
+  if(!user) return;
+
+  firebase.firestore().collection("users").doc(user.uid).set({
+    balance,
+    trades:journal,
+    vip:isVIP
+  });
+}
+
+/* ======================= VIP UPGRADE ======================= */
+
+function upgradeVIP(){
+  if(!user) return alert("Login required");
+
+  isVIP=true;
+  saveUser();
+  alert("VIP Activated");
+}
+
+/* ======================= TRADE JOURNAL UI ======================= */
+
+function renderJournal(){
+  let box=document.getElementById("journal");
+  if(!box) return;
+
+  box.innerHTML=journal.slice(-15).map(j=>
+    `<div class="card">
+      <b>${j.market}</b> | ${j.signal}
+      <br>Profit: ${j.profit}
+      <br>${j.time}
+    </div>`
+  ).join("");
+}
+
+setInterval(renderJournal,2000);
+
+/* ======================= MARKET SIGNAL ENGINE ======================= */
+
+function marketSignals(){
+  const signals={
+    EURUSD:Math.random()>0.5?"BUY":"SELL",
+    GBPUSD:Math.random()>0.5?"BUY":"SELL",
+    XAUUSD:Math.random()>0.5?"BUY":"SELL",
+    BTCUSD:Math.random()>0.5?"BUY":"SELL"
+  };
+
+  document.getElementById("eurSig") && (document.getElementById("eurSig").innerText=signals.EURUSD);
+  document.getElementById("gbpSig") && (document.getElementById("gbpSig").innerText=signals.GBPUSD);
+  document.getElementById("goldSig") && (document.getElementById("goldSig").innerText=signals.XAUUSD);
+  document.getElementById("btcSig") && (document.getElementById("btcSig").innerText=signals.BTCUSD);
+}
+
+setInterval(marketSignals,3000);
+
+/* ======================= VIP SIGNAL FEED ======================= */
+
+function vipFeed(){
+  let feed=document.getElementById("feed");
+  if(!feed) return;
+
+  let s=["EUR BUY","GOLD SELL","BTC BUY","GBP SELL"];
+  feed.innerHTML=s.map(x=>`<span style="margin-right:15px">${x}</span>`).join("");
+}
+
+setInterval(vipFeed,4000);
+
+/* ======================= LIGHT/DARK ======================= */
+
+function toggleTheme(){
+  document.body.classList.toggle("light-mode");
+}
+
+/* ======================= CHART FIX ======================= */
+
+function initChart(){
+  new TradingView.widget({
+    container_id:"tv",
+    symbol:"OANDA:EURUSD",
+    interval:"60",
+    theme:"dark",
+    autosize:true
+  });
+}
+
+initChart();
+
+
+/* ======================= ADVANCED VIP SYSTEM ======================= */
+
+function checkVIPAccess(){
+  const vipPages=["academy","vipSignals"];
+
+  vipPages.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      if(!isVIP){
+        el.innerHTML=`
+          <div class="card">
+            <h2>VIP ACCESS REQUIRED 🔒</h2>
+            <p>Upgrade to unlock premium trading signals, academy & bot insights.</p>
+            <button class="btn" onclick="upgradeVIP()">Upgrade Now</button>
+          </div>
+        `;
+      }
+    }
+  });
+}
+
+/* Run VIP lock check */
+setInterval(checkVIPAccess,2000);
+
+/* ======================= NOTIFICATION ENGINE ======================= */
+
+function notify(msg,type="info"){
+  let n=document.createElement("div");
+  n.innerText=msg;
+
+  n.style.position="fixed";
+  n.style.bottom="20px";
+  n.style.right="20px";
+  n.style.padding="12px 15px";
+  n.style.borderRadius="10px";
+  n.style.zIndex="99999";
+  n.style.color="#fff";
+  n.style.fontWeight="bold";
+  n.style.boxShadow="0 10px 20px rgba(0,0,0,0.3)";
+
+  if(type==="success") n.style.background="green";
+  else if(type==="error") n.style.background="red";
+  else n.style.background="#00aaff";
+
+  document.body.appendChild(n);
+
+  setTimeout(()=>n.remove(),3000);
+}
+
+/* ======================= ENHANCED BOT AI LOGIC ======================= */
+
+function aiSignalEngine(){
+  const volatility=Math.random();
+
+  if(volatility>0.7){
+    return "STRONG BUY 📈";
+  }
+  if(volatility<0.3){
+    return "STRONG SELL 📉";
+  }
+  return "WAIT ⏳";
+}
+
+/* Upgrade bot with AI signals */
+function startSmartBot(){
+  if(botRunning) return;
+
+  botRunning=true;
+
+  botEngine=setInterval(()=>{
+    const signal=aiSignalEngine();
+    const profit=(Math.random()*30-10);
+
+    balance+=profit;
+
+    journal.push({
+      time:new Date().toLocaleTimeString(),
+      market:"AI-MULTI",
+      signal:signal,
+      profit:profit.toFixed(2)
+    });
+
+    document.getElementById("sig").innerText=signal;
+
+    refreshUI();
+    saveUser();
+
+  },2000);
+
+  notify("Smart AI Bot Activated 🚀","success");
+}
+
+/* ======================= ADMIN SIMULATION PANEL ======================= */
+
+function adminPanel(){
+  return `
+  <div class="card">
+    <h2>Admin Panel</h2>
+    <button class="btn" onclick="resetBalance()">Reset Balance</button>
+    <button class="btn" onclick="clearTrades()">Clear Trades</button>
+  </div>
+  `;
+}
+
+function resetBalance(){
+  balance=0;
+  refreshUI();
+  saveUser();
+  notify("Balance reset");
+}
+
+function clearTrades(){
+  journal=[];
+  refreshUI();
+  saveUser();
+  notify("Trades cleared");
+}
+
+/* ======================= AUTO SYNC ENGINE ======================= */
+
+setInterval(()=>{
+  if(user){
+    saveUser();
+  }
+},8000);
+
+/* ======================= PERFORMANCE STATS ======================= */
+
+function calculateStats(){
+  let wins=journal.filter(j=>parseFloat(j.profit)>0).length;
+  let losses=journal.filter(j=>parseFloat(j.profit)<=0).length;
+
+  let winrate=journal.length?((wins/journal.length)*100).toFixed(2):0;
+
+  return {wins,losses,winrate};
+}
+
+function updateStatsUI(){
+  let stats=calculateStats();
+
+  let box=document.getElementById("statsBox");
+  if(box){
+    box.innerHTML=`
+      <div class="card">
+        <h3>Win Rate</h3>
+        <h2>${stats.winrate}%</h2>
+      </div>
+    `;
+  }
+}
+
+setInterval(updateStatsUI,3000);
+
+/* ======================= LIVE MARKET SIMULATION ======================= */
+
+function liveMarketTick(){
+  const prices={
+    EURUSD:(1.08+Math.random()*0.01).toFixed(4),
+    GBPUSD:(1.26+Math.random()*0.01).toFixed(4),
+    XAUUSD:(2300+Math.random()*10).toFixed(2),
+    BTCUSD:(65000+Math.random()*200).toFixed(2)
+  };
+
+  if(document.getElementById("livePrices")){
+    document.getElementById("livePrices").innerHTML=`
+      EURUSD: ${prices.EURUSD} <br>
+      GBPUSD: ${prices.GBPUSD} <br>
+      XAUUSD: ${prices.XAUUSD} <br>
+      BTCUSD: ${prices.BTCUSD}
+    `;
+  }
+}
+
+setInterval(liveMarketTick,1500);
+
+/* ======================= SECURITY LAYER ======================= */
+
+function protectRoutes(){
+  const publicPages=["home"];
+
+  if(!user){
+    show("home");
+  }
+}
+
+setInterval(protectRoutes,3000);
+
+<script>
+
+/* ======================= SAFE PAGE REGISTRY (FIX MISSING PAGES BUG) ======================= */
+
+const pagesList=[
+  "home","dashboard","bot","market","market-review",
+  "academy","team","gallery","deposit","withdraw","vipSignals"
+];
+
+function safeShow(page){
+  pagesList.forEach(p=>{
+    const el=document.getElementById(p);
+    if(el) el.style.display="none";
+  });
+
+  const active=document.getElementById(page);
+  if(active) active.style.display="block";
+
+  document.getElementById("navMenu")?.classList.remove("show");
+}
+
+/* override old function safely */
+window.showPage = safeShow;
+
+/* ======================= FIX NAV CLICK BINDING ======================= */
+
+document.querySelectorAll("nav a").forEach(a=>{
+  a.addEventListener("click",()=>{
+    const txt=a.innerText.toLowerCase();
+
+    if(txt.includes("home")) safeShow("home");
+    if(txt.includes("dashboard")) safeShow("dashboard");
+    if(txt.includes("bot")) safeShow("bot");
+    if(txt.includes("market") && !txt.includes("review")) safeShow("market");
+    if(txt.includes("review")) safeShow("market-review");
+    if(txt.includes("academy")) safeShow("academy");
+    if(txt.includes("team")) safeShow("team");
+    if(txt.includes("gallery")) safeShow("gallery");
+    if(txt.includes("deposit")) safeShow("deposit");
+    if(txt.includes("withdraw")) safeShow("withdraw");
+  });
+});
+
+/* ======================= CREATE MISSING UI BLOCKS SAFELY ======================= */
+
+function ensureUIBlocks(){
+
+  // VIP SIGNALS FIX
+  if(!document.getElementById("vipSignals")){
+    let sec=document.createElement("section");
+    sec.id="vipSignals";
+    sec.className="page";
+    sec.innerHTML=`
+      <div class="card">
+        <h2>VIP Signals Feed</h2>
+        <div id="feed"></div>
+      </div>
+    `;
+    document.body.appendChild(sec);
+  }
+
+  // STATS BOX FIX
+  if(!document.getElementById("statsBox")){
+    let div=document.createElement("div");
+    div.id="statsBox";
+    div.className="grid";
+    document.getElementById("dashboard")?.appendChild(div);
+  }
+
+  // LIVE PRICES FIX
+  if(!document.getElementById("livePrices")){
+    let div=document.createElement("div");
+    div.id="livePrices";
+    div.className="card";
+    div.innerHTML="Loading market data...";
+    document.getElementById("market")?.appendChild(div);
+  }
+
+  // JOURNAL FIX
+  if(!document.getElementById("journal")){
+    let div=document.createElement("div");
+    div.id="journal";
+    div.className="grid";
+    document.getElementById("dashboard")?.appendChild(div);
+  }
+}
+
+/* run safety builder */
+ensureUIBlocks();
+
+/* ======================= ENHANCED NAV UI (SAAS STRIPE STYLE HOVER FIX) ======================= */
+
+document.querySelectorAll("nav a").forEach(a=>{
+  a.style.transition="0.2s";
+});
+
+/* ======================= FULL SYSTEM BOOT ======================= */
+
+function systemBoot(){
+  refreshUI();
+  renderJournal();
+  marketSignals();
+  vipFeed();
+}
+
+setInterval(systemBoot,3000);
+
+/* ======================= ERROR SAFETY WRAPPER ======================= */
+
+window.onerror=function(msg){
+  console.log("Safe Error Caught:",msg);
+  return true;
+};
+
+/* ======================= FINAL INIT PATCH ======================= */
+
+setTimeout(()=>{
+  safeShow("home");
+  notify("GIBSONFX SaaS System Loaded 🚀","success");
+},1000);
+
+</script>
+
+</body>
+</html>
