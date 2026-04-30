@@ -57,6 +57,19 @@ nav a:hover{
 .menu-btn{display:none;font-size:22px;cursor:pointer;color:#00eaff;}
 .toggle-btn{position:fixed;top:20px;right:20px;background:#00eaff;color:black;border:none;padding:10px 15px;font-weight:bold;border-radius:5px;cursor:pointer;z-index:1001;}
 .page{display:none;padding:20px;}
+  .ai-card{
+  background:linear-gradient(145deg,#121a2b,#1a2238);
+  border:1px solid rgba(255,215,0,0.15);
+  box-shadow:0 0 20px var(--gold-glow);
+  border-radius:12px;
+  padding:20px;
+  transition:0.3s;
+}
+
+.ai-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 30px var(--gold-glow);
+}
 .hero{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:20px;}
 .hero img{width:100%;max-width:400px;border-radius:10px;}
 .hero h1{font-size:36px;color:#00eaff;}
@@ -129,11 +142,11 @@ body.light-mode #tradeJournal{background:var(--card-light);}
 
 <section id="dashboard" class="page">
   <h1>User Dashboard</h1>
-  <div class="stats">
-    <div class="stat-card"><h3>Total Balance</h3><h2 id="totalBalance">$0</h2></div>
-    <div class="stat-card"><h3>Today's P/L (%)</h3><h2 id="todayProfit">0%</h2></div>
-    <div class="stat-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
-    <div class="stat-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
+  <div class="stat-card ai-card">
+    <div class="stat-card ai-card"><h3>Total Balance</h3><h2 id="totalBalance">$0</h2></div>
+    <div class="stat-card ai-card"><h3>Today's P/L (%)</h3><h2 id="todayProfit">0%</h2></div>
+    <div class="stat-card ai-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
+    <div class="stat-card ai-card"><h3>Bot Status</h3><h2 id="botStatus">Stopped</h2></div>
   </div>
   <h3>Trade Journal (Last 20 trades)</h3>
   <div id="tradeJournal"></div>
