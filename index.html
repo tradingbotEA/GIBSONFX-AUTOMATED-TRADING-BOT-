@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIBSONFX Elite PRO SaaS Platform</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- TradingView -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --panel:#121a2b;
+  --text:#fff;
+  --blue:#00eaff;
+  --gold:#FFD700;
+  --border:rgba(255,255,255,0.08);
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  background:#0f172a;
+  position:sticky;
+  top:0;
+  z-index:999;
+}
+
+nav{
+  display:flex;
+  gap:10px;
+}
+
+nav a{
+  color:white;
+  text-decoration:none;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.menu-btn{display:none;cursor:pointer}
+
+.page{display:none;padding:20px}
+.page.active{display:block}
+
+.card{
+  background:var(--panel);
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+.btn{
+  background:var(--gold);
+  padding:10px 15px;
+  border:none;
+  cursor:pointer;
+  border-radius:8px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
+}
+
+.chart{
+  height:300px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="./assets/logo.png" height="40">
+  <span class="menu-btn" onclick="toggleMenu()">☰</span>
+  <nav id="navMenu">
+    <a onclick="show('home')">Home</a>
+    <a onclick="show('dashboard')">Dashboard</a>
+    <a onclick="show('bot')">Bot</a>
+    <a onclick="show('market')">Market</a>
+    <a onclick="show('academy')">Academy</a>
+    <a onclick="show('team')">Team</a>
+    <a onclick="show('gallery')">Gallery</a>
+    <a onclick="show('deposit')">Deposit</a>
+    <a onclick="show('withdraw')">Withdraw</a>
+    <a onclick="show('vip')">VIP</a>
+  </nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page active">
+  <div class="card">
+    <h1>GIBSONFX SaaS Platform</h1>
+    <p>AI Trading Bot + VIP Signals + SaaS Dashboard</p>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+  <div class="grid">
+    <div class="card"><h3>Balance</h3><h2 id="bal">$0</h2></div>
+    <div class="card"><h3>Trades</h3><h2 id="tr">0</h2></div>
+    <div class="card"><h3>Bot</h3><h2 id="status">OFF</h2></div>
+  </div>
+
+  <div class="card">
+    <h3>Trade Journal</h3>
+    <div id="journal"></div>
+  </div>
+</section>
+
+<!-- BOT -->
+<section id="bot" class="page">
+  <div class="card">
+    <h2>AI BOT</h2>
+    <button class="btn" onclick="startBot()">Start</button>
+    <button class="btn" onclick="stopBot()">Stop</button>
+    <h3 id="signal">WAIT</h3>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page">
+  <div class="card">
+    <div id="tv" class="chart"></div>
+  </div>
+</section>
+
+<!-- ACADEMY -->
+<section id="academy" class="page">
+  <div class="card">
+    <h2>Trading Academy</h2>
+    <p>Smart Money Concepts + Risk Management</p>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="page">
+  <div class="card"><h2>Team</h2><p>GIBSONFX Team</p></div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="page">
+  <div class="card"><h2>Gallery</h2></div>
+</section>
+
+<!-- DEPOSIT -->
+<section id="deposit" class="page">
+  <div class="card">
+    <h2>Deposit</h2>
+    <input id="dep" placeholder="Amount">
+    <button class="btn" onclick="deposit()">Deposit</button>
+  </div>
+</section>
+
+<!-- WITHDRAW -->
+<section id="withdraw" class="page">
+  <div class="card">
+    <h2>Withdraw</h2>
+    <input id="wit" placeholder="Amount">
+    <button class="btn" onclick="withdraw()">Withdraw</button>
+  </div>
+</section>
+
+<!-- VIP -->
+<section id="vip" class="page">
+  <div class="card">
+    <h2>VIP ACCESS</h2>
+    <p>Premium Signals & Bot Unlock</p>
+    <button class="btn" onclick="upgradeVIP()">Upgrade</button>
+  </div>
+</section>
+
+<script>
+
+/* ================= CORE STATE ================= */
+let balance=0;
+let trades=0;
+let bot;
+
+/* ================= NAV ================= */
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleMenu(){
+  document.getElementById("navMenu").classList.toggle("show");
+}
+
+/* ================= BOT ================= */
+function startBot(){
+  bot=setInterval(()=>{
+    let signal=Math.random()>0.5?"BUY":"SELL";
+    trades++;
+    balance+=Math.random()*10;
+
+    document.getElementById("signal").innerText=signal;
+    document.getElementById("bal").innerText="$"+balance.toFixed(2);
+    document.getElementById("tr").innerText=trades;
+
+    document.getElementById("status").innerText="RUNNING";
+
+    let j=document.getElementById("journal");
+    j.innerHTML+=`<p>${signal} | Profit ${(Math.random()*10).toFixed(2)}</p>`;
+  },2000);
+}
+
+function stopBot(){
+  clearInterval(bot);
+  document.getElementById("status").innerText="STOPPED";
+}
+
+/* ================= DEPOSIT / WITHDRAW ================= */
+function deposit(){
+  let a=parseFloat(document.getElementById("dep").value||0);
+  balance+=a;
+  document.getElementById("bal").innerText="$"+balance.toFixed(2);
+}
+
+function withdraw(){
+  let a=parseFloat(document.getElementById("wit").value||0);
+  if(a>balance) return alert("Insufficient");
+  balance-=a;
+  document.getElementById("bal").innerText="$"+balance.toFixed(2);
+}
+
+/* ================= VIP ================= */
+function upgradeVIP(){
+  alert("VIP Activated");
+}
+
+/* ================= CHART ================= */
+new TradingView.widget({
+  container_id:"tv",
+  symbol:"OANDA:EURUSD",
+  interval:"60",
+  theme:"dark",
+  autosize:true
+});
+
+</script>
+
+</body>
+  </html>
