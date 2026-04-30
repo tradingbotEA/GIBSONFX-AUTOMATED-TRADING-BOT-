@@ -162,7 +162,7 @@ body::before{
 
 <section id="dashboard" class="page">
   <h1>User Dashboard</h1>
-  <div class="stat-card ai-card">
+  <div class="stats">
     <div class="stat-card ai-card"><h3>Total Balance</h3><h2 id="totalBalance">$0</h2></div>
     <div class="stat-card ai-card"><h3>Today's P/L (%)</h3><h2 id="todayProfit">0%</h2></div>
     <div class="stat-card ai-card"><h3>Active Trades</h3><h2 id="activeTrades">0</h2></div>
@@ -406,7 +406,24 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 // State
-let loggedIn=false, isVIP=false, balance=0, tradeJournal=[], botInterval, backtestMode=false;
+auth.onAuthStateChanged(user=>{
+  if(user){
+    loggedIn = true;
+
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      if(doc.exists){
+        const data = doc.data();
+        balance = data.balance || 0;
+        isVIP = data.vip || false;
+        tradeJournal = data.trades || [];
+        updateUI();
+      }
+    });
+
+  } else {
+    loggedIn = false;
+  }
+});
 
 // Menu
 function toggleMenu(){document.getElementById('navMenu').classList.toggle('show');}
@@ -457,11 +474,18 @@ function login(){
 }
 
 // Save user
-function saveUser(){const user=auth.currentUser; if(user){db.collection("users").doc(user.uid).update({
-  balance: balance,
-  vip: isVIP,
-  trades: tradeJournal
-});}}
+function saveUser(){
+  const user = auth.currentUser;
+  if(user){
+    db.collection("users").doc(user.uid).update({
+      balance,
+      vip: isVIP,
+      trades: tradeJournal
+    }).catch(err=>{
+      console.error("Save error:", err);
+    });
+  }
+}
 
 // Update dashboard UI
 function updateUI(){
@@ -486,7 +510,14 @@ setInterval(updateAIInsight,6000);
 
 // Trading Bot
 function startBot(){
-  if(botInterval){alert("Bot already running");return;}
+  if(!loggedIn){
+    alert("Login required");
+    return;
+  }
+  if(botInterval !== null){
+  alert("Bot already running");
+  return;
+  }
 
   botInterval=setInterval(()=>{
     const markets=[...document.getElementById("botMarkets").selectedOptions].map(o=>o.value);
@@ -560,7 +591,10 @@ function requestWithdraw(){
 function toggleTheme(){document.body.classList.toggle("light-mode");}
 
 // TradingView charts
-function initCharts(){
+window.onload = function(){
+  initCharts();
+  updateUI();
+};
   const symbols=["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
   symbols.forEach(sym=>{
     new TradingView.widget({
@@ -596,6 +630,12 @@ function initCharts(){
 
 // Fullscreen chart
 function openFullChart(symbol){
+  setTimeout(()=>{
+  document.querySelectorAll('.tradingview-widget-container').forEach((el,i)=>{
+    const symbols=["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
+    el.onclick = ()=>openFullChart(symbols[i % symbols.length]);
+  });
+},2000);
   document.getElementById("fullChartModal").style.display="flex";
   document.getElementById("fullChartContainer").innerHTML="";
   new TradingView.widget({
