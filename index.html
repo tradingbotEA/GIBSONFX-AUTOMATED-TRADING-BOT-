@@ -237,6 +237,14 @@ nav a:hover{
   transform: translateY(-2px);
 }
 
+body.light-mode nav a {
+  color: #333;
+}
+
+body.light-mode nav a:hover {
+  color: #FFD700;
+}
+
 .menu-btn{display:none;font-size:22px;cursor:pointer;color:#00eaff;}
 .toggle-btn{
   position:fixed;
@@ -333,7 +341,7 @@ body.light-mode .hero-content h1 {
 }
 
 body.light-mode .hero-content p {
-  color: #555;
+  color: #333;
 }
 
 .cta-button {
@@ -392,6 +400,11 @@ body.light-mode .hero-content p {
   margin-bottom: 40px;
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
   animation: bounceIn 0.8s ease-out 0.4s backwards;
+}
+
+body.light-mode .home-nav-title {
+  color: #FF6B00;
+  text-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
 }
 
 .hero-nav-grid {
@@ -461,15 +474,24 @@ body.light-mode .hero-content p {
 }
 
 body.light-mode .hero-nav-link {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 191, 255, 0.05));
-  border-color: rgba(0, 191, 255, 0.3);
-  color: #00bfff;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.08), rgba(0, 191, 255, 0.08));
+  border-color: rgba(255, 107, 0, 0.4);
+  color: #FF6B00;
+}
+
+body.light-mode .hero-nav-link p {
+  color: #555;
 }
 
 body.light-mode .hero-nav-link:hover {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 191, 255, 0.15));
-  border-color: rgba(0, 191, 255, 0.6);
-  box-shadow: 0 15px 40px rgba(0, 191, 255, 0.2);
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), rgba(0, 191, 255, 0.15));
+  border-color: rgba(255, 107, 0, 0.7);
+  box-shadow: 0 15px 40px rgba(255, 107, 0, 0.2);
+  color: #FF6B00;
+}
+
+body.light-mode .hero-nav-link:hover p {
+  color: #FF6B00;
 }
 
 .hero {
@@ -526,7 +548,7 @@ body.light-mode .hero h1{color:#00bfff;}
   animation: scaleIn 0.6s ease-out;
 }
 
-body.light-mode .stat-card{background:var(--card-light);box-shadow:0 0 15px var(--shadow-light);}
+body.light-mode .stat-card{background:var(--card-light);box-shadow:0 0 15px var(--shadow-light);color: #333;}
 
 .bot-box,.market-card,.card,.modal-content,.gallery-card,.admin-box{
   background:var(--card-dark);
@@ -542,6 +564,7 @@ body.light-mode .market-card,
 body.light-mode .admin-box{
   background:var(--card-light);
   box-shadow:0 0 15px var(--shadow-light);
+  color: #333;
 }
 
 .market-cards,.gallery-cards{
@@ -653,9 +676,13 @@ body.light-mode .overlay{
   position:relative;
   text-align:center;
   animation: scaleIn 0.3s ease-out;
+  color: #fff;
 }
 
-body.light-mode .modal-content{background:var(--card-light);}
+body.light-mode .modal-content{
+  background:var(--card-light);
+  color: #333;
+}
 
 .close-btn{
   position:absolute;
@@ -685,10 +712,12 @@ body.light-mode .modal-content{background:var(--card-light);}
   padding:10px;
   border-radius:8px;
   margin-top:10px;
+  color: #fff;
 }
 
 body.light-mode #tradeJournal{
   background:var(--card-light);
+  color: #333;
 }
 
 body::before{
@@ -709,6 +738,13 @@ body::before{
   margin: 15px 0;
   display: none;
   animation: slideInLeft 0.4s ease-out;
+  color: #fff;
+}
+
+body.light-mode .content-warning {
+  background: rgba(255, 107, 0, 0.1);
+  border-left-color: #FF6B00;
+  color: #333;
 }
 
 .content-warning.show {
@@ -721,6 +757,68 @@ footer {
   margin-top: 40px;
   border-top: 1px solid rgba(255,215,0,0.2);
   animation: slideInUp 0.6s ease-out;
+  color: #fff;
+}
+
+body.light-mode footer {
+  color: #333;
+  border-top-color: rgba(255, 107, 0, 0.2);
+}
+
+input {
+  background: var(--card-dark);
+  color: #fff;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+body.light-mode input {
+  background: var(--card-light);
+  color: #333;
+  border-color: rgba(255, 107, 0, 0.3);
+}
+
+input:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+select {
+  background: var(--card-dark);
+  color: #fff;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+body.light-mode select {
+  background: var(--card-light);
+  color: #333;
+  border-color: rgba(255, 107, 0, 0.3);
+}
+
+h1, h2, h3 {
+  color: inherit;
+}
+
+body.light-mode h1 {
+  color: #333;
+}
+
+body.light-mode h2 {
+  color: #333;
+}
+
+body.light-mode h3 {
+  color: #333;
 }
 
 @media screen and (max-width:768px){
@@ -756,18 +854,19 @@ footer {
 <a onclick="showPage('bot')">Trading Bot</a>
 <a onclick="showPage('market')">Market</a>
 <a onclick="showPage('market-review')">Market Review</a>
-<a onclick="showPage('academy')">Trading Academy</a>
+<a onclick="showPage('academy')">Academy</a>
 <a onclick="showPage('team')">Team</a>
 <a onclick="showPage('gallery')">Gallery</a>
 <a onclick="showPage('deposit')">Deposit</a>
 <a onclick="showPage('withdraw')">Withdraw</a>
-<a id="vipLink" onclick="upgradeVIP()">Upgrade to VIP</a>
-<a id="loginLink" onclick="openLoginModal()">Login / Sign Up</a>
+<a id="vipLink" onclick="upgradeVIP()">VIP</a>
+<a id="loginLink" onclick="openLoginModal()">Login</a>
 </nav>
 </header>
 
 <!-- PAGES -->
 <section id="home" class="page active">
+  <div class="content-warning" id="contentWarning"></div>
   <div class="hero">
     <div class="hero-content">
       <h1>🚀 GIBSONFX Elite PRO</h1>
