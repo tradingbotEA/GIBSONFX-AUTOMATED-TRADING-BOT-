@@ -76,6 +76,89 @@
   }
 }
 
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 20px rgba(0, 234, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(0, 234, 255, 0.6);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotateIn {
+  from {
+    opacity: 0;
+    transform: rotate(-10deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.hero-nav-link {
+  animation: slideInUp 0.6s ease-out backwards;
+}
+
+.hero-nav-link:nth-child(1) { animation-delay: 0.1s; }
+.hero-nav-link:nth-child(2) { animation-delay: 0.2s; }
+.hero-nav-link:nth-child(3) { animation-delay: 0.3s; }
+.hero-nav-link:nth-child(4) { animation-delay: 0.4s; }
+.hero-nav-link:nth-child(5) { animation-delay: 0.5s; }
+.hero-nav-link:nth-child(6) { animation-delay: 0.6s; }
+.hero-nav-link:nth-child(7) { animation-delay: 0.7s; }
+.hero-nav-link:nth-child(8) { animation-delay: 0.8s; }
+
 .page-enter {
   animation: fadeInUp 0.6s ease-out forwards;
 }
@@ -132,17 +215,6 @@ header{
   position:relative;
   z-index:1002;
   animation: slideInDown 0.6s ease-out;
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 body.light-mode header{background:#e3e3e3;}
@@ -211,16 +283,201 @@ nav a:hover{
   box-shadow:0 0 30px var(--gold-glow);
 }
 
-.hero{
+/* HOME PAGE SPECIAL STYLING */
+#home {
+  background: linear-gradient(135deg, rgba(11,15,26,0.95), rgba(18,26,43,0.95));
+  min-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.hero {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+  gap: 40px;
+}
+
+.hero-content {
+  flex: 1;
+  min-width: 300px;
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.hero-content h1 {
+  font-size: 54px;
+  color: #00eaff;
+  margin: 0 0 20px 0;
+  text-shadow: 0 0 20px rgba(0, 234, 255, 0.5);
+  animation: bounceIn 0.8s ease-out;
+}
+
+body.light-mode .hero-content h1 {
+  color: #00bfff;
+  text-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.hero-content p {
+  font-size: 18px;
+  color: #ccc;
+  line-height: 1.8;
+  margin: 15px 0;
+  animation: slideInUp 0.8s ease-out 0.2s backwards;
+}
+
+body.light-mode .hero-content p {
+  color: #555;
+}
+
+.cta-button {
+  display: inline-block;
+  background: linear-gradient(45deg, #FFD700, #f7c948);
+  color: black;
+  padding: 15px 40px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: 0.3s;
+  cursor: pointer;
+  border: none;
+  font-size: 16px;
+  animation: slideInUp 0.8s ease-out 0.4s backwards;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.cta-button:hover {
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.hero-image {
+  flex: 1;
+  min-width: 300px;
+  text-align: center;
+  animation: slideInRight 0.8s ease-out 0.2s backwards;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), 0 0 60px rgba(0, 234, 255, 0.2);
+  transition: 0.3s;
+}
+
+.hero-image img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.6), 0 0 80px rgba(0, 234, 255, 0.4);
+}
+
+/* HOME PAGE NAVIGATION */
+.home-nav-container {
+  width: 100%;
+  margin-top: 80px;
+  animation: fadeInUp 0.8s ease-out 0.3s backwards;
+}
+
+.home-nav-title {
+  text-align: center;
+  font-size: 28px;
+  color: #FFD700;
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  animation: bounceIn 0.8s ease-out 0.4s backwards;
+}
+
+.hero-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-nav-link {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0, 234, 255, 0.1));
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  padding: 30px 20px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  text-decoration: none;
+  color: #00eaff;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-nav-link::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.hero-nav-link:hover::before {
+  opacity: 1;
+}
+
+.hero-nav-link:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 234, 255, 0.2));
+  border-color: rgba(255, 215, 0, 0.6);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3), 0 0 20px rgba(0, 234, 255, 0.2);
+}
+
+.hero-nav-link span {
+  font-size: 28px;
+}
+
+.hero-nav-link p {
+  margin: 0;
+  font-size: 12px;
+  color: #aaa;
+  transition: 0.3s;
+}
+
+.hero-nav-link:hover p {
+  color: #FFD700;
+}
+
+body.light-mode .hero-nav-link {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 191, 255, 0.05));
+  border-color: rgba(0, 191, 255, 0.3);
+  color: #00bfff;
+}
+
+body.light-mode .hero-nav-link:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 191, 255, 0.15));
+  border-color: rgba(0, 191, 255, 0.6);
+  box-shadow: 0 15px 40px rgba(0, 191, 255, 0.2);
+}
+
+.hero {
   display:flex;
   align-items:center;
   justify-content:space-between;
   flex-wrap:wrap;
   margin-bottom:20px;
-}
-
-.hero div {
-  animation: slideInLeft 0.6s ease-out;
 }
 
 .hero img{
@@ -471,12 +728,18 @@ footer {
   .hero img{max-width:90%;margin-top:20px;}
   .stats{flex-direction:column;align-items:center;}
   .stat-card{width:90%;}
+  .hero-nav-grid{grid-template-columns: repeat(2, 1fr);}
+  .hero-content h1 {font-size: 36px;}
+  #home {padding: 40px 20px;}
 }
 
 @media screen and (max-width:480px){
   header{flex-direction:row;align-items:center;}
   .hero h1{font-size:28px;}
   .btn{padding:10px 18px;}
+  .hero-nav-grid{grid-template-columns: 1fr;}
+  .hero-content h1 {font-size: 28px;}
+  .hero-content p {font-size: 14px;}
 }
 </style>
 </head>
@@ -505,15 +768,63 @@ footer {
 
 <!-- PAGES -->
 <section id="home" class="page active">
-  <div class="content-warning" id="contentWarning"></div>
   <div class="hero">
-    <div>
-      <h1>GIBSONFX Elite PRO AI Bot</h1>
+    <div class="hero-content">
+      <h1>🚀 GIBSONFX Elite PRO</h1>
       <p>Automated AI-powered trading system with real chart pattern analysis.</p>
-      <p>Trading Academy with certificates & VIP signals.</p>
-      <a href="https://wa.me/254786810591" class="btn" target="_blank">Join VIP Signals</a>
+      <p>Master Smart Money Concepts and trade like institutions.</p>
+      <p>Get VIP signals, trading academy access, and a personal trading bot.</p>
+      <a href="https://wa.me/254786810591" class="cta-button" target="_blank">📲 Join VIP Signals Now</a>
     </div>
-    <img src="./assets/hero.jpg" alt="Hero Image" onerror="handleImageError(this)">
+    <div class="hero-image">
+      <img src="./assets/hero.jpg" alt="Hero Image" onerror="handleImageError(this)">
+    </div>
+  </div>
+
+  <div class="home-nav-container">
+    <div class="home-nav-title">📊 Explore Features</div>
+    <div class="hero-nav-grid">
+      <div class="hero-nav-link" onclick="showPage('dashboard')">
+        <span>📈</span>
+        <strong>Dashboard</strong>
+        <p>View your trading stats</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('bot')">
+        <span>🤖</span>
+        <strong>Trading Bot</strong>
+        <p>AI-powered automation</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('market')">
+        <span>📊</span>
+        <strong>Live Charts</strong>
+        <p>Real-time market data</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('market-review')">
+        <span>🔍</span>
+        <strong>Market Review</strong>
+        <p>VIP signal analysis</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('academy')">
+        <span>📚</span>
+        <strong>Academy</strong>
+        <p>Learn trading concepts</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('team')">
+        <span>👥</span>
+        <strong>Team</strong>
+        <p>Meet the experts</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('gallery')">
+        <span>🖼️</span>
+        <strong>Gallery</strong>
+        <p>Success stories</p>
+      </div>
+      <div class="hero-nav-link" onclick="showPage('deposit')">
+        <span>💰</span>
+        <strong>Deposit</strong>
+        <p>Fund your account</p>
+      </div>
+    </div>
   </div>
 </section>
 
