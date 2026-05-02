@@ -395,6 +395,59 @@ body::before{
 <footer><p>© 2026 GIBSONFX Elite PRO AI Trading Platform</p></footer>
 
 <script>
+  BACKEND URL
+const API = "http://YOUR_VPS_IP:8000";
+
+function showPage(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+if(id==='market') loadChart();
+}
+
+// BOT CONTROL (REAL BACKEND)
+async function startBot(){
+await fetch(API+"/start",{method:"POST"});
+updateStatus();
+}
+
+async function stopBot(){
+await fetch(API+"/stop",{method:"POST"});
+updateStatus();
+}
+
+async function updateStatus(){
+let res = await fetch(API+"/status");
+let data = await res.json();
+document.getElementById("status").innerText = data.running ? "RUNNING" : "STOPPED";
+}
+
+// BALANCE FROM BINANCE
+async function loadBalance(){
+let res = await fetch(API+"/balance");
+let data = await res.json();
+document.getElementById("balance").innerText = data.free || 0;
+}
+
+// TRADINGVIEW CHART
+function loadChart(){
+new TradingView.widget({
+container_id: "chart",
+symbol: "BINANCE:BTCUSDT",
+interval: "15",
+theme: "dark",
+autosize: true
+});
+}
+
+// AUTO REFRESH
+setInterval(()=>{
+updateStatus();
+loadBalance();
+},5000);
+
+updateStatus();
+loadBalance();
+
 // Firebase setup
 const firebaseConfig = {
   apiKey: "AIzaSyBBQekvGDpZWmCy1Cz1R5oxHPJeTlqSoVw",
