@@ -396,159 +396,28 @@ body::before{
 <footer><p>© 2026 GIBSONFX Elite PRO AI Trading Platform</p></footer>
 
 <script>
-// Firebase setup
+<script>
+// ================= FIREBASE =================
 const firebaseConfig = {
   apiKey: "AIzaSyBBQekvGDpZWmCy1Cz1R5oxHPJeTlqSoVw",
   authDomain: "gibsonfx-web.firebaseapp.com",
   projectId: "gibsonfx-web"
 };
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// State
-let loggedIn=false, isVIP=false, balance=0, tradeJournal=[], botInterval, backtestMode=false;
+// ================= STATE =================
+let loggedIn = false;
+let isVIP = false;
+let balance = 0;
+let tradeJournal = [];
+let botInterval = null;
+let backtestMode = false;
 
-// Menu
-function toggleMenu(){document.getElementById('navMenu').classList.toggle('show');}
-function showPage(pageId){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(pageId).style.display='block';
-
-  // CLOSE MENU AFTER CLICK
-  document.getElementById('navMenu').classList.remove('show');
-}
-
-// Login modal
-document.getElementById("loginLink").onclick=()=>{document.getElementById("loginModal").style.display="flex";};
-document.getElementById("closeModal").onclick=()=>{document.getElementById("loginModal").style.display="none";};
-
-// Auth
-function signup(){
-  const email=document.getElementById("email").value;
-  const password=document.getElementById("password").value;
-
-  auth.createUserWithEmailAndPassword(email,password)
-  .then(user=>{
-    balance=100;
-    db.collection("users").doc(user.user.uid).set({
-      balance,vip:false,trades:[],deposits:[],withdrawals:[]
-    });
-
-    alert("Account Created ✅");
-
-    // CLOSE MODAL
-    document.getElementById("loginModal").style.display="none";
-  })
-  .catch(err=>alert(err.message));
-}
-
-function login(){
-  const email=document.getElementById("email").value;
-  const password=document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email,password)
-  .then(()=>{
-    alert("Login Successful ✅");
-
-    // CLOSE MODAL
-    document.getElementById("loginModal").style.display="none";
-  })
-  .catch(err=>alert(err.message));
-}
-
-// Save user
-function saveUser(){const user=auth.currentUser; if(user){db.collection("users").doc(user.uid).update({
-  balance: balance,
-  vip: isVIP,
-  trades: tradeJournal
-});}}
-  saveUser();
-
-// Update dashboard UI
-function updateUI(){
-  document.getElementById("totalBalance").innerText="$"+balance.toFixed(2);
-  document.getElementById("activeTrades").innerText=tradeJournal.filter(t=>!t.closed).length;
-  document.getElementById("tradeJournal").innerHTML=tradeJournal.slice(-20).map(t=>`<p>${t.time} | ${t.market} | ${t.type} | ${t.profit}</p>`).join('');
-  document.getElementById("botStatus").innerText=botInterval?"Running":"Stopped";
-}
-  function updateAIInsight(){
-  const insights=[
-    "Liquidity sweep detected on XAUUSD",
-    "Bearish order block forming on GBPUSD",
-    "Bullish momentum building on EURUSD",
-    "BTC consolidating before breakout"
-  ];
-
-  document.getElementById("aiInsight").innerText =
-    insights[Math.floor(Math.random()*insights.length)];
-}
-
-setInterval(updateAIInsight,4000);
-
-// Trading Bot
-function startBot(){
-  if(botInterval){alert("Bot already running");return;}
-
-  botInterval = setInterval(...);
-document.getElementById("botStatus").innerText = "Running 🟢";
-
-    markets.forEach(m=>{
-      // Simulate trend logic
-      const trend=Math.random();
-      let signal, profit;
-
-      if(trend>0.6){
-        signal="BUY";
-        profit=(Math.random()*30+5).toFixed(2);
-      }else if(trend<0.4){
-        signal="SELL";
-        profit=(Math.random()*30+5).toFixed(2);
-      }else{
-        signal="WAIT";
-        profit=0;
-      }
-
-      document.getElementById("liveSignal").innerText=signal;
-
-      if(signal!=="WAIT"){
-        balance+=parseFloat(profit);
-
-        tradeJournal.push({
-          time:new Date().toLocaleTimeString(),
-          market:m,
-          type:signal,
-          profit:"+"+profit,
-          closed:true
-        });
-
-        updateUI();
-        saveUser();
-      }
-    });
-
-  },4000);
-}
-
-function stopBot(){
-  clearInterval(botInterval);
-botInterval = null;
-document.getElementById("botStatus").innerText = "Stopped 🔴";
-function toggleBacktestMode(){
-  backtestMode = !backtestMode;
-
-  if(backtestMode){
-    clearInterval(botInterval);
-    botInterval = null;
-    alert("Backtest Mode ON (Bot paused)");
-  } else {
-    alert("Backtest Mode OFF");
-  }
-}
-saveUser();
-// VIP Upgrade
-function upgradeVIP(){
-  auth.onAuthStateChanged(user=>{
+// ================= AUTH =================
+auth.onAuthStateChanged(user=>{
   if(user){
     loggedIn = true;
 
@@ -561,106 +430,218 @@ function upgradeVIP(){
         updateUI();
       }
     });
+
   } else {
     loggedIn = false;
   }
 });
 
-// Deposit / Withdraw
+// ================= SAVE =================
+function saveUser(){
+  const user = auth.currentUser;
+  if(user){
+    db.collection("users").doc(user.uid).update({
+      balance, vip: isVIP, trades: tradeJournal
+    });
+  }
+}
+
+// ================= UI =================
+function updateUI(){
+  document.getElementById("totalBalance").innerText = "$"+balance.toFixed(2);
+
+  document.getElementById("tradeJournal").innerHTML =
+    tradeJournal.slice(-20).map(t =>
+      `<p>${t.time} | ${t.market} | ${t.type} | Entry:${t.entry} | SL:${t.sl} | TP:${t.tp} | ${t.profit}</p>`
+    ).join('');
+
+  document.getElementById("botStatus").innerText =
+    botInterval ? "Running 🟢" : "Stopped 🔴";
+}
+
+// ================= SMC ENGINE =================
+
+// Fake candles (simulation)
+function generateCandle(prev){
+  const open = prev.close;
+  const close = open + (Math.random()-0.5)*2;
+  const high = Math.max(open, close) + Math.random();
+  const low = Math.min(open, close) - Math.random();
+  return {open, high, low, close};
+}
+
+// Structure
+function detectStructure(candles){
+  if(candles.length < 3) return "RANGE";
+
+  const a = candles[candles.length-1];
+  const b = candles[candles.length-2];
+
+  if(a.high > b.high && a.low > b.low) return "UPTREND";
+  if(a.low < b.low && a.high < b.high) return "DOWNTREND";
+
+  return "RANGE";
+}
+
+// Liquidity
+function detectLiquiditySweep(candles){
+  if(candles.length < 5) return false;
+
+  const last = candles[candles.length-1];
+  const highs = candles.slice(-5,-1).map(c=>c.high);
+  const lows = candles.slice(-5,-1).map(c=>c.low);
+
+  if(last.high > Math.max(...highs)) return "BUY_SWEEP";
+  if(last.low < Math.min(...lows)) return "SELL_SWEEP";
+
+  return false;
+}
+
+// Order Block
+function detectOrderBlock(candles){
+  const last = candles[candles.length-2];
+  if(!last) return null;
+
+  return {high:last.high, low:last.low};
+}
+
+// Signal Logic
+function smcSignalEngine({structure, sweep, ob, price}){
+  let signal="WAIT", sl=0, tp=0;
+
+  if(structure==="UPTREND" && sweep==="SELL_SWEEP"){
+    signal="BUY";
+    sl = ob.low;
+    tp = price + (price - sl)*2;
+  }
+
+  if(structure==="DOWNTREND" && sweep==="BUY_SWEEP"){
+    signal="SELL";
+    sl = ob.high;
+    tp = price - (sl - price)*2;
+  }
+
+  return {signal, entry:price, sl, tp};
+}
+
+// ================= BOT =================
+function startBot(){
+  if(botInterval){
+    alert("Bot already running");
+    return;
+  }
+
+  let candles = [{open:100, high:101, low:99, close:100}];
+
+  botInterval = setInterval(()=>{
+
+    const markets = [...document.getElementById("botMarkets").selectedOptions]
+      .map(o=>o.value);
+
+    markets.forEach(m=>{
+
+      const candle = generateCandle(candles[candles.length-1]);
+      candles.push(candle);
+      if(candles.length>50) candles.shift();
+
+      const structure = detectStructure(candles);
+      const sweep = detectLiquiditySweep(candles);
+      const ob = detectOrderBlock(candles);
+
+      const trade = smcSignalEngine({
+        structure,
+        sweep,
+        ob,
+        price: candle.close
+      });
+
+      document.getElementById("liveSignal").innerText = trade.signal;
+
+      if(trade.signal !== "WAIT"){
+
+        const profit = (Math.random()*15+5).toFixed(2);
+        balance += parseFloat(profit);
+
+        tradeJournal.push({
+          time: new Date().toLocaleTimeString(),
+          market: m,
+          type: trade.signal,
+          entry: trade.entry.toFixed(2),
+          sl: trade.sl.toFixed(2),
+          tp: trade.tp.toFixed(2),
+          profit: "+"+profit,
+          closed: true
+        });
+
+        updateUI();
+        saveUser();
+      }
+
+    });
+
+  },4000);
+
+  updateUI();
+}
+
+function stopBot(){
+  clearInterval(botInterval);
+  botInterval = null;
+  updateUI();
+}
+
+// ================= OTHER =================
+function toggleBacktestMode(){
+  backtestMode = !backtestMode;
+  if(backtestMode){
+    stopBot();
+    alert("Backtest ON");
+  } else {
+    alert("Backtest OFF");
+  }
+}
+
+function upgradeVIP(){
+  if(!loggedIn){
+    alert("Login first");
+    return;
+  }
+  isVIP = true;
+  saveUser();
+  alert("VIP Activated");
+}
+
 function createDeposit(){
-  const amt=parseFloat(document.getElementById("depositAmount").value);
-  if(!auth.currentUser){
-  alert("Login first");
-  return;
+  const amt = parseFloat(document.getElementById("depositAmount").value);
+
+  if(!auth.currentUser || isNaN(amt) || amt<=0){
+    alert("Invalid");
+    return;
   }
-  if(isNaN(amt)||amt<=0){alert("Invalid Amount");return;}
-  balance+=amt;
+
+  balance += amt;
   saveUser();
   updateUI();
-  document.getElementById("depositStatus").innerText="Deposit Successful ✅";
 }
+
 function requestWithdraw(){
-  const amt=parseFloat(document.getElementById("withdrawAmount").value);
-  if(!auth.currentUser){
-  alert("Login first");
-  return;
+  const amt = parseFloat(document.getElementById("withdrawAmount").value);
+
+  if(!auth.currentUser || isNaN(amt) || amt<=0 || amt>balance){
+    alert("Invalid");
+    return;
   }
-  if(isNaN(amt)||amt<=0||amt>balance){alert("Invalid Amount");return;}
-  balance-=amt;
+
+  balance -= amt;
   saveUser();
   updateUI();
-  document.getElementById("withdrawStatus").innerText="Withdrawal Successful ✅";
 }
 
-// Dark/Light Mode
-function toggleTheme(){document.body.classList.toggle("light-mode");}
-
-// TradingView charts
-function initCharts(){
-  const symbols=["EURUSD","GBPUSD","XAUUSD","BTCUSD"];
-  symbols.forEach(sym=>{
-    new TradingView.widget({
-      "container_id":"chart"+sym,
-      "autosize":true,
-      "symbol": sym=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+sym,
-      "interval":"60",
-      "timezone":"Etc/UTC",
-      "theme":"dark",
-      "style":"1",
-      "locale":"en",
-      "toolbar_bg":"#000000",
-      "enable_publishing":false,
-      "hide_top_toolbar":true,
-      "withdateranges":true
-    });
-    new TradingView.widget({
-      "container_id":"chart"+sym+"Review",
-      "autosize":true,
-      "symbol": sym=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+sym,
-      "interval":"60",
-      "timezone":"Etc/UTC",
-      "theme":"dark",
-      "style":"1",
-      "locale":"en",
-      "toolbar_bg":"#000000",
-      "enable_publishing":false,
-      "hide_top_toolbar":true,
-      "withdateranges":true
-    });
-  });
+function toggleTheme(){
+  document.body.classList.toggle("light-mode");
 }
 
-// Fullscreen chart
-function openFullChart(symbol){
-  document.getElementById("fullChartModal").style.display="flex";
-  document.getElementById("fullChartContainer").innerHTML="";
-  new TradingView.widget({
-    "container_id":"fullChartContainer",
-    "autosize":true,
-    "symbol": symbol=="XAUUSD"?"OANDA:XAUUSD":"OANDA:"+symbol,
-    "interval":"60",
-    "timezone":"Etc/UTC",
-    "theme":"dark",
-    "style":"1",
-    "locale":"en",
-    "toolbar_bg":"#000000",
-    "enable_publishing":false,
-    "hide_top_toolbar":false,
-    "withdateranges":true
-  });
-}
-function closeFullChart(){document.getElementById("fullChartModal").style.display="none";}
-
-// VIP Signals feed simulation
-function updateVIPSignals(){
-  const signals=["BUY EURUSD","SELL GBPUSD","BUY XAUUSD","SELL BTCUSD"];
-  const feed=document.getElementById("liveSignalsFeed");
-  feed.innerHTML=signals.map(s=>`<span style="margin-right:20px">${s} (${new Date().toLocaleTimeString()})</span>`).join('');
-}
-setInterval(updateVIPSignals,5000);
-
-// Initialize
-initCharts();
+// ================= INIT =================
 updateUI();
 </script>
 </body>
