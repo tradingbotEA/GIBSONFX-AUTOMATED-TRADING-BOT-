@@ -590,6 +590,40 @@ function initCharts(){
   });
 }
 
+  let bot = null;
+let botRunning = false;
+
+// START BOT
+function startRealBot(){
+  if(botRunning) return;
+
+  const risk = parseFloat(document.getElementById("riskInput").value) / 100;
+  const speed = parseInt(document.getElementById("speedInput").value);
+
+  bot = new GibsonFXBotEngine({
+    symbols: ['EURUSDT','GBPUSDT','BTCUSDT','XAUUSD'],
+    riskPerTrade: risk,
+    analysisInterval: speed
+  });
+
+  bot.start();
+  botRunning = true;
+
+  document.getElementById("botStatus").innerText = "Running 🟢";
+
+  runBotUIUpdater();
+}
+
+// STOP BOT
+function stopRealBot(){
+  if(!botRunning) return;
+
+  bot.stop();
+  botRunning = false;
+
+  document.getElementById("botStatus").innerText = "Stopped 🔴";
+}
+
 // Fullscreen chart
 function openFullChart(symbol){
   document.getElementById("fullChartModal").style.display="flex";
