@@ -159,7 +159,7 @@ body::before{
 
 <!-- PAGES -->
 <section id="home" class="page" style="display:block;">
-  <div class="hero">
+  <div class="hero reveal">
     <div>
       <h1>GIBSONFX Elite PRO AI Bot</h1>
       <p>Automated AI-powered trading system with real Smart Money Concepts analysis.</p>
@@ -170,9 +170,9 @@ body::before{
   </div>
 </section>
 
-<section id="dashboard" class="page">
+<section id="dashboard" class="page reveal">
   <h1>User Dashboard</h1>
-  <div class="ai-card">
+  <div class="ai-card reveal">
     <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-around;">
       <div style="flex: 1; min-width: 150px;">
         <h3>Total Balance</h3>
@@ -200,10 +200,10 @@ body::before{
   <div id="tradeJournal"></div>
 </section>
 
-<section id="bot" class="page">
+<section id="bot" class="page reveal">
   <h1>Elite PRO Bot Control</h1>
 
-  <div class="bot-box">
+  <div class="bot-box reveal-left">
     <p><strong>🤖 Real SMC Bot Engine</strong></p>
 
     <label>Risk Per Trade (%)</label>
@@ -231,9 +231,9 @@ body::before{
   </div>
 </section>
 
-<section id="market" class="page">
+<section id="market" class="page reveal">
   <h1>Live Market Charts</h1>
-  <div class="market-cards">
+  <div class="market-card reveal-scale">
     <div id="chartEURUSD" class="tradingview-widget-container"></div>
     <div id="chartGBPUSD" class="tradingview-widget-container"></div>
     <div id="chartXAUUSD" class="tradingview-widget-container"></div>
@@ -361,15 +361,15 @@ body::before{
 <section id="team" class="page">
   <h1 style="text-align:center;">Our Team</h1>
   <div class="team-container">
-    <div class="team-member">
+    <div class="team-member reveal">
       <img src="./assets/director.jpg" alt="Gibson Mugai">
       <div class="overlay"><h3>Gibson Mugai</h3><p>Founder & Director</p></div>
     </div>
-    <div class="team-member">
+    <div class="team-member reveal">
       <img src="./assets/team2.jpg" alt="Lead Dev">
       <div class="overlay"><h3>Lead Developer</h3><p>Gibson Mugai</p></div>
     </div>
-    <div class="team-member">
+    <div class="team-member reveal">
       <img src="./assets/team3.jpg" alt="Peter Njuguna">
       <div class="overlay"><h3>Peter Njuguna</h3><p>Marketing</p></div>
     </div>
@@ -436,6 +436,46 @@ body::before{
 <footer><p>© 2026 GIBSONFX Elite PRO AI Trading Platform - Powered by Smart Money Concepts</p></footer>
 
 <script>
+  /* SCROLL ANIMATIONS */
+.reveal{
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.reveal-left{
+  opacity:0;
+  transform:translateX(-50px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-left.visible{
+  opacity:1;
+  transform:translateX(0);
+}
+
+.reveal-right{
+  opacity:0;
+  transform:translateX(50px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-right.visible{
+  opacity:1;
+  transform:translateX(0);
+}
+
+.reveal-scale{
+  opacity:0;
+  transform:scale(0.9);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-scale.visible{
+  opacity:1;
+  transform:scale(1);
+}
 // Firebase setup
 const firebaseConfig = {
   apiKey: "AIzaSyBBQekvGDpZWmCy1Cz1R5oxHPJeTlqSoVw",
@@ -452,8 +492,22 @@ let loggedIn=false, isVIP=false, balance=0, tradeJournal=[], botInterval, backte
 // Menu
 function toggleMenu(){document.getElementById('navMenu').classList.toggle('show');}
 function showPage(pageId){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(pageId).style.display='block';
+  document.querySelectorAll('.page').forEach(p=>{
+    p.style.display='none';
+    p.classList.remove('visible'); // reset animation
+  });
+
+  const page = document.getElementById(pageId);
+  page.style.display='block';
+
+  // trigger animation again
+  setTimeout(()=>{
+    page.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+      .forEach(el => el.classList.add('visible'));
+  },100);
+
+  document.getElementById('navMenu').classList.remove('show');
+}
 
   // CLOSE MENU AFTER CLICK
   document.getElementById('navMenu').classList.remove('show');
@@ -656,6 +710,22 @@ setInterval(updateVIPSignals,5000);
 // Initialize
 initCharts();
 updateUI();
+  // SCROLL REVEAL ENGINE
+const revealElements = document.querySelectorAll(
+  '.reveal, .reveal-left, .reveal-right, .reveal-scale'
+);
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+},{
+  threshold:0.15
+});
+
+revealElements.forEach(el => revealObserver.observe(el));
 </script>
 </body>
 </html>
