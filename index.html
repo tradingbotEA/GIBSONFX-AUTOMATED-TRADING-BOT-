@@ -202,18 +202,32 @@ body::before{
 
 <section id="bot" class="page">
   <h1>Elite PRO Bot Control</h1>
+
   <div class="bot-box">
-    <p><strong>🔴 Legacy Bot (Disabled)</strong></p>
-    <p>Select markets for bot:</p>
-    <select id="botMarkets" multiple disabled>
-      <option value="EURUSD" selected>EUR/USD</option>
-      <option value="GBPUSD" selected>GBP/USD</option>
-      <option value="XAUUSD" selected>XAU/USD</option>
-      <option value="BTCUSD" selected>BTC/USD</option>
+    <p><strong>🤖 Real SMC Bot Engine</strong></p>
+
+    <label>Risk Per Trade (%)</label>
+    <input type="number" id="riskInput" value="2" min="1" max="10">
+
+    <label>Analysis Speed</label>
+    <select id="speedInput">
+      <option value="1000">Fast (1s)</option>
+      <option value="5000" selected>Normal (5s)</option>
+      <option value="10000">Slow (10s)</option>
     </select>
-    <p>Live Signal:</p>
+
+    <br><br>
+
+    <button class="btn" onclick="startRealBot()">🚀 Start Bot</button>
+    <button class="btn" onclick="stopRealBot()">🛑 Stop Bot</button>
+
+    <h3>Live Signal:</h3>
     <h2 id="liveSignal">WAIT</h2>
-    <p style="color: #FFD700; font-size: 12px;">⚠️ Use the Real Bot Controls below instead</p>
+
+    <p>Confidence: <span id="signalConfidence">0%</span></p>
+    <p>Entry: <span id="signalEntry">-</span></p>
+    <p>SL: <span id="signalSL">-</span></p>
+    <p>TP: <span id="signalTP">-</span></p>
   </div>
 </section>
 
