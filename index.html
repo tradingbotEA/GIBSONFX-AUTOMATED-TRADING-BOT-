@@ -533,10 +533,23 @@ function toggleBacktestMode(){backtestMode=!backtestMode;alert("Backtest Mode: "
 
 // VIP Upgrade
 function upgradeVIP(){
-  if(!loggedIn){alert("Please login first");return;}
-  isVIP=true;saveUser();
-  alert("You are now VIP ✅");
-}
+  auth.onAuthStateChanged(user=>{
+  if(user){
+    loggedIn = true;
+
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      if(doc.exists){
+        const data = doc.data();
+        balance = data.balance || 0;
+        isVIP = data.vip || false;
+        tradeJournal = data.trades || [];
+        updateUI();
+      }
+    });
+  } else {
+    loggedIn = false;
+  }
+});
 
 // Deposit / Withdraw
 function createDeposit(){
