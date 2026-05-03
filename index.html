@@ -134,6 +134,36 @@ body::before{
 @media screen and (max-width:480px){header{flex-direction:row;align-items:center;} .hero h1{font-size:28px;} .btn{padding:10px 18px;}}
 </style>
 </head>
+  <div id="loginModal" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+  <div style="
+    background:#121a2b;
+    padding:30px;
+    border-radius:12px;
+    width:90%;
+    max-width:350px;
+    text-align:center;
+  ">
+    <h2 style="margin-bottom:20px;">Login / Sign Up</h2>
+
+    <input id="email" placeholder="Email" style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:none;">
+    <input id="password" type="password" placeholder="Password" style="width:100%;padding:10px;margin-bottom:20px;border-radius:6px;border:none;">
+
+    <button class="btn btn-primary" onclick="signup()">Sign Up</button>
+    <button class="btn btn-outline" onclick="login()">Login</button>
+
+    <br><br>
+    <span onclick="closeModal()" style="cursor:pointer;color:#aaa;">Cancel</span>
+  </div>
+  </div>
 <body>
 
 <button class="toggle-btn" onclick="toggleTheme()">Dark/Light Mode</button>
@@ -160,6 +190,9 @@ body::before{
 <!-- PAGES -->
 <section id="home" class="page" style="display:block;">
   <div class="hero reveal">
+    <button class="btn btn-primary" onclick="startTrading()">Start Trading</button>
+
+<button class="btn btn-outline" onclick="handleLogin()">View Demo</button>
     <div>
       <h1>GIBSONFX Elite PRO AI Bot</h1>
       <p>Automated AI-powered trading system with real Smart Money Concepts analysis.</p>
@@ -414,8 +447,8 @@ body::before{
     <h2>Login / Sign Up</h2>
     <input id="email" placeholder="Email"><br>
     <input id="password" type="password" placeholder="Password"><br>
-    <button class="btn" onclick="signup()">Sign Up</button>
-    <button class="btn" onclick="login()">Login</button>
+    <button class="btn btn-primary" onclick="startTrading()">Get Started</button>
+    <button class="btn btn-outline" onclick="handleLogin()">Login</button>
   </div>
 </div>
 
@@ -436,6 +469,12 @@ body::before{
 <footer><p>© 2026 GIBSONFX Elite PRO AI Trading Platform - Powered by Smart Money Concepts</p></footer>
 
 <script>
+  const user = localStorage.getItem("gibsonfx_user");
+
+if(!user){
+  alert("Access denied. Please login first.");
+  window.location.href = "index.html"; // landing page
+}
   /* SCROLL ANIMATIONS */
 .reveal{
   opacity:0;
@@ -539,16 +578,23 @@ function signup(){
 }
 
 function login(){
-  const email=document.getElementById("email").value;
-  const password=document.getElementById("password").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
   auth.signInWithEmailAndPassword(email,password)
-  .then(()=>{
-    loggedIn=true;
+  .then((userCredential)=>{
+    const user = userCredential.user;
+
+    // SAVE SESSION
+    localStorage.setItem("gibsonfx_user", JSON.stringify({
+      uid: user.uid,
+      email: user.email
+    }));
+
     alert("Login Successful ✅");
 
-    // CLOSE MODAL
-    document.getElementById("loginModal").style.display="none";
+    // REDIRECT BACK TO LANDING OR DASHBOARD
+    window.location.href = "app.html";
   })
   .catch(err=>alert(err.message));
 }
@@ -726,6 +772,57 @@ const revealObserver = new IntersectionObserver((entries) => {
 });
 
 revealElements.forEach(el => revealObserver.observe(el));
+  <script>
+// SESSION CHECK
+function isLoggedIn(){
+  return localStorage.getItem("gibsonfx_user") !== null;
+}
+
+// SAVE USER (called after Firebase login in your main app)
+function saveUserSession(user){
+  localStorage.setItem("gibsonfx_user", JSON.stringify(user));
+}
+
+// LOGIN BUTTON
+function handleLogin(){
+  window.location.href = "app.html"; // your trading platform file
+}
+
+// START TRADING BUTTON
+function startTrading(){
+  if(!isLoggedIn()){
+    alert("Please login first");
+    return;
+  }
+
+  // Premium loader feel
+  showLoader();
+
+  setTimeout(()=>{
+    window.location.href = "app.html";
+  },1200);
+}
+
+// SIMPLE LOADER
+function showLoader(){
+  const loader = document.createElement("div");
+  loader.id = "loader";
+  loader.innerHTML = "Connecting to trading engine...";
+  loader.style = `
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:#0b0f1a;
+    color:#FFD700;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:20px;
+    z-index:9999;
+  `;
+  document.body.appendChild(loader);
+}
+</script>
 </script>
 </body>
 </html>
