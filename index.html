@@ -390,6 +390,7 @@ body::before{
 <section id="vipSignals" class="page">
   <h2>VIP Live Signals</h2>
   <div id="liveSignalsFeed" style="background:#121a2b;padding:10px;color:#00eaff;overflow-x:auto;white-space:nowrap;"></div>
+  <a onclick="showPage('vipSignals')">VIP Signals</a>
 </section>
 
 <footer><p>© 2026 GIBSONFX Elite PRO AI Trading Platform</p></footer>
@@ -462,6 +463,7 @@ function saveUser(){const user=auth.currentUser; if(user){db.collection("users")
   vip: isVIP,
   trades: tradeJournal
 });}}
+  saveUser();
 
 // Update dashboard UI
 function updateUI(){
@@ -482,14 +484,14 @@ function updateUI(){
     insights[Math.floor(Math.random()*insights.length)];
 }
 
-setInterval(updateAIInsight,6000);
+setInterval(updateAIInsight,4000);
 
 // Trading Bot
 function startBot(){
   if(botInterval){alert("Bot already running");return;}
 
-  botInterval=setInterval(()=>{
-    const markets=[...document.getElementById("botMarkets").selectedOptions].map(o=>o.value);
+  botInterval = setInterval(...);
+document.getElementById("botStatus").innerText = "Running 🟢";
 
     markets.forEach(m=>{
       // Simulate trend logic
@@ -525,12 +527,25 @@ function startBot(){
       }
     });
 
-  },6000);
+  },4000);
 }
 
-function stopBot(){clearInterval(botInterval);botInterval=null;updateUI();}
-function toggleBacktestMode(){backtestMode=!backtestMode;alert("Backtest Mode: "+(backtestMode?"ON":"OFF"));}
+function stopBot(){
+  clearInterval(botInterval);
+botInterval = null;
+document.getElementById("botStatus").innerText = "Stopped 🔴";
+function toggleBacktestMode(){
+  backtestMode = !backtestMode;
 
+  if(backtestMode){
+    clearInterval(botInterval);
+    botInterval = null;
+    alert("Backtest Mode ON (Bot paused)");
+  } else {
+    alert("Backtest Mode OFF");
+  }
+}
+saveUser();
 // VIP Upgrade
 function upgradeVIP(){
   auth.onAuthStateChanged(user=>{
@@ -554,6 +569,10 @@ function upgradeVIP(){
 // Deposit / Withdraw
 function createDeposit(){
   const amt=parseFloat(document.getElementById("depositAmount").value);
+  if(!auth.currentUser){
+  alert("Login first");
+  return;
+  }
   if(isNaN(amt)||amt<=0){alert("Invalid Amount");return;}
   balance+=amt;
   saveUser();
@@ -562,6 +581,10 @@ function createDeposit(){
 }
 function requestWithdraw(){
   const amt=parseFloat(document.getElementById("withdrawAmount").value);
+  if(!auth.currentUser){
+  alert("Login first");
+  return;
+  }
   if(isNaN(amt)||amt<=0||amt>balance){alert("Invalid Amount");return;}
   balance-=amt;
   saveUser();
